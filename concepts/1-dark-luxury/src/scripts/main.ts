@@ -34,38 +34,27 @@ if (FX) {
 const glCanvas = $<HTMLCanvasElement>('#gl');
 const GL = createGL(glCanvas);
 type SceneLight = { i: number; r: number; anchor?: HTMLElement | null; dx?: number; dy?: number };
+// One light per scene, placed behind the focal element. r = falloff radius in viewport heights.
 const sceneLight: Record<string, SceneLight> = {
-  hero: { i: 1.15, r: 0.36, dx: 0.1, dy: 0.04 },
-  story: { i: 0.55, r: 0.26 },
-  numbers: { i: 0.75, r: 0.36 },
-  expertise: { i: 0.85, r: 0.3 },
-  method: { i: 0.7, r: 0.28 },
-  statement: { i: 0.75, r: 0.3 },
-  values: { i: 0.55, r: 0.22 },
-  team: { i: 0.7, r: 0.22 },
+  hero: { i: 1.0, r: 0.46 },
+  story: { i: 0.5, r: 0.3 },
+  numbers: { i: 0.8, r: 0.36 },
+  expertise: { i: 0.85, r: 0.34 },
+  method: { i: 0.85, r: 0.24 },
+  statement: { i: 0.8, r: 0.3 },
+  values: { i: 0.75, r: 0.2 },
+  team: { i: 0.8, r: 0.26 },
   contact: { i: 0.85, r: 0.3 },
-  outro: { i: 0.9, r: 0.26 },
+  outro: { i: 0.9, r: 0.36 },
 };
 const scenes = $$<HTMLElement>('.scene');
 scenes.forEach((s) => {
   const k = s.dataset.scene!;
   if (sceneLight[k]) sceneLight[k].anchor = $('[data-anchor]', s);
 });
-// on phones the lamp sits above the headline: throw the light downward instead of sideways
-const tuneLight = () => {
-  sceneLight.hero.dx = isMobile() ? 0 : 0.1;
-  sceneLight.hero.dy = isMobile() ? 0.1 : 0.04;
-};
-tuneLight();
-window.addEventListener('resize', tuneLight);
 const light = { boost: 0, override: null as null | { x: number; y: number } };
 let introLight = FX ? 0 : 1; // the lamp is lit by the intro
 let currentScene = 'hero';
-const mouse = { x: 0.5, y: 0.4, tx: 0.5, ty: 0.4 };
-window.addEventListener('pointermove', (e) => {
-  mouse.tx = e.clientX / window.innerWidth;
-  mouse.ty = e.clientY / window.innerHeight;
-}, { passive: true });
 
 function activeScene(): HTMLElement | null {
   const mid = window.innerHeight * 0.5;
@@ -77,7 +66,7 @@ function activeScene(): HTMLElement | null {
 }
 
 let lastT = 0;
-function tickLight(time: number) {
+function tickLight(time: number, snap = false) {
   if (!GL) return;
   const st = GL.state;
   const s = activeScene();
@@ -92,25 +81,18 @@ function tickLight(time: number) {
     tx = (r.left + r.width / 2) / window.innerWidth + (cfg.dx || 0);
     ty = (r.top + r.height / 2) / window.innerHeight + (cfg.dy || 0);
   }
-  // keep it on-screen-ish so the haze never vanishes entirely
-  tx = clamp(tx, -0.15, 1.15);
-  ty = clamp(ty, -0.2, 1.2);
-  // frame-rate independent easing toward the target
+  tx = clamp(tx, -0.2, 1.2);
+  ty = clamp(ty, -0.3, 1.3);
+  // frame-rate independent easing: the light glides to its next place, then holds still
   const dt = Math.min(0.1, Math.max(0.001, time - lastT));
   lastT = time;
-  const k = 1 - Math.exp(-dt * 3.6);
-  const k2 = 1 - Math.exp(-dt * 2.8);
+  const k = snap ? 1 : 1 - Math.exp(-dt * 5);
+  const k2 = snap ? 1 : 1 - Math.exp(-dt * 3);
   st.lx = lerp(st.lx, tx, k);
   st.ly = lerp(st.ly, ty, k);
   st.lr = lerp(st.lr, cfg.r, k2);
-  const breathe = 1 + Math.sin(time * 0.6) * 0.06;
-  st.li = lerp(st.li, (cfg.i + light.boost) * introLight * breathe, k2);
-  mouse.x = lerp(mouse.x, mouse.tx, k2);
-  mouse.y = lerp(mouse.y, mouse.ty, k2);
-  st.mx = mouse.x;
-  st.my = mouse.y;
-  st.scroll = window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-  GL.render(FX ? time : 12.0);
+  st.li = lerp(st.li, (cfg.i + light.boost) * introLight, k2);
+  GL.render(FX ? time : 0);
 }
 
 if (GL) {
@@ -120,13 +102,12 @@ if (GL) {
     document.addEventListener('visibilitychange', () => { visible = !document.hidden; });
     gsap.ticker.add((t) => { if (visible) tickLight(t); });
   } else {
-    // Reduced motion: one still frame per scroll settle, no animation.
-    GL.state.li = 0.9;
-    const still = () => { const s = activeScene(); if (s) currentScene = s.dataset.scene || currentScene; GL.state.li = sceneLight[currentScene].i; tickLight(12); };
-    for (let i = 0; i < 30; i++) tickLight(12);
+    // Reduced motion: the light is placed (not animated) behind each scene's focal element.
+    const still = () => tickLight(0, true);
+    still();
     window.addEventListener('scroll', () => requestAnimationFrame(still), { passive: true });
   }
-  window.addEventListener('resize', () => GL.resize());
+  window.addEventListener('resize', () => { GL.resize(); if (!FX) tickLight(0, true); });
 }
 
 /* ------------------------------------------------------------------ *
@@ -568,7 +549,7 @@ function setupStory() {
   ScrollTrigger.create({
     trigger: stage,
     start: 'top top',
-    end: () => `+=${window.innerHeight * 2.6}`,
+    end: () => `+=${window.innerHeight * 0.85}`,
     pin: true,
     scrub: 0.8,
     animation: tl,
@@ -639,10 +620,8 @@ function setupExpertise() {
   const dial = $('.xp__dial', stage);
   const ticks = $<SVGSVGElement>('.xp__ticks', stage);
   const items = $$('.xp__item', stage);
-  const lbls = $$('.xp__lbl', stage);
+  const rows = $$<HTMLButtonElement>('.xp__row', stage);
   const nms = $$('.xp__nm', stage);
-  lbls.forEach((l, k) => l.style.setProperty('--lo', String(clamp(1 - (k * 30) / 75) ** 1.4)));
-  const pips = $$<HTMLButtonElement>('.xp__pips button', stage);
   const N = items.length;
   const SVGNS = 'http://www.w3.org/2000/svg';
   // build the instrument
@@ -652,12 +631,7 @@ function setupExpertise() {
     parent.appendChild(e);
     return e;
   };
-  const defs = mk('defs', {}, ticks);
-  const rg = mk('radialGradient', { id: 'xpG' }, defs);
-  mk('stop', { offset: 0, 'stop-color': '#e2be76', 'stop-opacity': 0.14 }, rg);
-  mk('stop', { offset: 1, 'stop-color': '#e2be76', 'stop-opacity': 0 }, rg);
-  mk('circle', { r: 500, fill: 'url(#xpG)' }, ticks);
-  mk('circle', { r: 498, fill: 'none', stroke: 'rgba(226,190,118,.35)', 'stroke-width': 1.2 }, ticks);
+  mk('circle', { r: 498, fill: 'none', stroke: 'rgba(226,190,118,.38)', 'stroke-width': 1.2 }, ticks);
   mk('circle', { r: 440, fill: 'none', stroke: 'rgba(255,255,255,.07)', 'stroke-width': 1 }, ticks);
   mk('circle', { r: 268, fill: 'none', stroke: 'rgba(226,190,118,.18)', 'stroke-width': 1, 'stroke-dasharray': '2 6' }, ticks);
   mk('circle', { r: 120, fill: 'none', stroke: 'rgba(255,255,255,.08)', 'stroke-width': 1 }, ticks);
@@ -673,173 +647,148 @@ function setupExpertise() {
       stroke: major ? 'rgba(246,223,166,.85)' : 'rgba(226,190,118,.32)', 'stroke-width': major ? 2 : 1,
     }, rotG);
   }
-  // a second, counter-rotating sight ring
   const sight = mk('g', { class: 'rot2' }, ticks);
   mk('circle', { r: 360, fill: 'none', stroke: 'rgba(226,190,118,.55)', 'stroke-width': 1.2, 'stroke-dasharray': '120 1011', 'stroke-linecap': 'round' }, sight);
   mk('circle', { r: 360, fill: 'none', stroke: 'rgba(255,255,255,.06)', 'stroke-width': 1 }, sight);
-  // pointer at 3 o'clock
   mk('path', { d: 'M500 0 l-16 -8 v16z', fill: '#f6dfa6' }, ticks);
 
   let active = -1;
-  const words = items.map((it) => splitWords($('.xp__h', it)));
   const show = (i: number) => {
     if (i === active) return;
-    const prev = active;
     active = i;
-    lbls.forEach((l, k) => l.classList.toggle('is-on', k === i));
+    items.forEach((it, k) => it.classList.toggle('is-on', k === i));
     nms.forEach((l, k) => l.classList.toggle('is-on', k === i));
-    pips.forEach((p, k) => p.classList.toggle('is-on', k === i));
-    items.forEach((it, k) => {
-      if (k === i) {
-        gsap.killTweensOf([it, ...words[k], $('.xp__p', it), $('.xp__idx', it)]);
-        gsap.set(it, { autoAlpha: 1 });
-        gsap.fromTo($('.xp__idx', it), { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.9, ease: EASE.out });
-        gsap.fromTo(words[k], { yPercent: 118 }, { yPercent: 0, duration: 1.05, ease: EASE.out, stagger: 0.06 });
-        const p = $('.xp__p', it);
-        p.classList.add('wiping');
-        gsap.fromTo(p, { '--wp': 0 }, { '--wp': 1, duration: 1.3, ease: EASE.soft, delay: 0.15, onComplete: () => p.classList.remove('wiping') });
-      } else if (k === prev) {
-        gsap.to(it, { autoAlpha: 0, duration: 0.35, ease: 'power2.in' });
-      } else {
-        gsap.set(it, { autoAlpha: 0 });
-      }
-    });
   };
-  items.forEach((it) => gsap.set(it, { autoAlpha: 0 }));
   show(0);
 
   const rot2 = $('.rot2', ticks) as unknown as SVGGElement;
+  // one short pin (~0.9 viewport): the instrument turns through all six; every title stays readable
   const st = ScrollTrigger.create({
     trigger: stage,
     start: 'top top',
-    end: () => `+=${window.innerHeight * 0.75 * (N - 1)}`,
+    end: () => `+=${window.innerHeight * 0.9}`,
     pin: true,
-    scrub: 0.6,
-    snap: { snapTo: 1 / (N - 1), duration: { min: 0.25, max: 0.7 }, delay: 0.08, ease: EASE.io },
+    scrub: 0.5,
+    snap: { snapTo: 1 / (N - 1), duration: { min: 0.2, max: 0.5 }, delay: 0.1, ease: EASE.io },
     onUpdate: (self) => {
       const f = self.progress * (N - 1);
       dial.style.setProperty('--rot', `${-f * 30}deg`);
-      lbls.forEach((l, k) => {
-        const ang = Math.abs((k - f) * 30);
-        l.style.setProperty('--lo', String(clamp(1 - ang / 75) ** 1.4));
-      });
       rot2.style.transform = `rotate(${f * 22}deg)`;
       show(Math.round(f));
     },
   });
-  pips.forEach((p, i) => p.addEventListener('click', () => {
+  rows.forEach((r, i) => r.addEventListener('click', () => {
     const y = st.start + (i / (N - 1)) * (st.end - st.start);
-    lenis?.scrollTo(y, { duration: 1.2 });
+    if (lenis) lenis.scrollTo(y, { duration: 1 });
+    else window.scrollTo(0, y);
   }));
-  // entrance: the instrument turns in from the dark
-  gsap.from(dial, { rotation: 40, opacity: 0, scale: 0.9, duration: 2, ease: EASE.out, scrollTrigger: { trigger: '.xp', start: 'top 70%', once: true } as ScrollTrigger.Vars });
+  gsap.from([ticks, $('.xp__num', dial)], { opacity: 0, scale: 0.92, duration: 1.8, ease: EASE.out, scrollTrigger: { trigger: '.xp', start: 'top 70%', once: true } as ScrollTrigger.Vars });
 }
 
 /* ------------------------------------------------------------------ *
- * METHOD — the file arrives as noise; each step calms it into one line
+ * METHOD — one scene: the file arrives as noise; a front of light moves
+ * along the rail, each step lights, and behind it the strands become one line
  * ------------------------------------------------------------------ */
 function setupMethod() {
+  const sec = $('.mth');
   const stage = $('.mth__stage');
-  const track = $('.mth__track', stage);
   const canvas = $<HTMLCanvasElement>('.mth__wave', stage);
   const ctx = canvas.getContext('2d')!;
   const steps = $$('.mth__step', stage);
+  const nodes = $$('.mth__node', stage);
   const seal = $('.mth__seal', stage);
   let W = 0, H = 0, dpr = 1;
   const resize = () => {
-    const r = stage.getBoundingClientRect();
-    W = r.width; H = r.height; dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight; dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = W * dpr; canvas.height = H * dpr;
   };
   resize();
   window.addEventListener('resize', resize);
-  const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
-  // snap so a step always comes to rest in the centre of the screen
-  let snaps: number[] = [0, 1];
-  const measureSnaps = () => {
-    const prev = gsap.getProperty(track, 'x') as number;
-    gsap.set(track, { x: 0 });
-    const tr = track.getBoundingClientRect();
-    const d = dist() || 1;
-    snaps = [0, ...steps.map((s) => {
-      const r = s.getBoundingClientRect();
-      return clamp((tr.right - (r.left + r.width / 2) - window.innerWidth / 2) / d);
-    }), 1];
-    gsap.set(track, { x: prev });
-  };
-  ScrollTrigger.addEventListener('refreshInit', measureSnaps);
-  measureSnaps();
-  gsap.to(track, {
-    x: () => dist(),
-    ease: 'none',
-    scrollTrigger: {
-      trigger: stage,
-      start: 'top top',
-      end: () => `+=${dist()}`,
-      pin: true,
-      scrub: 0.7,
-      invalidateOnRefresh: true,
-      snap: { snapTo: (v: number) => snaps.reduce((a, b) => (Math.abs(b - v) < Math.abs(a - v) ? b : a)), duration: { min: 0.3, max: 0.9 }, delay: 0.12, ease: EASE.io },
-    },
+  const state = { p: 0 };
+  ScrollTrigger.create({
+    trigger: stage,
+    start: 'top top',
+    end: () => `+=${window.innerHeight * 0.9}`,
+    pin: true,
+    scrub: 0.6,
+    onUpdate: (self) => { state.p = self.progress; },
   });
   let visible = false;
-  ScrollTrigger.create({ trigger: '.mth', start: 'top bottom', end: 'bottom top', onToggle: (s) => { visible = s.isActive; } });
+  ScrollTrigger.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: (s) => { visible = s.isActive; } });
 
   const draw = (t: number) => {
-    const sr = stage.getBoundingClientRect();
-    const xs = steps.map((s) => { const r = s.getBoundingClientRect(); return r.left + r.width / 2 - sr.left; });
-    const sealR = seal.getBoundingClientRect();
-    const sealX = sealR.left + sealR.width / 2 - sr.left;
-    const yc = H * (isMobile() ? 0.62 : 0.64);
-    // active step = nearest to centre
-    let best = 0, bd = 1e9;
-    xs.forEach((x, i) => { const d = Math.abs(x - W / 2); if (d < bd) { bd = d; best = i; } });
-    steps.forEach((s, i) => s.classList.toggle('is-on', i === best && bd < W * 0.32));
+    const cr = canvas.getBoundingClientRect();
+    const nx = nodes.map((n) => { const r = n.getBoundingClientRect(); return r.left + r.width / 2 - cr.left; });
+    const sr = seal.getBoundingClientRect();
+    const sealX = sr.left + sr.width / 2 - cr.left;
+    const startX = nx[0] + (nx[0] - nx[1]) * 0.6; // a little before the first step
+    const yc = H / 2;
+    // the front travels right → left (RTL) across the whole rail
+    const p = gsap.parseEase('power1.inOut')(clamp(state.p / 0.92));
+    const front = lerp(startX, sealX, p);
+    steps.forEach((s, i) => {
+      s.classList.toggle('is-on', front <= nx[i] + 2);
+      s.classList.toggle('is-now', front <= nx[i] + 2 && (i === steps.length - 1 || front > nx[i + 1] + 2));
+    });
+    sec.classList.toggle('is-sealed', state.p > 0.96);
+
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    // calm(x): 0 at step 1 → 1 at step 5 (RTL: x decreases along the journey)
-    const calm = (x: number) => {
-      if (x >= xs[0]) return 0;
-      for (let i = 0; i < xs.length - 1; i++) {
-        if (x <= xs[i] && x >= xs[i + 1]) return (i + (xs[i] - x) / (xs[i] - xs[i + 1])) / (xs.length - 1);
-      }
-      return 1;
+    const amp = H * 0.34;
+    const left = sealX, right = Math.min(W, startX + W * 0.06);
+    // noise ahead of the front (x < front), one calm line behind it (x > front)
+    const ampAt = (x: number) => {
+      const ahead = 1 - clamp((x - (front - 90)) / 150); // 1 well ahead, 0 behind
+      const edgeL = clamp((x - left) / 60); // settle into the seal
+      const edgeR = clamp((right - x) / 120); // fade in at the start of the rail
+      return amp * ahead * edgeL * edgeR;
     };
-    const alpha = (x: number) => {
-      const fadeIn = clamp(1 - (x - xs[0]) / (W * 0.45));
-      const fadeOut = x < sealX ? 0 : 1;
-      return fadeIn * fadeOut;
-    };
-    const amp = H * (isMobile() ? 0.1 : 0.13);
-    const strands = 4;
-    for (let k = 0; k < strands; k++) {
+    const alphaAt = (x: number) => clamp((right - x) / 140) * (x >= left - 1 ? 1 : 0);
+    // the processed line — bright, single
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(Math.max(left, front), yc);
+    ctx.lineTo(right, yc);
+    const lg = ctx.createLinearGradient(right, 0, left, 0);
+    lg.addColorStop(0, 'rgba(226,190,118,0)');
+    lg.addColorStop(0.08, 'rgba(240,210,150,0.9)');
+    lg.addColorStop(1, 'rgba(250,228,180,1)');
+    ctx.strokeStyle = lg;
+    ctx.lineWidth = 1.6;
+    ctx.shadowColor = 'rgba(226,190,118,0.8)';
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    // the unprocessed strands
+    for (let k = 0; k < 4; k++) {
       ctx.beginPath();
       let started = false;
-      for (let x = W + 4; x >= -4; x -= 4) {
-        const a = alpha(x);
-        if (a <= 0.001) { started = false; continue; }
-        const c = calm(x);
-        const A = amp * Math.pow(1 - c, 1.7);
+      for (let x = Math.min(front + 120, right); x >= left; x -= 3) {
+        const A = ampAt(x);
         const n =
-          Math.sin(x * 0.011 + t * 1.25 + k * 1.9) * 0.55 +
-          Math.sin(x * 0.027 - t * 0.9 + k * 0.7) * 0.3 +
-          Math.sin(x * 0.061 + t * 2.1 + k * 2.6) * 0.15;
-        const y = yc + A * n * (0.6 + 0.4 * Math.sin(k + x * 0.003));
+          Math.sin(x * 0.012 + t * 1.2 + k * 1.9) * 0.55 +
+          Math.sin(x * 0.029 - t * 0.85 + k * 0.7) * 0.3 +
+          Math.sin(x * 0.067 + t * 2.0 + k * 2.6) * 0.15;
+        const y = yc + A * n * (0.65 + 0.35 * Math.sin(k + x * 0.004));
         if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
       }
-      const g = ctx.createLinearGradient(W, 0, 0, 0);
-      g.addColorStop(0, 'rgba(226,190,118,0.0)');
-      g.addColorStop(0.2, `rgba(226,190,118,${0.35 + k * 0.08})`);
-      g.addColorStop(1, `rgba(246,223,166,${0.55 + k * 0.08})`);
-      ctx.strokeStyle = g;
-      ctx.lineWidth = k === 0 ? 1.6 : 1;
-      ctx.shadowColor = 'rgba(226,190,118,0.7)';
-      ctx.shadowBlur = k === 0 ? 12 : 0;
+      ctx.strokeStyle = `rgba(226,190,118,${(0.28 + k * 0.07) * alphaAt(front)})`;
+      ctx.lineWidth = 1;
       ctx.stroke();
     }
-    // light the lamp on the active word
-    const ax = xs[best] + sr.left;
-    light.override = currentScene === 'method' ? { x: ax / window.innerWidth, y: (sr.top + yc) / window.innerHeight } : null;
+    // the front: a bead of light (the pen tip again)
+    if (state.p > 0.002 && state.p < 0.96) {
+      const g = ctx.createRadialGradient(front, yc, 0, front, yc, 22);
+      g.addColorStop(0, 'rgba(255,250,236,1)');
+      g.addColorStop(0.3, 'rgba(232,196,122,0.55)');
+      g.addColorStop(1, 'rgba(226,190,118,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(front, yc, 22, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    const fx = (cr.left + clamp(front, left, right)) / window.innerWidth;
+    light.override = currentScene === 'method' ? { x: fx, y: (cr.top + yc) / window.innerHeight } : null;
   };
   gsap.ticker.add((t) => {
     if (visible) draw(t);
@@ -885,7 +834,7 @@ function setupValues() {
   const items = $$('.val__item', sec);
   const words = items.map((it) => $('.val__word', it));
   const lits = items.map((it) => $('.val__lit', it));
-  const L = { x: 0, y: 0, tx: 0, ty: 0 };
+  const L = { x: -1, y: -1, tx: 0, ty: 0 };
   let pointerIn = false;
   let visible = false;
   if (finePointer) {
@@ -898,30 +847,36 @@ function setupValues() {
     });
   }
   ScrollTrigger.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: (s) => { visible = s.isActive; } });
-  const R = () => (isMobile() ? 170 : 300);
+  const R = () => (isMobile() ? 130 : 210);
+  let lastT = 0;
   gsap.ticker.add((t) => {
     if (!visible) return;
     const sr = sec.getBoundingClientRect();
+    const rects = words.map((w) => w.getBoundingClientRect());
     if (!pointerIn) {
-      // the lamp wanders on its own, following the reader down the wall
-      const vy = window.innerHeight * 0.55 - sr.top;
-      L.tx = sr.width * (0.5 + Math.sin(t * 0.55) * (isMobile() ? 0.3 : 0.36));
-      L.ty = clamp(vy + Math.sin(t * 0.8) * 40, 0, sr.height);
+      // idle: the lamp visits each value in turn and rests on it — deliberate, never drifting
+      const dwell = 2.4;
+      const i = Math.floor(t / dwell) % words.length;
+      const r = rects[i];
+      L.tx = r.left - sr.left + r.width * 0.5;
+      L.ty = r.top - sr.top + r.height * 0.55;
     }
-    L.x = lerp(L.x || L.tx, L.tx, 0.08);
-    L.y = lerp(L.y || L.ty, L.ty, 0.08);
+    const dt = Math.min(0.1, Math.max(0.001, t - lastT));
+    lastT = t;
+    const k = 1 - Math.exp(-dt * (pointerIn ? 9 : 3.2));
+    if (L.x < 0) { L.x = L.tx; L.y = L.ty; }
+    L.x = lerp(L.x, L.tx, k);
+    L.y = lerp(L.y, L.ty, k);
     lamp.style.transform = `translate(${L.x}px, ${L.y}px)`;
     const rad = R();
     words.forEach((w, i) => {
-      const r = w.getBoundingClientRect();
-      const lx = L.x - (r.left - sr.left);
-      const ly = L.y - (r.top - sr.top);
-      lits[i].style.setProperty('--lx', `${lx}px`);
-      lits[i].style.setProperty('--ly', `${ly}px`);
+      const r = rects[i];
+      lits[i].style.setProperty('--lx', `${L.x - (r.left - sr.left)}px`);
+      lits[i].style.setProperty('--ly', `${L.y - (r.top - sr.top)}px`);
       lits[i].style.setProperty('--lr', `${rad}px`);
       const cx = r.left - sr.left + r.width / 2, cy = r.top - sr.top + r.height / 2;
-      const d = Math.hypot((L.x - cx) / Math.max(1, r.width / 2 + rad * 0.3), (L.y - cy) / (r.height / 2 + rad * 0.4));
-      items[i].style.setProperty('--b', String(clamp(1.6 - d)));
+      const d = Math.hypot((L.x - cx) / Math.max(1, r.width / 2 + rad * 0.25), (L.y - cy) / (r.height / 2 + rad * 0.3));
+      items[i].style.setProperty('--b', String(clamp(1.5 - d)));
     });
   });
 }

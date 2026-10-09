@@ -215,34 +215,36 @@ const leadLines = closing.lead.split(/(?<=…)\s+/);
         </div>
       </section>
 
-      <!-- 03 · The line pours into the engraving; then a beam reads the ledger -->
+      <!-- 03 · The line pours into the engraving; the engraving rises and a beam reads the ledger -->
       <section id="numbers" class="sc stats" data-n="03" data-t="الأرقام">
-        <div class="lead pin">
-          <p class="label"><span class="fig" dir="ltr">03</span><i class="dia" aria-hidden="true"></i>{stats.label}</p>
-          <p class="lead-fig">
-            <span class="lead-pre">{stats.lead.prefix}</span>
-            <span class="lead-num" dir="ltr"><span class="engr" data-text={leadText}>{leadText}</span></span>
-            <span class="lead-unit">{stats.lead.unit}</span>
-          </p>
-          <p class="lead-sub">
-            <span class="ln">{stats.subtitle[0]}</span>
-            <span class="ln">{stats.subtitle[1]}</span>
-          </p>
-        </div>
-        <div class="ledger-wrap pin">
-          <div class="ledger-in">
-            <ol class="ledger">
-              {stats.items.map((it, i) => (
-                <li class="cell" data-v={it.value}>
-                  <span class="cell-i fig" dir="ltr">{pad(i + 1)}</span>
-                  <span class="cell-v fig" dir="ltr" aria-label={formatNumber(it.value)}>
-                    {cells(formatNumber(it.value)).map((c) => <span class={c.k} aria-hidden="true">{c.ch}</span>)}
-                  </span>
-                  <span class="cell-l">{it.label}</span>
-                </li>
-              ))}
-            </ol>
-            <div class="beam" aria-hidden="true"><i></i></div>
+        <div class="num-pin pin">
+          <p class="label num-label"><span class="fig" dir="ltr">03</span><i class="dia" aria-hidden="true"></i>{stats.label}</p>
+          <div class="lead">
+            <p class="lead-fig">
+              <span class="lead-pre">{stats.lead.prefix}</span>
+              <span class="lead-num" dir="ltr"><span class="engr" data-text={leadText}>{leadText}</span></span>
+              <span class="lead-unit">{stats.lead.unit}</span>
+            </p>
+            <p class="lead-sub">
+              <span class="ln">{stats.subtitle[0]}</span>
+              <span class="ln">{stats.subtitle[1]}</span>
+            </p>
+          </div>
+          <div class="ledger-wrap">
+            <div class="ledger-in">
+              <ol class="ledger">
+                {stats.items.map((it, i) => (
+                  <li class="cell" data-v={it.value}>
+                    <span class="cell-i fig" dir="ltr">{pad(i + 1)}</span>
+                    <span class="cell-v fig" dir="ltr" aria-label={formatNumber(it.value)}>
+                      {cells(formatNumber(it.value)).map((c) => <span class={c.k} aria-hidden="true">{c.ch}</span>)}
+                    </span>
+                    <span class="cell-l">{it.label}</span>
+                  </li>
+                ))}
+              </ol>
+              <div class="beam" aria-hidden="true"><i></i></div>
+            </div>
           </div>
         </div>
       </section>
@@ -257,9 +259,9 @@ const leadLines = closing.lead.split(/(?<=…)\s+/);
               <p class="exp-hint" aria-hidden="true"><span class="fig" dir="ltr">06</span> مجالات</p>
             </header>
             {expertise.items.map((it, i) => (
-              <article class={`exp-item ${i % 2 ? 'lo' : 'hi'}`}>
-                <span class="exp-n fig" dir="ltr" aria-hidden="true">{pad(i + 1)}</span>
+              <article class="exp-item">
                 <i class="node dia" aria-hidden="true"></i>
+                <span class="exp-n fig" dir="ltr" aria-hidden="true">{pad(i + 1)}<small> / 06</small></span>
                 <div class="exp-text">
                   <h3 class="t-h3">{it.title}</h3>
                   <p>{it.body}</p>
@@ -275,7 +277,28 @@ const leadLines = closing.lead.split(/(?<=…)\s+/);
       <section id="method" class="sc method" data-n="05" data-t="منهجيتنا">
         <div class="method-pin pin">
           <div class="method-visual" aria-hidden="true">
-            <svg class="method-svg" viewBox="740 25 190 220"><use href="#lg-scale" fill="url(#gold-grad)" /></svg>
+            <!-- the logo's own scale, redrawn as lines of light: each step draws a part, then it comes to rest -->
+            <svg class="lscale" viewBox="730 -4 208 252">
+              <defs>
+                <linearGradient id="ls-gold" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#F6E2AE" />
+                  <stop offset="1" stop-color="#C99B45" />
+                </linearGradient>
+                <radialGradient id="ls-halo" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stop-color="#E2BE76" stop-opacity="0.55" />
+                  <stop offset="1" stop-color="#E2BE76" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <ellipse class="ls-halo" cx="834" cy="24" rx="40" ry="40" fill="url(#ls-halo)" />
+              <g class="ls-swing">
+                <path class="ls-part" data-s="0" pathLength="1" d="M834 32 V188" />
+                <path class="ls-part" data-s="1" pathLength="1" d="M832 33 L764 171" />
+                <path class="ls-part" data-s="1" pathLength="1" d="M836 33 L904 171" />
+                <path class="ls-part ls-bar" data-s="2" pathLength="1" d="M763 169 V190 H905 V169" />
+                <path class="ls-part ls-bowl" data-s="3" pathLength="1" d="M786 210 H882 Q864 228 834 229.5 Q804 228 786 210 Z" />
+              </g>
+              <path class="ls-knot" d="M834 12 L841 23 L834 34 L827 23 Z" />
+            </svg>
           </div>
           <div class="method-copy">
             <p class="label"><span class="fig" dir="ltr">05</span><i class="dia" aria-hidden="true"></i>{method.label}</p>

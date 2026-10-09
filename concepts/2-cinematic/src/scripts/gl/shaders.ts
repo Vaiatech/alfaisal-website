@@ -42,8 +42,8 @@ const float TAU = 6.2831853;
 
 vec3 stLogo() {
   vec3 p = position;
-  p.z += sin(uTime * 0.7 + aRnd.x * TAU) * 0.035;
-  p.xy += vec2(sin(uTime * 0.5 + aRnd.y * TAU), cos(uTime * 0.43 + aRnd.z * TAU)) * 0.012;
+  p.z += sin(uTime * 0.7 + aRnd.x * TAU) * 0.02;
+  p.xy += vec2(sin(uTime * 0.5 + aRnd.y * TAU), cos(uTime * 0.43 + aRnd.z * TAU)) * 0.004;
   return p;
 }
 
@@ -54,7 +54,7 @@ vec3 stTangle() {
   float r = 1.0 + 0.4 * cos(pq.y * t);
   vec3 p = vec3(r * cos(pq.x * t), r * sin(pq.x * t), 0.5 * sin(pq.y * t)) * (uTR * 0.68);
   p = uRM[k] * p;
-  p += (aRnd.xyz - 0.5) * (0.06 + 0.16 * aRnd.w * aRnd.w);
+  p += (aRnd.xyz - 0.5) * (0.025 + 0.06 * aRnd.w * aRnd.w * aRnd.w);
   float rr = uRot + uTime * 0.03;
   float c = cos(rr), s = sin(rr);
   p.xz = mat2(c, -s, s, c) * p.xz;
@@ -73,12 +73,12 @@ vec3 stPath() {
   float ang = (aMeta.x + aRnd.z * 0.25) / 7.0 * TAU;
   vec2 d = vec2(cos(ang), sin(ang));
   b.yz += d * s * uSpread;
-  b += (aRnd.xyz - 0.5) * (0.05 + 0.16 * abs(s) * uSpread);
+  b += (aRnd.xyz - 0.5) * (0.03 + 0.1 * abs(s) * uSpread);
   return b;
 }
 
 vec3 stNum() {
-  return aNum.xyz + vec3(sin(uTime * 0.6 + aRnd.x * TAU), cos(uTime * 0.5 + aRnd.y * TAU), sin(uTime * 0.8 + aRnd.z * TAU)) * 0.025;
+  return aNum.xyz + vec3(sin(uTime * 0.6 + aRnd.x * TAU), cos(uTime * 0.5 + aRnd.y * TAU), sin(uTime * 0.8 + aRnd.z * TAU)) * 0.012;
 }
 
 vec3 stDust() {
@@ -131,19 +131,19 @@ void main() {
   float coc = abs(dist - uFocus) * uDof;
   float near = smoothstep(1.5, uNear, dist);
   gl_Position = projectionMatrix * mv;
-  float glow = step(aRnd.y, 0.07);
-  gl_PointSize = clamp(aMeta.w * uSize * uPx * (1.0 + coc * 1.3) * (1.0 + glow * 3.2) / dist, 0.0, 44.0);
+  float glow = step(aRnd.y, 0.035) * (1.0 - lw * 0.7);
+  gl_PointSize = clamp(aMeta.w * uSize * uPx * (1.0 + coc * 1.3) * (1.0 + glow * 2.4) / dist, 0.0, 44.0);
 
   vec3 gold = mix(vec3(0.68, 0.51, 0.18), vec3(0.92, 0.78, 0.5), aRnd.y);
-  if (aRnd.z > 0.93) gold = vec3(0.78, 0.22, 0.17);
+  if (aRnd.z > 0.975) gold = vec3(0.78, 0.22, 0.17);
   if (aRnd.x > 0.985) gold = vec3(1.0, 0.94, 0.82);
   vec3 c = mix(gold, aCol, lw);
   c = mix(c, mix(vec3(0.95, 0.8, 0.5), vec3(1.0, 0.93, 0.78), aRnd.y), nw * 0.6);
   vCol = c;
 
   float halo = mix(1.0, aNum.w, nw);
-  vA = (0.5 + 0.5 * aRnd.y) * alpha * halo * uGain * (1.0 + lw * 0.95) * (1.0 + f * 1.4 + tip * 4.0) / (1.0 + coc * coc * 1.6);
-  vA *= mix(1.0, 0.13, glow) * near;
+  vA = (0.5 + 0.5 * aRnd.y) * alpha * halo * uGain * (1.0 + lw * 1.25 + nw * 0.4) * (1.0 + f * 1.4 + tip * 4.0) / (1.0 + coc * coc * 1.6);
+  vA *= mix(1.0, 0.12, glow) * near;
 }
 `;
 

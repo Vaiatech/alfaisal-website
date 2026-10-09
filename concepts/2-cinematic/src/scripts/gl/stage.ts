@@ -1,7 +1,5 @@
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { vert, frag } from './shaders';
-import { buildScale, type ScaleRig } from './scale';
 import { FOV, LOGO_H, LOGO_W, worldPerPixel, type V3 } from './math';
 export type { V3 } from './math';
 
@@ -14,8 +12,6 @@ export type Frame = {
   turb: number;
   mouseK: number;
   write: number;
-  scaleIn: number;
-  balance: number;
   rot: number;
   gain: number;
   par: number;
@@ -78,7 +74,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
   await tick();
 
   // ── Sample the signature ───────────────────────────────────────────────
-  const COUNT = mobile ? 20000 : 56000;
+  const COUNT = mobile ? 26000 : 74000;
   const S = mobile ? 0.9 : 1.25;
   const CW = Math.round(830 * S), CH = Math.round(835 * S);
   const d = (id: string) => document.getElementById(id)!.getAttribute('d');
@@ -167,7 +163,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
       wt = 0.9 + fy * 0.3;
       tmp.copy(cScale);
     }
-    const thick = part === 0 ? 0.5 : 0.22;
+    const thick = part === 0 ? 0.32 : 0.14;
     pos[i * 3] = (fx - 0.5) * LOGO_W;
     pos[i * 3 + 1] = -(fy - 0.5) * LOGO_H;
     pos[i * 3 + 2] = (Math.random() - 0.5) * thick;
@@ -179,7 +175,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     meta[i * 4] = Math.floor(Math.random() * 7);
     meta[i * 4 + 1] = Math.random();
     meta[i * 4 + 2] = Math.min(wt, 0.999);
-    meta[i * 4 + 3] = 0.55 + Math.pow(Math.random(), 3) * 1.6;
+    meta[i * 4 + 3] = 0.62 + Math.pow(Math.random(), 4) * 1.0;
     num[i * 4 + 3] = 1;
   }
   step(0.55);
@@ -197,8 +193,8 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
 
   const u = {
     uTime: { value: 0 }, uFrom: { value: 0 }, uTo: { value: 0 }, uMix: { value: 0 },
-    uSpread: { value: 0.3 }, uTurb: { value: 0 }, uSize: { value: mobile ? 30 : 34 }, uPx: { value: 1 },
-    uGain: { value: 0 }, uWrite: { value: 1 }, uMouseK: { value: 0 }, uFocus: { value: 18 }, uDof: { value: 0.09 },
+    uSpread: { value: 0.3 }, uTurb: { value: 0 }, uSize: { value: mobile ? 23 : 23 }, uPx: { value: 1 },
+    uGain: { value: 0 }, uWrite: { value: 1 }, uMouseK: { value: 0 }, uFocus: { value: 18 }, uDof: { value: 0.035 },
     uRot: { value: 0 }, uNear: { value: 9 }, uTR: { value: TR }, uPathL: { value: PATH_L }, uNodes: { value: NODES },
     uMouse: { value: new THREE.Vector3(99, 99, 0) }, uMouseVel: { value: new THREE.Vector3() }, uDustC: { value: new THREE.Vector3() },
     uLA: { value: LA.map((a) => new THREE.Vector3(...a)) }, uLP: { value: LP.map((a) => new THREE.Vector3(...a)) }, uRM: { value: RM },
@@ -214,31 +210,18 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
   step(0.68);
   await tick();
 
-  // ── The scale of the method chapter ───────────────────────────────────
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  pmrem.dispose();
-  scene.environment = envTex;
-  const rig: ScaleRig = buildScale(mobile);
-  scene.add(rig.group);
-  step(0.82);
-  await tick();
-
   // compile everything once, behind the loader
-  rig.group.visible = true;
   renderer.compile(scene, camera);
   step(0.94);
 
   // ── State ─────────────────────────────────────────────────────────────
-  const cur: Frame = { seq: 0, cam: [0, 0, 20], look: [0, 0, 0], spread: 0.3, turb: 0, mouseK: 0, write: 1, scaleIn: 0, balance: 0, rot: 0, gain: 0, par: 1, near: 9 };
+  const cur: Frame = { seq: 0, cam: [0, 0, 20], look: [0, 0, 0], spread: 0.3, turb: 0, mouseK: 0, write: 1, rot: 0, gain: 0, par: 1, near: 9 };
   let target: Frame = { ...cur, cam: [...cur.cam] as V3, look: [...cur.look] as V3 };
   const mouse = { x: 0, y: 0, active: false };
   const mWorld = new THREE.Vector3(99, 99, 0), mPrev = new THREE.Vector3(99, 99, 0), mVel = new THREE.Vector3();
   let vw = 1, vh = 1, time = 0, running = true;
   const words: { el: HTMLElement; w: number; h: number; tK: number; tT: number; path: V3 }[] = [];
   let introGain = 0;
-  // scale placement (world)
-  const scalePose = { pos: new THREE.Vector3(), size: 1 };
   // adaptive quality
   let ftAcc = 0, ftN = 0, quality = 1, drewEmpty = false;
 
@@ -323,7 +306,6 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     cur.turb = lerp(cur.turb, target.turb, ks);
     cur.mouseK = lerp(cur.mouseK, target.mouseK, ks);
     cur.write = lerp(cur.write, target.write, ks);
-    cur.scaleIn = lerp(cur.scaleIn, target.scaleIn, k);
     cur.rot = lerp(cur.rot, target.rot, ks);
     cur.gain = lerp(cur.gain, target.gain, ks);
     cur.par = lerp(cur.par, target.par ?? 1, ks);
@@ -361,20 +343,9 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     u.uMouseVel.value.lerp(mVel.multiplyScalar(6), 0.12);
     u.uMouseK.value = cur.mouseK;
 
-    // scale
-    const si = cur.scaleIn;
-    rig.group.visible = si > 0.002;
-    if (rig.group.visible) {
-      rig.group.position.copy(scalePose.pos);
-      rig.group.position.y += (1 - si) * scalePose.size * 0.25;
-      rig.group.scale.setScalar(scalePose.size);
-      rig.setTarget(cur.balance);
-      rig.update(dt, time, si, px);
-    } else rig.update(dt, time, 0, px);
-
     updateWords();
     // nothing visible (no light, no scale): skip the draw
-    const visible = u.uGain.value > 0.002 || rig.group.visible;
+    const visible = u.uGain.value > 0.002;
     if (visible || drewEmpty === false) renderer.render(scene, camera);
     drewEmpty = !visible;
 
@@ -416,14 +387,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     setPointer(x: number, y: number, active: boolean) { mouse.x = x; mouse.y = y; mouse.active = active; },
     setRunning(r: boolean) { running = r; if (r) last = performance.now(); },
     get seq() { return cur.seq; },
-    debug() { return { cur, target, scale: { vis: rig.group.visible, pos: rig.group.position.toArray(), size: scalePose.size }, cam: camera.position.toArray() }; },
-    /** place the scale so it fills a screen rect when the camera sits at `cam` (straight view at distance D) */
-    placeScale(rect: { x: number; y: number; w: number; h: number }, camPos: V3, D: number) {
-      const wpp = worldPerPixel(D, vh);
-      const cxp = rect.x + rect.w / 2 - vw / 2, cyp = rect.y + rect.h / 2 - vh / 2;
-      scalePose.size = Math.min(rect.h * wpp * 0.92, (rect.w * wpp * 0.94) / 1.44);
-      scalePose.pos.set(camPos[0] + cxp * wpp, camPos[1] - cyp * wpp - scalePose.size * 0.5, camPos[2] - D);
-    },
+    debug() { return { cur, target, cam: camera.position.toArray() }; },
     /** sample the engraved number's glyphs at their exact screen place (when pinned, camera straight at distance D) */
     sampleNumber(el: HTMLElement, rect: { x: number; y: number; w: number; h: number }, camPos: V3, D: number) {
       const cs = getComputedStyle(el);
