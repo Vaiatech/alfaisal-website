@@ -3,7 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { Track, ease } from './director';
 import type { Stage } from './gl/stage';
-import { fitCamera, worldPerPixel, LOGO_H, type V3 } from './gl/math';
+import { fitCamera, worldPerPixel, aimVanishing, LOGO_H, type V3 } from './gl/math';
 
 /* ─────────────────────────── setup ─────────────────────────── */
 const html = document.documentElement;
@@ -14,6 +14,7 @@ const mqMobile = window.matchMedia('(max-width: 760px)');
 let mobile = mqMobile.matches;
 const qs = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector(s) as T;
 const qsa = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => [...r.querySelectorAll(s)] as T[];
+const VW = () => document.documentElement.clientWidth || window.innerWidth;
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const smooth = (v: number) => { const t = clamp01(v); return t * t * (3 - 2 * t); };
 const map = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
@@ -35,6 +36,8 @@ let scrollNow = 0;
 let introK = 0; // 1 = camera held at the loader's mark
 let introCam: { cam: V3; look: V3 } | null = null;
 let outro = { O0: 0, O1: 1 };
+let aim = { C0: 0, C1: 1, O0: 0, O1: 1 };
+const ctaEl = document.querySelector('.contact-act .btn-solid') as HTMLElement;
 
 /* ─────────────────────────── reveal gesture: the RTL light wipe ─────────────────────────── */
 const wipeTargets = (el: Element) => {
@@ -137,7 +140,7 @@ function go(hash: string) {
     .fromTo(wipeA, { clipPath: 'inset(0 0 0 100%)' }, { clipPath: 'inset(0 0 0 0%)', duration: 0.75 })
     .fromTo(wipeB, { clipPath: 'inset(0 0 0 100%)' }, { clipPath: 'inset(0 0 0 0%)', duration: 0.75 }, 0.09)
     .fromTo(wipeEdge, { right: '0%', opacity: 1 }, { right: '100%', duration: 0.75 }, 0.09)
-    .to(label, { '--r': 1.2, duration: 0.9, stagger: 0.08 }, 0.4)
+    .to(label, { '--r': 1.2, duration: 0.8, stagger: 0.08 }, 0.35)
     .add(() => {
       lenis!.start();
       lenis!.scrollTo(y, { immediate: true, force: true });
@@ -146,7 +149,7 @@ function go(hash: string) {
       drive();
       stage?.snap();
     })
-    .to(wipeB, { clipPath: 'inset(0 100% 0 0)', duration: 0.8 }, '+=0.3')
+    .to(wipeB, { clipPath: 'inset(0 100% 0 0)', duration: 0.8 }, '+=0.45')
     .fromTo(wipeEdge, { right: '0%' }, { right: '100%', duration: 0.8 }, '<')
     .to(wipeA, { clipPath: 'inset(0 100% 0 0)', duration: 0.8 }, '<0.08')
     .set(wipeEdge, { opacity: 0 });
@@ -309,12 +312,12 @@ function ledgerScene(p: number) {
 const expTrack = qs('.exp-track');
 const expItems = qsa('.exp-item');
 const expRail = qs('.exp-rail');
-function expDist() { return Math.max(0, expTrack.scrollWidth - window.innerWidth); }
+function expDist() { return Math.max(0, expTrack.scrollWidth - VW()); }
 function expScene(p: number) {
   const d = expDist();
   gsap.set(expTrack, { x: p * d });
   expRail.style.setProperty('--ep', p.toFixed(4));
-  const vw = window.innerWidth;
+  const vw = VW();
   expItems.forEach((it) => {
     const r = it.getBoundingClientRect();
     const k = 1 - smooth(Math.abs(r.right - vw * 0.62) / (vw * 0.55));
@@ -425,7 +428,7 @@ function rectAtScroll(el: Element, s: number) {
 }
 
 async function layout() {
-  const vw = window.innerWidth, vh = window.innerHeight;
+  const vw = VW(), vh = window.innerHeight;
   scrollNow = window.scrollY;
   const maxS = ScrollTrigger.maxScroll(window);
   const docTop = (el: Element) => el.getBoundingClientRect().top + scrollNow;
@@ -482,14 +485,15 @@ async function layout() {
   const out = fitCamera(oRect, vw, vh, LOGO_H, [0, 0, 0]);
   // contact: the camera lies down on the line, which runs away to a vanishing point of light
   const horizon = mobile
-    ? { cam: [15, 1.7, 3.2] as V3, cam2: [12, 1.4, 2.6] as V3, look: [-14, -0.9, -1.5] as V3 }
-    : { cam: [15, 1.9, 4.6] as V3, cam2: [12, 1.5, 3.6] as V3, look: [-14, -0.6, -2.4] as V3 };
+    ? { cam: [16, 1.5, -2.6] as V3, cam2: [13, 1.3, -2.2] as V3, look: [-14, -0.5, 1.5] as V3 }
+    : { cam: [16, 1.6, -3.8] as V3, cam2: [13, 1.4, -3.2] as V3, look: [-14, -0.4, 2.4] as V3 };
+  aim = { C0: C0 - vh * 0.5, C1: C0 + vh * 0.2, O0, O1 };
   const ocy = ((oRect.y + oRect.h / 2) / vh) * 100;
 
   track.clear();
   const k = (at: number, v: Record<string, number | number[]>, e = ease.io) => track.key(at, v, e);
   // ── film ──
-  k(0, { seq: 0, cam: hero.cam, look: hero.look, spread: 0.25, turb: 0, mouseK: 1, write: 1, scaleIn: 0, rot: 0, gain: 1 });
+  k(0, { near: 9, par: 1, seq: 0, cam: hero.cam, look: hero.look, spread: 0.25, turb: 0, mouseK: 1, write: 1, scaleIn: 0, rot: 0, gain: 1 });
   k(heroFollow, { seq: 0.3, cam: shiftY(hero.cam, -heroFollow * hero.wpp * 0.55), look: shiftY(hero.look, -heroFollow * hero.wpp * 0.55), turb: 1.8, mouseK: 0 }, ease.lin);
   k(S0, { seq: 1, cam: A.cam, look: A.look, turb: 0.6, rot: 0 });
   k(S0 + SL * 0.42, { seq: 1, cam: B.cam, look: B.look, rot: 1.3 });
@@ -497,10 +501,13 @@ async function layout() {
   k(S0 + SL * 0.8, { seq: 2, cam: C.cam, look: C.look, rot: 1.7 });
   k(S1, { seq: 2, spread: 0.18, cam: Dk.cam, look: Dk.look, turb: 0.9 });
   k(L0, { seq: 2, cam: numCam, look: numLook, spread: 0.18 });
+  k(L0 - vh * 0.2, { par: 1 });
+  k(L0 + LL * 0.2, { par: 0 });
   k(L0 + LL * 0.42, { seq: 3, turb: 0.7 });
   k(L1, { seq: 3, cam: numCam, look: numLook });
   k(G0, { seq: 3, cam: ledgerCam, look: ledgerLook }, ease.lin);
-  k(G0 + GL * 0.3, { seq: 4, turb: 0.5 });
+  k(G0 + GL * 0.3, { seq: 4, turb: 0.5, par: 0 });
+  k(G0 + GL * 0.5, { par: 1 });
   k(G1, { seq: 4, cam: shiftY(ledgerCam, -3), look: shiftY(ledgerLook, -3), spread: 0.18, gain: 1 });
   k(E0, { seq: 5, spread: mobile ? 0.7 : 1.15, cam: expA.cam, look: expA.look, gain: mobile ? 0.6 : 1 });
   k(E1, { seq: 5, cam: expB.cam, look: expB.look, scaleIn: 0 }, sts.exp ? ease.lin : ease.io);
@@ -509,10 +516,10 @@ async function layout() {
   k(M1 + vh * 0.5, { scaleIn: 0.5 }, ease.lin);
   k(M1 + vh, { cam: shiftY(mCam, -vh * wppM), look: shiftY(mLook, -vh * wppM), scaleIn: 0 }, ease.lin);
   k(V0, { seq: 6, cam: shiftY(mCam, -vh * wppM - 6), look: shiftY(mLook, -vh * wppM - 6) });
-  k(Math.max(V0 + 10, C0 - vh * 0.9), { seq: 6, write: 1 });
-  k(C0, { seq: 7, spread: 0.55, cam: horizon.cam, look: horizon.look, gain: 0.7 });
+  k(Math.max(V0 + 10, C0 - vh * 0.9), { seq: 6, write: 1, near: 9 });
+  k(C0, { near: 19, seq: 7, spread: 0.5, cam: horizon.cam, look: horizon.look, gain: 0.6 });
   k(O0, { seq: 7, write: 0, cam: horizon.cam2, look: horizon.look, mouseK: 0, spread: 0.3 });
-  k(O1, { seq: 8, write: 1, cam: out.cam, look: out.look, mouseK: 1, gain: 1.25 });
+  k(O1, { near: 9, par: 0.3, seq: 8, write: 1, cam: out.cam, look: out.look, mouseK: 1, gain: 1.25 });
 
   // ── light ──
   k(0, { kx: hcx, ky: hcy, ka: 1, fa: 0.55, da: 0, ba: [30, 21, 17], bb: [11, 8, 7] });
@@ -564,6 +571,18 @@ function drive() {
   updateHud(s);
   if (!stage) return;
   let cam = g('cam') as V3, look = g('look') as V3;
+  // contact: the line of light vanishes exactly on the consultation button
+  const wIn = smooth(map(s, aim.C0, aim.C1)) * (1 - smooth(map(s, aim.O0, aim.O0 + (aim.O1 - aim.O0) * 0.45)));
+  let gainMul = 1;
+  if (wIn > 0.001 && ctaEl) {
+    const r = ctaEl.getBoundingClientRect();
+    const vw = VW(), vh = window.innerHeight;
+    // the line lives while its destination is on screen, then gives the details room
+    gainMul = 1 - wIn * (1 - smooth(map(r.top + r.height / 2, vh * 0.05, vh * 0.4)));
+    const tx = ((r.left + r.width / 2) / vw) * 2 - 1, ty = -(((r.top + r.height / 2) / vh) * 2 - 1);
+    const L = aimVanishing(cam, [-1, 0, 0], Math.max(-0.95, Math.min(0.95, tx)), Math.max(-1.4, Math.min(1.4, ty)), vw / vh);
+    look = look.map((x, i) => x + (L[i] - x) * wIn) as V3;
+  }
   if (introK > 0 && introCam) {
     const t = introK;
     cam = cam.map((x, i) => x + (introCam!.cam[i] - x) * t) as V3;
@@ -572,7 +591,7 @@ function drive() {
   stage.set({
     seq: g('seq') as number, cam, look, spread: g('spread') as number, turb: g('turb') as number,
     mouseK: g('mouseK') as number, write: g('write') as number, scaleIn: g('scaleIn') as number,
-    rot: g('rot') as number, gain: g('gain') as number,
+    rot: g('rot') as number, gain: (g('gain') as number) * gainMul, par: g('par') as number, near: g('near') as number,
   });
 }
 
@@ -604,7 +623,7 @@ async function bootMotion() {
     document.fonts.load('800 64px Almarai', 'الفيصل'),
     document.fonts.load('400 18px Almarai', 'الفيصل'),
     document.fonts.load('700 18px Almarai', 'الفيصل'),
-    document.fonts.load('800 64px Almarai', '6,750+'),
+    document.fonts.load('800 64px Almarai', '6,750'),
     document.fonts.load('600 24px Naskh', 'بمنظومة'),
   ]).catch(() => null).then(() => loader.real(0.22));
 
@@ -681,7 +700,7 @@ function bootStatic() {
 function bindGlobal() {
   window.addEventListener('pointermove', (e) => {
     if (e.pointerType !== 'mouse' || !stage) return;
-    stage.setPointer((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1, true);
+    stage.setPointer((e.clientX / VW()) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1, true);
   }, { passive: true });
   document.addEventListener('pointerleave', () => stage?.setPointer(0, 0, false));
   document.addEventListener('visibilitychange', () => stage?.setRunning(!document.hidden));

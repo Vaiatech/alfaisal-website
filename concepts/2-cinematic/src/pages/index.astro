@@ -5,8 +5,8 @@ import { logoPaths, strokes, MARK_VB } from '../lib/logo';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 const year = new Date().getFullYear();
-// Lead number, written once, displayed LTR inside an isolate.
-const leadText = formatNumber(stats.lead.value) + '+';
+// Lead number exactly as approved: «أكثر من» + 6,750 + «عميل» (no extra plus sign).
+const leadText = formatNumber(stats.lead.value);
 // Digits as fixed-width cells (Almarai has no tabular figures) — Latin digits only, never Arabic letters.
 const cells = (s: string) => [...s].map((ch) => ({ ch, k: /\d/.test(ch) ? 'd' : 'p' }));
 const chapters = [

@@ -18,6 +18,8 @@ export type Frame = {
   balance: number;
   rot: number;
   gain: number;
+  par: number;
+  near: number;
 };
 
 /** The journey of the particles, in scroll order: signature → knot → line → number → air → line → air → line to the horizon → signature */
@@ -197,7 +199,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     uTime: { value: 0 }, uFrom: { value: 0 }, uTo: { value: 0 }, uMix: { value: 0 },
     uSpread: { value: 0.3 }, uTurb: { value: 0 }, uSize: { value: mobile ? 30 : 34 }, uPx: { value: 1 },
     uGain: { value: 0 }, uWrite: { value: 1 }, uMouseK: { value: 0 }, uFocus: { value: 18 }, uDof: { value: 0.09 },
-    uRot: { value: 0 }, uTR: { value: TR }, uPathL: { value: PATH_L }, uNodes: { value: NODES },
+    uRot: { value: 0 }, uNear: { value: 9 }, uTR: { value: TR }, uPathL: { value: PATH_L }, uNodes: { value: NODES },
     uMouse: { value: new THREE.Vector3(99, 99, 0) }, uMouseVel: { value: new THREE.Vector3() }, uDustC: { value: new THREE.Vector3() },
     uLA: { value: LA.map((a) => new THREE.Vector3(...a)) }, uLP: { value: LP.map((a) => new THREE.Vector3(...a)) }, uRM: { value: RM },
   };
@@ -228,7 +230,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
   step(0.94);
 
   // ── State ─────────────────────────────────────────────────────────────
-  const cur: Frame = { seq: 0, cam: [0, 0, 20], look: [0, 0, 0], spread: 0.3, turb: 0, mouseK: 0, write: 1, scaleIn: 0, balance: 0, rot: 0, gain: 0 };
+  const cur: Frame = { seq: 0, cam: [0, 0, 20], look: [0, 0, 0], spread: 0.3, turb: 0, mouseK: 0, write: 1, scaleIn: 0, balance: 0, rot: 0, gain: 0, par: 1, near: 9 };
   let target: Frame = { ...cur, cam: [...cur.cam] as V3, look: [...cur.look] as V3 };
   const mouse = { x: 0, y: 0, active: false };
   const mWorld = new THREE.Vector3(99, 99, 0), mPrev = new THREE.Vector3(99, 99, 0), mVel = new THREE.Vector3();
@@ -238,10 +240,10 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
   // scale placement (world)
   const scalePose = { pos: new THREE.Vector3(), size: 1 };
   // adaptive quality
-  let ftAcc = 0, ftN = 0, quality = 1;
+  let ftAcc = 0, ftN = 0, quality = 1, drewEmpty = false;
 
   function resize() {
-    vw = window.innerWidth; vh = window.innerHeight;
+    vw = document.documentElement.clientWidth || window.innerWidth; vh = window.innerHeight;
     renderer.setSize(vw, vh, false);
     camera.aspect = vw / vh;
     camera.updateProjectionMatrix();
@@ -261,15 +263,17 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     return { x: (v.x * 0.5 + 0.5) * vw, y: (-v.y * 0.5 + 0.5) * vh, z: v.z };
   }
 
+  const wpos: { x: number; y: number; s: number }[] = [];
   function updateWords() {
     if (!words.length) return;
+    const pts: { x: number; y: number; s: number; o: number }[] = [];
     // morph between knot (seq 1) and line (seq 2), staggered like the particles
     const s = cur.seq;
     const vis = clamp01((s - 0.55) / 0.35) * clamp01((2.75 - s) / 0.4);
     const m0 = clamp01(s - 1);
     const camPos = camera.position;
     words.forEach((w, i) => {
-      if (vis <= 0.001) { w.el.style.opacity = '0'; return; }
+      if (vis <= 0.001) { pts.push({ x: -999, y: -999, s: 1, o: 0 }); return; }
       let m = clamp01(m0 * 1.7 - (i / 7) * 0.7);
       m = m * m * (3 - 2 * m);
       const a = tanglePoint(w.tK, w.tT, time, cur.rot);
@@ -277,10 +281,32 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
       const q = project(p);
       const dz = Math.hypot(p[0] - camPos.x, p[1] - camPos.y, p[2] - camPos.z);
       const sc = Math.max(0.55, Math.min(1.5, (mobile ? 24 : 16) / dz));
-      const hw = (w.w * sc) / 2 + 14, hh = (w.h * sc) / 2;
-      const x = Math.min(vw - hw, Math.max(hw, q.x)), y = Math.min(vh - hh - 30, Math.max(hh + 80, q.y));
-      w.el.style.transform = `translate3d(${(x - w.w / 2).toFixed(1)}px, ${(y - w.h / 2).toFixed(1)}px, 0) scale(${sc.toFixed(3)})`;
-      w.el.style.opacity = String((vis * Math.min(1, sc * sc)).toFixed(3));
+      pts.push({ x: q.x, y: q.y, s: sc, o: vis * Math.min(1, sc * sc) });
+    });
+    // keep the labels legible: push overlapping boxes apart, then clamp to the frame
+    for (let it = 0; it < 6; it++) {
+      for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+        const a = pts[i], b = pts[j];
+        if (!a.o || !b.o) continue;
+        const ox = (words[i].w * a.s + words[j].w * b.s) / 2 + 18 - Math.abs(a.x - b.x);
+        const oy = (words[i].h * a.s + words[j].h * b.s) / 2 + 12 - Math.abs(a.y - b.y);
+        if (ox > 0 && oy > 0) {
+          const d = (oy / 2 + 0.5) * (a.y <= b.y ? 1 : -1);
+          a.y -= d; b.y += d;
+        }
+      }
+    }
+    pts.forEach((p, i) => {
+      const w = words[i];
+      if (!p.o) { w.el.style.opacity = '0'; return; }
+      const hw = (w.w * p.s) / 2 + 14, hh = (w.h * p.s) / 2;
+      const x = Math.min(vw - hw, Math.max(hw, p.x)), y = Math.min(vh - hh - 30, Math.max(hh + 80, p.y));
+      const prev = wpos[i];
+      const k = prev && Math.abs(prev.x - x) < 200 && Math.abs(prev.y - y) < 200 ? 0.35 : 1;
+      const nx = prev ? prev.x + (x - prev.x) * k : x, ny = prev ? prev.y + (y - prev.y) * k : y;
+      wpos[i] = { x: nx, y: ny, s: p.s };
+      w.el.style.transform = `translate3d(${(nx - w.w / 2).toFixed(1)}px, ${(ny - w.h / 2).toFixed(1)}px, 0) scale(${p.s.toFixed(3)})`;
+      w.el.style.opacity = p.o.toFixed(3);
     });
   }
 
@@ -300,9 +326,12 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     cur.scaleIn = lerp(cur.scaleIn, target.scaleIn, k);
     cur.rot = lerp(cur.rot, target.rot, ks);
     cur.gain = lerp(cur.gain, target.gain, ks);
+    cur.par = lerp(cur.par, target.par ?? 1, ks);
+    cur.near = lerp(cur.near, target.near ?? 9, ks);
+    u.uNear.value = cur.near;
 
     // subtle parallax from the pointer
-    const px = mouse.active ? mouse.x : 0, py = mouse.active ? mouse.y : 0;
+    const px = mouse.active ? mouse.x * cur.par : 0, py = mouse.active ? mouse.y * cur.par : 0;
     camera.position.set(cur.cam[0] + px * 0.35, cur.cam[1] + py * 0.22, cur.cam[2]);
     camera.lookAt(cur.look[0], cur.look[1], cur.look[2]);
     camera.updateMatrixWorld();
@@ -344,7 +373,10 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     } else rig.update(dt, time, 0, px);
 
     updateWords();
-    renderer.render(scene, camera);
+    // nothing visible (no light, no scale): skip the draw
+    const visible = u.uGain.value > 0.002 || rig.group.visible;
+    if (visible || drewEmpty === false) renderer.render(scene, camera);
+    drewEmpty = !visible;
 
     // adaptive quality: if frames are slow, render fewer particles at a lower ratio
     ftAcc += dt; ftN++;

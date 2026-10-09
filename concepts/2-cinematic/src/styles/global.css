@@ -115,7 +115,7 @@ p { text-wrap: pretty; }
 /* Buttons share the wipe gesture: gold enters from the right edge */
 .btn {
   position: relative; display: inline-flex; align-items: center; gap: 14px;
-  height: 52px; padding-inline: 26px 22px; isolation: isolate; overflow: hidden;
+  height: 52px; padding-inline: 26px 22px; isolation: isolate; overflow: hidden; white-space: nowrap;
   font-size: var(--t-small); font-weight: 700; line-height: 1;
   color: var(--cream); border: 1px solid rgba(226, 190, 118, 0.5);
   transition: color 0.5s var(--e-out), border-color 0.5s var(--e-out);
@@ -157,7 +157,7 @@ p { text-wrap: pretty; }
 .gl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; display: block; opacity: 0; transition: opacity 0.6s linear; }
 .gl-on .gl { opacity: 1; }
 .grain {
-  position: fixed; inset: -50%; z-index: 30; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay;
+  position: fixed; inset: 0; z-index: 30; pointer-events: none; opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.2 -.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -186,7 +186,7 @@ p { text-wrap: pretty; }
 .wipe-a { background: var(--wine); }
 .wipe-b { background: radial-gradient(60vmax 50vmax at 50% 50%, #1e1512, var(--ink-0) 75%); display: grid; place-content: center; justify-items: center; gap: 10px; }
 .wipe-n { font-size: var(--t-label); color: var(--gold-l); font-weight: 700; }
-.wipe-t { font-size: var(--t-h2); font-weight: 800; line-height: var(--lh-head); }
+.wipe-t { font-size: var(--t-h1); font-weight: 800; line-height: var(--lh-head); }
 .wipe-edge { position: absolute; top: 0; bottom: 0; width: 1px; right: 0; background: linear-gradient(to bottom, transparent, var(--gold-l) 20%, var(--gold-l) 80%, transparent); box-shadow: 0 0 24px 2px rgba(226, 190, 118, 0.6); opacity: 0; }
 
 /* ───────────────────────────── Header ───────────────────────────── */
@@ -260,7 +260,7 @@ main { position: relative; }
   padding: var(--hdr) var(--gut) 0;
 }
 .hero-copy { grid-column: 1; grid-row: 1; max-width: 640px; padding-block: 6vh 10vh; }
-.hero-mark { grid-column: 2; grid-row: 1; justify-self: center; height: min(76vh, 44vw); aspect-ratio: 830 / 835; position: relative; }
+.hero-mark { grid-column: 2; grid-row: 1; justify-self: center; height: min(74vh, 40vw); aspect-ratio: 830 / 835; position: relative; }
 .hero-mark svg, .outro-mark svg { width: 100%; height: 100%; filter: drop-shadow(0 0 50px rgba(201, 155, 69, 0.28)); transition: opacity 0.8s linear; }
 .gl-on .hero-mark svg, .gl-on .outro-mark svg, .gl-on .method-svg { opacity: 0; }
 .eyebrow { display: flex; align-items: center; gap: 12px; font-size: var(--t-small); font-weight: 700; color: var(--gold-l); line-height: 1.7; margin-bottom: 26px; }
@@ -333,7 +333,7 @@ main { position: relative; }
 /* 04 Expertise — along the path */
 .exp-pin { --rail: 57%; }
 .exp-track { display: flex; height: 100%; width: max-content; padding-inline: var(--gut) 12vw; will-change: transform; }
-.exp-head { flex: none; width: min(560px, 40vw); align-self: center; padding-top: var(--hdr); margin-inline-end: 6vw; padding-bottom: calc(100% - var(--rail)); }
+.exp-head { flex: none; width: min(560px, 40vw); align-self: flex-start; padding-top: calc(var(--hdr) + 12vh); margin-inline-end: 6vw; }
 .exp-head h2 { margin-top: 18px; }
 .exp-hint { margin-top: 22px; display: flex; gap: 10px; align-items: baseline; color: var(--cream-3); font-size: var(--t-small); }
 .exp-hint .fig { color: var(--gold-l); font-weight: 700; }
@@ -354,7 +354,7 @@ main { position: relative; }
 .method-pin { display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: var(--hdr) var(--gut) 0; gap: 4vw; }
 .method-copy { grid-column: 1; grid-row: 1; max-width: 600px; }
 .method-visual { grid-column: 2; grid-row: 1; justify-self: center; height: min(68vh, 40vw); aspect-ratio: 0.9; display: grid; place-items: center; }
-.method-svg { width: 78%; height: auto; filter: drop-shadow(0 0 40px rgba(201, 155, 69, 0.3)); transition: opacity 0.8s linear; }
+.method-svg { width: 56%; height: auto; filter: drop-shadow(0 0 40px rgba(201, 155, 69, 0.3)); transition: opacity 0.8s linear; }
 .method-copy h2 { margin-block: 18px 34px; }
 .steps { display: grid; gap: 2px; counter-reset: s; }
 .steps li { display: flex; align-items: baseline; gap: 18px; font-size: var(--t-h2); font-weight: 800; line-height: 1.38; color: var(--cream); transition: color 0.6s var(--e-out), opacity 0.6s var(--e-out); }
@@ -501,6 +501,7 @@ main { position: relative; }
 .no-js .story-words, .rm .story-words { padding-inline: var(--gut); inset: auto; }
 .no-js .lead .label, .rm .lead .label { position: static; }
 .no-js .method-state, .rm .method-state { grid-row: 2; padding-bottom: 12vh; }
+@media (max-width: 760px) { .no-js .method-state, .rm .method-state { grid-row: 3; } }
 .no-js .method-pin, .rm .method-pin { align-items: start; padding-top: 16vh; }
 @media (min-width: 761px) {
   .no-js .exp-pin, .rm .exp-pin { height: auto; overflow: visible; }
@@ -527,3 +528,5 @@ main { position: relative; }
 
 /* legibility over the moving light */
 .story-copy, .exp-text, .contact-body, .contact-lead, .contact-grid, .method-copy, .values .val-b { text-shadow: 0 1px 2px rgba(13, 10, 9, 0.6), 0 0 22px rgba(13, 10, 9, 0.85); }
+/* gradient-clipped text must never carry a shadow (Chrome paints it over the fill) */
+.gold, .steps li.on .step-w, .val-ink, .val-ink::after, .engr::after { text-shadow: none !important; }

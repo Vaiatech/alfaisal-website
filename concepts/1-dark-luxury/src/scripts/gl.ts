@@ -48,7 +48,7 @@ void main(){
   float aur = smoothstep(0.38, 0.92, f);
 
   // cool aurora drift in the navy
-  col += vec3(0.07, 0.12, 0.2) * aur * 0.55;
+  col += vec3(0.045, 0.085, 0.17) * aur * 0.5;
 
   // the gold light
   vec2 L = vec2(uLight.x * asp, 1.0 - uLight.y);
@@ -65,7 +65,7 @@ void main(){
   col += gold * pow(glow, 4.0) * uLightI * 0.35;
 
   // warm haze riding the aurora far from the light
-  col += gold * 0.045 * smoothstep(0.62, 1.0, f) * (1.0 - y * 0.5);
+  col += gold * 0.03 * smoothstep(0.62, 1.0, f) * (1.0 - y * 0.5);
 
   // pointer: a faint warm breath
   vec2 M = vec2(uMouse.x * asp, 1.0 - uMouse.y);

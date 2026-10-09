@@ -102,20 +102,23 @@ export function buildScale(mobile: boolean): ScaleRig {
     },
     update(dt, time, presence, px) {
       if (dt <= 0) return;
-      const h = Math.min(dt, 1 / 30);
-      // damped spring for the beam
-      const acc = -38 * (theta - tgt) - 3.6 * omega;
-      omega += acc * h;
-      theta += omega * h;
-      const alpha = (omega - prevOmega) / h;
-      prevOmega = omega;
+      // fixed sub-steps so the settling feels the same at any frame rate
+      const n = Math.min(8, Math.ceil(dt / (1 / 120)));
+      const h = dt / n;
+      for (let k = 0; k < n; k++) {
+        const acc = -38 * (theta - tgt) - 3.6 * omega;
+        omega += acc * h;
+        theta += omega * h;
+        const alpha = (omega - prevOmega) / h;
+        prevOmega = omega;
+        for (let i = 0; i < 2; i++) {
+          const sa = -14 * swing[i] - 1.8 * swingV[i] - alpha * 0.02;
+          swingV[i] += sa * h;
+          swing[i] += swingV[i] * h;
+        }
+      }
       beam.rotation.z = theta;
-      arms.forEach((a, i) => {
-        const sa = -14 * swing[i] - 1.8 * swingV[i] - alpha * 0.02;
-        swingV[i] += sa * h;
-        swing[i] += swingV[i] * h;
-        a.rotation.z = -theta + swing[i];
-      });
+      arms.forEach((a, i) => (a.rotation.z = -theta + swing[i]));
       group.rotation.y = Math.sin(time * 0.22) * 0.32 + px * 0.25;
       const p = presence;
       mats.forEach((m) => ((m as THREE.MeshStandardMaterial).envMapIntensity = 0.15 + p * 1.05));

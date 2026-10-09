@@ -35,7 +35,7 @@ const glCanvas = $<HTMLCanvasElement>('#gl');
 const GL = createGL(glCanvas);
 type SceneLight = { i: number; r: number; anchor?: HTMLElement | null; dx?: number; dy?: number };
 const sceneLight: Record<string, SceneLight> = {
-  hero: { i: 1.2, r: 0.34 },
+  hero: { i: 1.15, r: 0.36, dx: 0.1, dy: 0.04 },
   story: { i: 0.55, r: 0.26 },
   numbers: { i: 0.75, r: 0.36 },
   expertise: { i: 0.85, r: 0.3 },
@@ -51,6 +51,13 @@ scenes.forEach((s) => {
   const k = s.dataset.scene!;
   if (sceneLight[k]) sceneLight[k].anchor = $('[data-anchor]', s);
 });
+// on phones the lamp sits above the headline: throw the light downward instead of sideways
+const tuneLight = () => {
+  sceneLight.hero.dx = isMobile() ? 0 : 0.1;
+  sceneLight.hero.dy = isMobile() ? 0.1 : 0.04;
+};
+tuneLight();
+window.addEventListener('resize', tuneLight);
 const light = { boost: 0, override: null as null | { x: number; y: number } };
 let introLight = FX ? 0 : 1; // the lamp is lit by the intro
 let currentScene = 'hero';
@@ -82,8 +89,8 @@ function tickLight(time: number) {
     ty = light.override.y;
   } else if (cfg.anchor) {
     const r = cfg.anchor.getBoundingClientRect();
-    tx = (r.left + r.width / 2) / window.innerWidth;
-    ty = (r.top + r.height / 2) / window.innerHeight;
+    tx = (r.left + r.width / 2) / window.innerWidth + (cfg.dx || 0);
+    ty = (r.top + r.height / 2) / window.innerHeight + (cfg.dy || 0);
   }
   // keep it on-screen-ish so the haze never vanishes entirely
   tx = clamp(tx, -0.15, 1.15);

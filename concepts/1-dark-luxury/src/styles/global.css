@@ -1201,7 +1201,8 @@ html.fx .val__lamp {
 .team__door {
   grid-column: 2;
   grid-row: 1;
-  justify-self: center;
+  justify-self: start;
+  margin-inline-start: 4vw;
   position: relative;
   width: min(23vw, 300px);
   height: min(66vh, 620px);
@@ -1262,7 +1263,7 @@ html.fx .val__lamp {
   .team { grid-template-columns: 1fr; text-align: center; min-height: auto; padding-block: 12vh 16vh; gap: 4vh; }
   .team__copy { grid-row: 2; }
   .team__copy .eyebrow { justify-content: center; }
-  .team__door { grid-column: 1; grid-row: 1; width: 42vw; height: 40svh; }
+  .team__door { grid-column: 1; grid-row: 1; width: 42vw; height: 40svh; justify-self: center; margin: 0; }
 }
 
 /* =========================================================================
