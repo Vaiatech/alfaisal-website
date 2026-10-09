@@ -1,0 +1,10 @@
+---
+// Section label: index (Latin, tabular) + rhombus + Arabic name. Same object in every scene.
+interface Props { index: string; text: string; class?: string }
+const { index, text, class: cls } = Astro.props;
+---
+<p class:list={['label', cls]}>
+  <span class="label-i" dir="ltr">{index}</span>
+  <span class="rh" aria-hidden="true"></span>
+  <span class="label-t">{text}</span>
+</p>

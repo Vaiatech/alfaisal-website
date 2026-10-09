@@ -1,0 +1,48 @@
+---
+// The logo mark (calligraphy + pen + scale) or the full lockup, drawn from LogoDefs.
+// `write` adds a stroke mask (calligraphy-strokes.json) the scripts use to make the calligraphy write itself.
+// Without JS the mask is never attached, so the mark is always complete.
+import strokes from '../assets/calligraphy-strokes.json';
+
+interface Props {
+  id?: string;
+  class?: string;
+  full?: boolean; // full lockup with wordmark + tagline + rule
+  write?: boolean;
+  calligraphyOnly?: boolean;
+  label?: string;
+  viewBox?: string;
+}
+const { id, class: cls, full = false, write = false, calligraphyOnly = false, label, viewBox } = Astro.props;
+const vb = viewBox ?? (full ? '0 0 1031 1195' : calligraphyOnly ? '112 -6 750 830' : '112 -6 806 830');
+const maskId = id ? `${id}-mask` : undefined;
+---
+<svg
+  class:list={['mark', cls]}
+  id={id}
+  viewBox={vb}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+  data-write={write ? maskId : undefined}
+>
+  {write && (
+    <defs>
+      <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="-20" width="1031" height="1240">
+        <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+          {strokes.map((s) => (
+            <path d={s.d} stroke-width={s.w + 6} data-l={s.l} />
+          ))}
+        </g>
+      </mask>
+    </defs>
+  )}
+  {!calligraphyOnly && <use href="#lg-pen" class="mk-pen" />}
+  {!calligraphyOnly && <use href="#lg-penband" class="mk-band" />}
+  {!calligraphyOnly && <use href="#lg-scale" class="mk-scale" />}
+  <use href="#lg-calligraphy" class="mk-cal" />
+  {full && <use href="#lg-wordmark" class="mk-word" />}
+  {full && <use href="#lg-rule" class="mk-rule" />}
+  {full && <use href="#lg-tagline" class="mk-tag" />}
+</svg>

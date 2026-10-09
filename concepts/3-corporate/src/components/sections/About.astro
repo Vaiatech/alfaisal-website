@@ -1,0 +1,46 @@
+---
+// 03 · Idea: "Not a case — a system". The word «قضية» is struck through; below it, the seven
+// parts of a real file are wired, by scroll, into one gold bus that ends in the oxblood hub:
+// «نقرأ التفاصيل، نربط المسارات، ونبني الحل.» The hub sits in the pillar column, and it is the
+// shape the next section's field grows from.
+import Guides from '../Guides.astro';
+import Label from '../Label.astro';
+import { story } from '../../data/content';
+---
+<section class="sc about" id="about" data-tone="light" data-name="من نحن" data-i="03">
+  <Guides />
+  <div class="grid about-grid">
+    <Label index="03" text={story.label} class="about-label rv" />
+    <h2 class="about-title d1">
+      <span class="ln"><span class="ln-i">ليست كل</span></span>
+      <span class="ln"><span class="ln-i"><em>الملفات</em></span></span>
+      <span class="ln"><span class="ln-i"><s class="strike">قضية<span class="strike-bar" aria-hidden="true"></span></s></span></span>
+    </h2>
+    <div class="about-body">
+      <p class="lead rv">{story.body[0]}</p>
+      <p class="rv">{story.body[1]}</p>
+      <p class="about-value rv">{story.body[2]}</p>
+    </div>
+  </div>
+
+  <div class="board-wrap grid">
+    <div class="board" data-board>
+      <svg class="board-svg" aria-hidden="true"></svg>
+      <ol class="board-words">
+        {story.words.map((w, i) => (
+          <li class={`bw bw-${i + 1}`} data-bw>
+            <span class="bw-i" dir="ltr">{String(i + 1).padStart(2, '0')}</span>
+            <span class="bw-t">{w}</span>
+          </li>
+        ))}
+      </ol>
+      <div class="hub pillar-like" data-hub data-tone="maroon">
+        <span class="hub-node rh" aria-hidden="true"></span>
+        <p class="hub-t">
+          <span>{story.closing[0]}</span>
+          <span>{story.closing[1]}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

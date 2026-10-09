@@ -1,0 +1,43 @@
+---
+// Outro · Idea: "The signature". The page closes the way it opened: the calligraphy writes itself,
+// this time across the ink footer at architectural scale, and signs the page. Then the tagline locks in.
+import Mark from './Mark.astro';
+import Guides from './Guides.astro';
+import Arrow from './Arrow.astro';
+import { nav, site, contact } from '../data/content';
+---
+<footer class="ft" data-tone="dark" id="end">
+  <Guides />
+  <div class="ft-sign">
+    <Mark id="outro-mark" class="ft-mark" write />
+  </div>
+  <div class="grid ft-grid">
+    <div class="ft-id">
+      <p class="ft-name">{site.name}</p>
+      <p class="ft-tag">
+        {site.tagline.map((t, i) => (<><span class="ft-tw">{t}</span>{i < 2 && <span class="rh" aria-hidden="true"></span>}</>))}
+      </p>
+    </div>
+    <nav class="ft-nav" aria-label="روابط التذييل">
+      <ul>
+        {nav.map((n) => (
+          <li><a href={n.href} data-go={n.href.slice(1)}>{n.label}{n.soon && <span class="soon-tag">قريبًا</span>}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="ft-contact">
+      <a href={`tel:${contact.phones[0].tel}`}><bdi dir="ltr" class="tnum">{contact.phones[0].display}</bdi></a>
+      <a href={`mailto:${contact.email}`}><bdi dir="ltr">{contact.email}</bdi></a>
+      <span>{contact.address.city} — {contact.address.line}</span>
+    </div>
+    <a class="ft-top" href="#top" data-go="top">
+      <span>العودة إلى البداية</span>
+      <Arrow dir="up" />
+    </a>
+    <div class="ft-base">
+      <span>© <bdi dir="ltr" class="tnum">2026</bdi> {site.name}</span>
+      <span>السجل التجاري <bdi dir="ltr" class="tnum">{site.commercialRegistry}</bdi></span>
+      <bdi dir="ltr">{site.domain}</bdi>
+    </div>
+  </div>
+</footer>

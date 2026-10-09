@@ -1,0 +1,62 @@
+---
+// 08 · Idea: "Your file, on our desk". The values pillar grows into the closing field. The one
+// Naskh line on the page (the firm's voice) introduces a monumental «لنتحدث عن ملفك»; the
+// contact details are set as a directory on the grid, every number and address isolated for bidi.
+import Guides from '../Guides.astro';
+import Label from '../Label.astro';
+import Arrow from '../Arrow.astro';
+import { closing, contact, site } from '../../data/content';
+const [leadA, leadB] = closing.lead.split('… ');
+---
+<section class="sc contact field-grow" id="contact" data-tone="maroon" data-name="تواصل معنا" data-i="08">
+  <div class="field" aria-hidden="true"></div>
+  <Guides />
+  <div class="grid contact-grid">
+    <Label index="08" text={closing.label} class="contact-label rv" />
+    <p class="contact-lead naskh">
+      <span class="ln"><span class="ln-i">{leadA}…</span></span>
+      <span class="ln"><span class="ln-i">{leadB}</span></span>
+    </p>
+    <h2 class="contact-title">
+      <span class="ln"><span class="ln-i">لنتحدث</span></span>
+      <span class="ln"><span class="ln-i">عن ملفك</span></span>
+    </h2>
+    <div class="contact-body">
+      <p class="lead rv">{closing.body[0]}</p>
+      <p class="rv">{closing.body[1]}</p>
+      <div class="contact-actions rv">
+        <a class="btn btn-gold" href={site.consultUrl} target="_blank" rel="noopener">
+          <span class="btn-t">احجز استشارة</span>
+          <Arrow dir="out" />
+        </a>
+        <a class="btn btn-line" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener">
+          <span class="btn-t">واتساب</span>
+          <Arrow dir="out" />
+        </a>
+      </div>
+    </div>
+
+    <dl class="dir">
+      <div class="dir-c">
+        <dt>الهاتف</dt>
+        {contact.phones.map((p) => (
+          <dd><a href={`tel:${p.tel}`}><bdi dir="ltr" class="tnum">{p.display}</bdi></a><span class="dir-k">{p.label}</span></dd>
+        ))}
+      </div>
+      <div class="dir-c">
+        <dt>البريد الإلكتروني</dt>
+        <dd><a href={`mailto:${contact.email}`}><bdi dir="ltr">{contact.email}</bdi></a></dd>
+      </div>
+      <div class="dir-c">
+        <dt>العنوان</dt>
+        <dd>{contact.address.line}</dd>
+        <dd>{contact.address.city}، {contact.address.country}</dd>
+        <dd><a class="dir-map" href={contact.mapsUrl} target="_blank" rel="noopener">الموقع على الخريطة <Arrow dir="out" /></a></dd>
+      </div>
+      <div class="dir-c">
+        <dt>السجل التجاري</dt>
+        <dd><bdi dir="ltr" class="tnum">{site.commercialRegistry}</bdi></dd>
+      </div>
+    </dl>
+  </div>
+</section>

@@ -1,0 +1,26 @@
+---
+// Intro: the calligraphy writes itself on an oxblood field, then the field contracts into the
+// hero's pillar (the loader becomes the architecture). Only shown when <html> has .intro.
+import Mark from './Mark.astro';
+import Num from './Num.astro';
+import { site } from '../data/content';
+---
+<div class="intro" aria-hidden="true">
+  <div class="intro-field"></div>
+  <div class="intro-stage">
+    <Mark id="intro-mark" class="intro-mark" write />
+  </div>
+  <div class="intro-meta">
+    <span class="intro-name">{site.name}</span>
+    <span class="intro-count"><Num value={100} class="intro-num" /></span>
+  </div>
+  <button class="intro-skip" type="button" tabindex="-1">تخطٍّ</button>
+</div>
+
+<div class="shutter" aria-hidden="true">
+  {Array.from({ length: 12 }, () => <i />)}
+  <div class="shutter-label">
+    <span class="shutter-i" dir="ltr"></span>
+    <span class="shutter-t"></span>
+  </div>
+</div>

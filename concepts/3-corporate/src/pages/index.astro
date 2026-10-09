@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Intro from '../components/Intro.astro';
+import Footer from '../components/Footer.astro';
+import Hero from '../components/sections/Hero.astro';
+import Numbers from '../components/sections/Numbers.astro';
+import About from '../components/sections/About.astro';
+import Expertise from '../components/sections/Expertise.astro';
+import Method from '../components/sections/Method.astro';
+import Team from '../components/sections/Team.astro';
+import Values from '../components/sections/Values.astro';
+import Contact from '../components/sections/Contact.astro';
+---
+<Base>
+  <a class="skip" href="#main">تخطَّ إلى المحتوى</a>
+  <Intro />
+  <Header />
+  <main id="main">
+    <Hero />
+    <Numbers />
+    <About />
+    <Expertise />
+    <Method />
+    <Team />
+    <Values />
+    <Contact />
+  </main>
+  <Footer />
+</Base>

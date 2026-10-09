@@ -1,0 +1,9 @@
+---
+// Forward arrow for RTL (points left). Square-ended, drawn with the same stroke weight everywhere.
+interface Props { class?: string; dir?: 'fwd' | 'up' | 'down' | 'out' }
+const { class: cls, dir = 'fwd' } = Astro.props;
+const rot = dir === 'up' ? 90 : dir === 'down' ? -90 : dir === 'out' ? 45 : 0;
+---
+<svg class:list={['arrow', cls]} viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" style={rot ? `transform: rotate(${rot}deg)` : undefined}>
+  <path d="M21 12H4M10 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" />
+</svg>

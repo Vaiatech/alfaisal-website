@@ -1,0 +1,13 @@
+---
+// One copy of the traced logo, split into its named parts, referenced everywhere with <use>.
+// Fills are stripped so each instance colours its parts through CSS (style="fill: …" on <use>).
+import raw from '../assets/alfaisal-logo.svg?raw';
+
+const groups: string[] = [];
+const re = /<g id="([a-z]+)" fill="[^"]+">([\s\S]*?)<\/g>/g;
+let m: RegExpExecArray | null;
+while ((m = re.exec(raw))) groups.push(`<g id="lg-${m[1]}">${m[2]}</g>`);
+---
+<svg width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+  <defs set:html={groups.join('')} />
+</svg>

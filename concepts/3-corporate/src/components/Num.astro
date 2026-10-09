@@ -1,0 +1,33 @@
+---
+// A number set as mechanical reels: one fixed-width column per digit (Almarai has no tabular
+// figures, so the columns give tabular alignment). Rendered at its final value, so it reads
+// correctly without JS; the scripts spin it up from zero.
+interface Props { value: number; class?: string }
+const { value, class: cls } = Astro.props;
+const text = value.toLocaleString('en-US');
+const digitsTotal = text.replace(/\D/g, '').length;
+let seen = 0;
+const parts = [...text].map((ch) => {
+  if (/\d/.test(ch)) {
+    const place = digitsTotal - 1 - seen++;
+    return { kind: 'd' as const, d: Number(ch), place };
+  }
+  return { kind: 's' as const, ch };
+});
+---
+<span class:list={['num', cls]} data-value={value}>
+  <span class="sr">{text}</span>
+  <span class="num-reels" dir="ltr" aria-hidden="true">
+    {parts.map((p) =>
+      p.kind === 'd' ? (
+        <span class="rl" data-p={p.place} style={`--d:${p.d}`}>
+          <span class="rl-s">
+            <i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i><i>0</i>
+          </span>
+        </span>
+      ) : (
+        <span class="rl-sep" data-sep>{p.ch}</span>
+      ),
+    )}
+  </span>
+</span>

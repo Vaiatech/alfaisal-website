@@ -1,0 +1,49 @@
+---
+// 07 · Idea: "One principle at a time". Six values as a register; the scroll (or a click) selects one,
+// and the oxblood pillar sets it at monumental size. The pillar is the shape the closing field grows from.
+// Without JS or with reduced motion, it is a plain register with every value and its sentence.
+import Guides from '../Guides.astro';
+import Label from '../Label.astro';
+import { values } from '../../data/content';
+---
+<section class="sc values" id="values" data-tone="light" data-name="قيمنا" data-i="07">
+  <div class="values-stick">
+    <Guides />
+    <div class="grid values-grid">
+      <div class="values-head">
+        <Label index="07" text={values.label} class="rv" />
+        <h2 class="values-title d2">
+          <span class="ln"><span class="ln-i">ما الذي يميز</span></span>
+          <span class="ln"><span class="ln-i">طريقة عملنا؟</span></span>
+        </h2>
+      </div>
+      <ol class="vlist" data-vlist>
+        {values.items.map((v, i) => (
+          <li class="vl" data-vl>
+            <button type="button" class="vl-btn" data-v={i}>
+              <span class="vl-i" dir="ltr">{String(i + 1).padStart(2, '0')}</span>
+              <span class="vl-t">{v.title}</span>
+              <span class="vl-b">{v.body}</span>
+              <span class="vl-bar" aria-hidden="true"><b></b></span>
+            </button>
+          </li>
+        ))}
+      </ol>
+      <div class="pillar vstage" data-tone="maroon" aria-hidden="true">
+        <span class="vstage-i" dir="ltr">
+          <span class="vbig"><span class="rl"><span class="rl-s"><i>0</i><i>1</i></span></span><span class="rl" data-vunit style="--d:1"><span class="rl-s"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i></span></span></span>
+          <span class="vof">/ 06</span>
+        </span>
+        <div class="vstage-words">
+          {values.items.map((v, i) => (
+            <div class="vs" data-vs={i}>
+              <p class="vs-t"><span class="ln"><span class="ln-i">{v.title}</span></span></p>
+              <p class="vs-b"><span class="ln"><span class="ln-i">{v.body}</span></span></p>
+            </div>
+          ))}
+        </div>
+        <span class="vstage-node rh"></span>
+      </div>
+    </div>
+  </div>
+</section>

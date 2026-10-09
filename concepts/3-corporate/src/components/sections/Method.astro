@@ -1,0 +1,55 @@
+---
+// 05 · Idea: "From the first document to the last action". The expertise field collapses back
+// into the pillar, which now holds the title. Five verbs stand on one procedural rail that the
+// scroll draws from the first document to the last action; each verb locks on as the rail reaches it.
+// The rail ends in an ink field: «…بل بمنظومة.»
+import Guides from '../Guides.astro';
+import Label from '../Label.astro';
+import Arrow from '../Arrow.astro';
+import { method } from '../../data/content';
+---
+<section class="sc method" id="method" data-tone="light" data-name="منهجيتنا" data-i="05">
+  <Guides />
+  <div class="grid method-grid">
+    <div class="pillar method-pillar" data-tone="maroon">
+      <Label index="05" text={method.label} class="rv" />
+      <h2 class="method-title d2">
+        <span class="ln"><span class="ln-i">{method.title[0]}</span></span>
+        <span class="ln"><span class="ln-i">{method.title[1]}</span></span>
+      </h2>
+    </div>
+    <p class="method-body lead rv">{method.body}</p>
+  </div>
+
+  <div class="grid rail-wrap">
+    <div class="rail" data-rail>
+      <span class="rail-track" aria-hidden="true"><b></b></span>
+      <ol class="rail-steps">
+      {method.steps.map((s, i) => (
+        <li class="st" data-st>
+          <span class="st-node rh" aria-hidden="true"></span>
+          <span class="st-i" dir="ltr">{String(i + 1).padStart(2, '0')}</span>
+          <span class="st-t">{s}</span>
+        </li>
+      ))}
+      </ol>
+    </div>
+  </div>
+
+  <div class="statement field-grow" data-tone="dark">
+    <div class="field" aria-hidden="true"></div>
+    <Guides />
+    <div class="grid statement-grid">
+      <p class="statement-1 d3">
+        <span class="ln"><span class="ln-i">{method.statement[0]}</span></span>
+      </p>
+      <p class="statement-2">
+        <span class="ln"><span class="ln-i">{method.statement[1]}</span></span>
+      </p>
+      <a class="btn btn-gold statement-cta" href="#about" data-go="about">
+        <span class="btn-t">{method.cta}</span>
+        <Arrow />
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,37 @@
+---
+// 04 · Idea: "The practice index". The hub's oxblood grows into a full field. The six practices
+// are set as a monumental index — one row per practice, big numeral, big name — over the logo's
+// calligraphy carved into the field at architectural scale. Rows answer the cursor with a wipe.
+import Guides from '../Guides.astro';
+import Label from '../Label.astro';
+import Mark from '../Mark.astro';
+import { expertise } from '../../data/content';
+---
+<section class="sc expertise field-grow" id="expertise" data-tone="maroon" data-name="خبراتنا" data-i="04">
+  <div class="field" aria-hidden="true">
+    <div class="relief">
+      <Mark class="relief-mark" calligraphyOnly />
+    </div>
+  </div>
+  <Guides />
+  <div class="grid expertise-grid">
+    <div class="expertise-head">
+      <Label index="04" text={expertise.label} class="rv" />
+      <h2 class="expertise-title d2">
+        <span class="ln"><span class="ln-i">خبرتنا حيث</span></span>
+        <span class="ln"><span class="ln-i">تتقاطع التفاصيل</span></span>
+      </h2>
+      <p class="expertise-count rv"><span dir="ltr" class="tnum">06</span> مجالات</p>
+    </div>
+    <ol class="practice">
+      {expertise.items.map((it, i) => (
+        <li class="pr">
+          <span class="pr-wipe" aria-hidden="true"></span>
+          <span class="pr-i" dir="ltr">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="pr-t">{it.title}</h3>
+          <p class="pr-b">{it.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

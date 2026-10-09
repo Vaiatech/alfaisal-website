@@ -1,0 +1,45 @@
+---
+// 01 · Idea: "Monument and pillar". A monumental headline on the grid, against an oxblood
+// pillar that carries the calligraphy at architectural scale. The pillar is the recurring
+// column of the whole page: every later colour field grows out of it or collapses into it.
+import Mark from '../Mark.astro';
+import Guides from '../Guides.astro';
+import Arrow from '../Arrow.astro';
+import { hero, site } from '../../data/content';
+---
+<section class="sc hero" id="top" data-tone="light" data-name="الرئيسية" data-i="01">
+  <Guides />
+  <div class="grid hero-grid">
+    <p class="hero-eyebrow rv">
+      <span class="rh" aria-hidden="true"></span>
+      <span>{hero.eyebrow}</span>
+    </p>
+    <h1 class="hero-title d1">
+      <span class="ln"><span class="ln-i hero-l1">{hero.title[0]}</span></span>
+      <span class="ln"><span class="ln-i">تحتاج إلى <em>منظومة</em></span></span>
+      <span class="ln"><span class="ln-i">قانونية متكاملة</span></span>
+    </h1>
+    <div class="pillar hero-pillar" data-tone="maroon">
+      <div class="hero-pillar-mark">
+        <Mark id="hero-mark" class="pillar-mark" />
+      </div>
+      <p class="hero-pillar-tag">
+        {site.tagline.map((t, i) => (<><span>{t}</span>{i < 2 && <span class="rh" aria-hidden="true"></span>}</>))}
+      </p>
+    </div>
+    <div class="hero-body">
+      <p class="rv">{hero.body[0]}</p>
+      <p class="rv">{hero.body[1]}</p>
+    </div>
+    <div class="hero-actions rv">
+      <a class="btn btn-ink" href="#contact" data-go="contact">
+        <span class="btn-t">{hero.cta}</span>
+        <Arrow />
+      </a>
+      <a class="hero-scroll" href="#numbers" data-go="numbers">
+        <span>الأرقام</span>
+        <Arrow dir="down" />
+      </a>
+    </div>
+  </div>
+</section>

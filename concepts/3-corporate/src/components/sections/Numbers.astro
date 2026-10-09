@@ -1,0 +1,52 @@
+---
+// 02 · Idea: "6,750 made visible". The ink field grows out of the hero pillar. The headline figure
+// runs on mechanical reels while a matrix of exactly 6,750 rhombi (the logo's dot) fills mark by mark,
+// in step with the reels. The nine figures follow as a ledger: tabular, aligned by place value,
+// each with a linear bar so their real proportions read at a glance.
+import Guides from '../Guides.astro';
+import Label from '../Label.astro';
+import Num from '../Num.astro';
+import { stats } from '../../data/content';
+const max = Math.max(...stats.items.map((s) => s.value));
+---
+<section class="sc numbers field-grow" id="numbers" data-tone="dark" data-name="الأرقام" data-i="02">
+  <div class="field" aria-hidden="true"></div>
+  <Guides />
+  <div class="grid numbers-grid">
+    <Label index="02" text={stats.label} class="numbers-label rv" />
+
+    <div class="numbers-lead">
+      <p class="numbers-prefix rv">{stats.lead.prefix}</p>
+      <p class="numbers-big" aria-label={`${stats.lead.prefix} ${stats.lead.value.toLocaleString('en-US')} ${stats.lead.unit}`}>
+        <Num value={stats.lead.value} class="big-num" />
+        <span class="numbers-unit">{stats.lead.unit}</span>
+      </p>
+      <span class="numbers-rule" aria-hidden="true"></span>
+    </div>
+
+    <figure class="matrix-wrap">
+      <div class="matrix" data-count={stats.lead.value} data-cols="75" data-rows="90">
+        <canvas class="matrix-cv" aria-hidden="true"></canvas>
+      </div>
+      <figcaption class="matrix-cap">
+        <span dir="ltr" class="tnum">6,750</span> علامة — كل علامة عميل
+      </figcaption>
+    </figure>
+
+    <h2 class="numbers-sub d2">
+      <span class="ln"><span class="ln-i">{stats.subtitle[0]}</span></span>
+      <span class="ln"><span class="ln-i">وثقة تُبنى مع كل <em>ملف</em></span></span>
+    </h2>
+
+    <ol class="ledger" aria-label="أرقام الفيصل">
+      {stats.items.map((s, i) => (
+        <li class="lg-row" style={`--w:${Math.max(s.value / max, 0.004).toFixed(4)}`}>
+          <span class="lg-i" dir="ltr">{String(i + 1).padStart(2, '0')}</span>
+          <span class="lg-label">{s.label}</span>
+          <span class="lg-bar" aria-hidden="true"><b></b></span>
+          <Num value={s.value} class="lg-num" />
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

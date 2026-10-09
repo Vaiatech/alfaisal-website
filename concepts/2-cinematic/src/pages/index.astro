@@ -1,0 +1,371 @@
+---
+import '../styles/global.css';
+import { site, contact, nav, hero, stats, story, expertise, method, values, closing, formatNumber } from '../../../shared/content';
+import { logoPaths, strokes, MARK_VB } from '../lib/logo';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const year = new Date().getFullYear();
+// Lead number, written once, displayed LTR inside an isolate.
+const leadText = formatNumber(stats.lead.value) + '+';
+// Digits as fixed-width cells (Almarai has no tabular figures) — Latin digits only, never Arabic letters.
+const cells = (s: string) => [...s].map((ch) => ({ ch, k: /\d/.test(ch) ? 'd' : 'p' }));
+const chapters = [
+  { id: 'top', n: '01', t: 'الرئيسية' },
+  { id: 'about', n: '02', t: 'من نحن' },
+  { id: 'numbers', n: '03', t: 'الأرقام' },
+  { id: 'expertise', n: '04', t: 'خبراتنا' },
+  { id: 'method', n: '05', t: 'منهجيتنا' },
+  { id: 'values', n: '06', t: 'قيمنا' },
+  { id: 'contact', n: '07', t: 'تواصل معنا' },
+];
+const navNum = (href: string) => chapters.find((c) => '#' + c.id === href)?.n ?? '—';
+// «…» closes the first line of the closing lead: break the line right after it.
+const leadLines = closing.lead.split(/(?<=…)\s+/);
+---
+<!doctype html>
+<html lang="ar" dir="rtl" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{site.name}</title>
+    <meta name="description" content={site.description} />
+    <meta name="theme-color" content="#0d0a09" />
+    <link rel="canonical" href={site.url} />
+    <meta property="og:title" content={site.name} />
+    <meta property="og:description" content={site.description} />
+    <meta property="og:locale" content="ar_SA" />
+    <!-- Only the faces used above the fold are preloaded: Arabic 800 (headline) and 400 (body). -->
+    <link rel="preload" href="/fonts/almarai-arabic-800.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/almarai-arabic-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.remove('no-js');
+        d.classList.add('js');
+        var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (/[?&]motion=0/.test(location.search)) rm = true;
+        if (rm) d.classList.add('rm');
+        else d.classList.add('intro');
+        setTimeout(function () { if (!d.classList.contains('booted')) d.classList.remove('intro'); }, 5000);
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- The traced logo, defined once. Every mark on the page is a <use> of these paths. -->
+    <svg class="defs" aria-hidden="true" focusable="false" width="0" height="0">
+      <defs>
+        <path id="lg-calligraphy" d={logoPaths.calligraphy} />
+        <path id="lg-pen" d={logoPaths.pen} />
+        <path id="lg-scale" d={logoPaths.scale} />
+        <path id="lg-penband" d={logoPaths.penband} />
+        <path id="lg-wordmark" d={logoPaths.wordmark} />
+        <path id="lg-tagline" d={logoPaths.tagline} />
+        <path id="lg-rule" d={logoPaths.rule} />
+        <symbol id="mark" viewBox={MARK_VB}>
+          <use href="#lg-calligraphy" fill="url(#gold-grad)" />
+          <use href="#lg-scale" fill="url(#gold-grad)" />
+          <use href="#lg-pen" fill="#F1EADF" />
+          <use href="#lg-penband" fill="#BD882C" />
+        </symbol>
+        <linearGradient id="gold-grad" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0" stop-color="#E9C987" />
+          <stop offset=".45" stop-color="#C99B45" />
+          <stop offset="1" stop-color="#A57A28" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <!-- Fixed scenery: CSS light (always), WebGL canvas (when available), film grain -->
+    <div class="sky" aria-hidden="true">
+      <div class="sky-base"></div>
+      <div class="sky-key"></div>
+      <div class="sky-fill"></div>
+      <div class="sky-dawn"></div>
+    </div>
+    <canvas class="gl" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- Intro: the calligraphy writes itself as the page really loads -->
+    <div class="loader" aria-hidden="true">
+      <svg class="loader-mark" viewBox={MARK_VB}>
+        <defs>
+          <mask id="write-mask" maskUnits="userSpaceOnUse" x="100" y="-10" width="830" height="835">
+            <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+              {strokes.map((s) => (
+                <path d={s.d} stroke-width={(s.w * 1.25).toFixed(1)} stroke-dasharray={`${s.l + 2} ${s.l + 2}`} stroke-dashoffset={s.l + 2} data-l={s.l} />
+              ))}
+            </g>
+          </mask>
+        </defs>
+        <use href="#lg-calligraphy" fill="url(#gold-grad)" mask="url(#write-mask)" />
+        <g class="loader-rest">
+          <use href="#lg-scale" fill="url(#gold-grad)" />
+          <use href="#lg-pen" fill="#F1EADF" />
+          <use href="#lg-penband" fill="#BD882C" />
+        </g>
+      </svg>
+      <div class="loader-foot">
+        <span class="loader-line"><i></i></span>
+        <span class="loader-pct fig" dir="ltr"><span class="d">0</span><span class="d">0</span><span class="d">0</span></span>
+      </div>
+    </div>
+
+    <!-- Chapter wipe: the single transition gesture of the site -->
+    <div class="wipe" aria-hidden="true">
+      <div class="wipe-a"></div>
+      <div class="wipe-b"><span class="wipe-n fig" dir="ltr">01</span><span class="wipe-t">الرئيسية</span></div>
+      <i class="wipe-edge"></i>
+    </div>
+
+    <header class="hdr">
+      <a class="brand" href="#top" data-nav aria-label={site.name + ' — الرئيسية'}>
+        <svg class="brand-mark" viewBox={MARK_VB} aria-hidden="true"><use href="#mark" /></svg>
+        <svg class="brand-word" viewBox="0 868 1031 212" aria-hidden="true"><use href="#lg-wordmark" fill="currentColor" /></svg>
+      </a>
+      <nav class="hdr-nav" aria-label="القائمة الرئيسية">
+        <ul>
+          {nav.map((item) => (
+            <li>
+              <a href={item.href} data-nav data-soon={item.soon ? '' : undefined}>
+                {item.label}
+                {item.soon && <span class="soon-tag">قريبًا</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">
+        <span class="menu-btn-t">القائمة</span><span class="menu-btn-i" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </header>
+    <a class="consult" href={site.consultUrl} target="_blank" rel="noopener">
+      <span>احجز استشارة</span><i class="dia" aria-hidden="true"></i>
+    </a>
+
+    <div class="menu" id="menu" aria-label="القائمة" hidden>
+      <ol class="menu-list">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} data-nav data-soon={item.soon ? '' : undefined}>
+              <span class="menu-n fig" dir="ltr">{item.soon ? '—' : navNum(item.href)}</span>
+              <span class="menu-t">{item.label}</span>
+              {item.soon && <span class="soon-tag">قريبًا</span>}
+            </a>
+          </li>
+        ))}
+      </ol>
+      <div class="menu-foot">
+        <a href={`tel:${contact.phones[0].tel}`} dir="ltr">{contact.phones[0].display}</a>
+        <a href={`mailto:${contact.email}`} dir="ltr">{contact.email}</a>
+      </div>
+    </div>
+
+    <div class="soon" id="team" role="status" aria-live="polite">
+      <i class="dia" aria-hidden="true"></i>
+      <p><strong>فريقنا</strong><span>قريبًا</span></p>
+    </div>
+
+    <div class="hud" aria-hidden="true">
+      <span class="hud-n fig" dir="ltr">01</span>
+      <span class="hud-bar"><i></i></span>
+      <span class="hud-t">الرئيسية</span>
+    </div>
+
+    <main>
+      <!-- 01 · The signature: the firm's name written in light -->
+      <section id="top" class="sc hero" data-n="01" data-t="الرئيسية">
+        <div class="hero-mark" aria-hidden="true"><svg viewBox={MARK_VB}><use href="#mark" /></svg></div>
+        <div class="hero-copy">
+          <p class="eyebrow"><i class="dia" aria-hidden="true"></i>{hero.eyebrow}</p>
+          <h1 class="t-h1">
+            <span class="ln rv">{hero.title[0]}</span>
+            <span class="ln rv gold">{hero.title[1]}</span>
+          </h1>
+          <div class="hero-body rv">
+            {hero.body.map((p) => <p>{p}</p>)}
+          </div>
+          <div class="hero-act rv">
+            <a class="btn" href="#contact" data-nav><span>{hero.cta}</span><i class="btn-line" aria-hidden="true"></i></a>
+            <span class="hero-tag" aria-label={site.tagline.join('، ')}>
+              {site.tagline.map((w, i) => <>{i > 0 && <i class="dia" aria-hidden="true"></i>}<span>{w}</span></>)}
+            </span>
+          </div>
+        </div>
+        <div class="cue" aria-hidden="true"><i></i><span>القصة تبدأ هنا</span></div>
+      </section>
+
+      <!-- 02 · The tangle: seven details in a knot; reading pulls them into one line -->
+      <section id="about" class="sc story" data-n="02" data-t="من نحن">
+        <div class="story-pin pin">
+          <div class="story-copy">
+            <p class="label"><span class="fig" dir="ltr">02</span><i class="dia" aria-hidden="true"></i>{story.label}</p>
+            <h2 class="t-h2 rv">{story.title}</h2>
+            <p class="story-line" data-i="0">{story.body[0]}</p>
+            <p class="story-line" data-i="1">{story.body[1]}</p>
+            <p class="story-line accent" data-i="2">{story.body[2]}</p>
+          </div>
+          <ul class="story-words" aria-hidden="true">
+            {story.words.map((w) => <li><i class="dia"></i><span>{w}</span></li>)}
+          </ul>
+          <p class="story-close t-h2">
+            <span class="ln">{story.closing[0]}</span>
+            <span class="ln gold">{story.closing[1]}</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- 03 · The line pours into the engraving; then a beam reads the ledger -->
+      <section id="numbers" class="sc stats" data-n="03" data-t="الأرقام">
+        <div class="lead pin">
+          <p class="label"><span class="fig" dir="ltr">03</span><i class="dia" aria-hidden="true"></i>{stats.label}</p>
+          <p class="lead-fig">
+            <span class="lead-pre">{stats.lead.prefix}</span>
+            <span class="lead-num" dir="ltr"><span class="engr" data-text={leadText}>{leadText}</span></span>
+            <span class="lead-unit">{stats.lead.unit}</span>
+          </p>
+          <p class="lead-sub">
+            <span class="ln">{stats.subtitle[0]}</span>
+            <span class="ln">{stats.subtitle[1]}</span>
+          </p>
+        </div>
+        <div class="ledger-wrap pin">
+          <div class="ledger-in">
+            <ol class="ledger">
+              {stats.items.map((it, i) => (
+                <li class="cell" data-v={it.value}>
+                  <span class="cell-i fig" dir="ltr">{pad(i + 1)}</span>
+                  <span class="cell-v fig" dir="ltr" aria-label={formatNumber(it.value)}>
+                    {cells(formatNumber(it.value)).map((c) => <span class={c.k} aria-hidden="true">{c.ch}</span>)}
+                  </span>
+                  <span class="cell-l">{it.label}</span>
+                </li>
+              ))}
+            </ol>
+            <div class="beam" aria-hidden="true"><i></i></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 · Along the path: six areas sit where the threads cross -->
+      <section id="expertise" class="sc exp" data-n="04" data-t="خبراتنا">
+        <div class="exp-pin pin">
+          <div class="exp-track">
+            <header class="exp-head">
+              <p class="label"><span class="fig" dir="ltr">04</span><i class="dia" aria-hidden="true"></i>{expertise.label}</p>
+              <h2 class="t-h2 rv">{expertise.title}</h2>
+              <p class="exp-hint" aria-hidden="true"><span class="fig" dir="ltr">06</span> مجالات</p>
+            </header>
+            {expertise.items.map((it, i) => (
+              <article class={`exp-item ${i % 2 ? 'lo' : 'hi'}`}>
+                <span class="exp-n fig" dir="ltr" aria-hidden="true">{pad(i + 1)}</span>
+                <i class="node dia" aria-hidden="true"></i>
+                <div class="exp-text">
+                  <h3 class="t-h3">{it.title}</h3>
+                  <p>{it.body}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <div class="exp-rail" aria-hidden="true"><i></i></div>
+        </div>
+      </section>
+
+      <!-- 05 · Settling the balance: five steps, each a weight that brings the scale to rest -->
+      <section id="method" class="sc method" data-n="05" data-t="منهجيتنا">
+        <div class="method-pin pin">
+          <div class="method-visual" aria-hidden="true">
+            <svg class="method-svg" viewBox="740 25 190 220"><use href="#lg-scale" fill="url(#gold-grad)" /></svg>
+          </div>
+          <div class="method-copy">
+            <p class="label"><span class="fig" dir="ltr">05</span><i class="dia" aria-hidden="true"></i>{method.label}</p>
+            <h2 class="t-h2 rv"><span class="ln">{method.title[0]}</span><span class="ln gold">{method.title[1]}</span></h2>
+            <ol class="steps">
+              {method.steps.map((s, i) => (
+                <li data-i={i}><span class="step-n fig" dir="ltr">{pad(i + 1)}</span><span class="step-w">{s}</span></li>
+              ))}
+            </ol>
+            <p class="method-body">{method.body}</p>
+          </div>
+          <div class="method-state">
+            <p class="t-h2"><span class="ln">{method.statement[0]}</span><span class="ln naskh gold">{method.statement[1]}</span></p>
+            <a class="btn" href="#about" data-nav><span>{method.cta}</span><i class="btn-line" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 · Six engravings read by the same raking light -->
+      <section id="values" class="sc values" data-n="06" data-t="قيمنا">
+        <header class="values-head">
+          <p class="label"><span class="fig" dir="ltr">06</span><i class="dia" aria-hidden="true"></i>{values.label}</p>
+          <h2 class="t-h2 rv">{values.title}</h2>
+        </header>
+        <ol class="vals">
+          {values.items.map((v, i) => (
+            <li class="val">
+              <span class="val-n fig" dir="ltr" aria-hidden="true">{pad(i + 1)}</span>
+              <h3 class="val-t"><span class="val-ink" data-text={v.title}>{v.title}</span></h3>
+              <p class="val-b">{v.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <!-- 07 · The open door: the path ends in light, at a conversation -->
+      <section id="contact" class="sc contact" data-n="07" data-t="تواصل معنا">
+        <p class="label"><span class="fig" dir="ltr">07</span><i class="dia" aria-hidden="true"></i>{closing.label}</p>
+        <p class="contact-lead naskh">
+          {leadLines.map((l) => <span class="ln">{l}</span>)}
+        </p>
+        <h2 class="t-display rv">{closing.title}</h2>
+        <p class="contact-body"><span class="ln">{closing.body[0]}</span><span class="ln">{closing.body[1]}</span></p>
+        <div class="contact-act">
+          <a class="btn btn-solid" href={site.consultUrl} target="_blank" rel="noopener"><span>احجز استشارة</span><i class="btn-line" aria-hidden="true"></i></a>
+          <a class="btn" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener"><span>واتساب</span><i class="btn-line" aria-hidden="true"></i></a>
+        </div>
+        <dl class="contact-grid">
+          <div>
+            <dt>اتصل بنا</dt>
+            <dd>
+              {contact.phones.map((p) => (
+                <a href={`tel:${p.tel}`}><span class="ph" dir="ltr">{p.display}</span><small>{p.label}</small></a>
+              ))}
+            </dd>
+          </div>
+          <div>
+            <dt>البريد الإلكتروني</dt>
+            <dd><a href={`mailto:${contact.email}`}><span dir="ltr">{contact.email}</span></a></dd>
+          </div>
+          <div>
+            <dt>العنوان</dt>
+            <dd>
+              <a href={contact.mapsUrl} target="_blank" rel="noopener">
+                <span>{contact.address.line}</span>
+                <small>{contact.address.city}، {contact.address.country}</small>
+              </a>
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- Outro · the camera pulls back to the signature -->
+      <section class="outro" aria-label={site.name}>
+        <div class="outro-mark" aria-hidden="true"><svg viewBox={MARK_VB}><use href="#mark" /></svg></div>
+        <svg class="outro-word" viewBox="0 868 1031 327" role="img" aria-label={site.name + ' — ' + site.tagline.join('، ')}>
+          <use class="ow-word" href="#lg-wordmark" fill="#F1EADF" />
+          <use class="ow-rule" href="#lg-rule" fill="#BD882C" />
+          <use class="ow-tag" href="#lg-tagline" fill="#E2BE76" />
+        </svg>
+        <footer class="foot">
+          <p>© <span dir="ltr">{year}</span> {site.name}</p>
+          <p>سجل تجاري <span class="fig" dir="ltr">{site.commercialRegistry}</span></p>
+          <a href="#top" data-nav>العودة إلى البداية</a>
+        </footer>
+      </section>
+    </main>
+
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

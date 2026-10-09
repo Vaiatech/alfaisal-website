@@ -1,0 +1,63 @@
+---
+import Mark from './Mark.astro';
+import Arrow from './Arrow.astro';
+import { nav, site, contact } from '../data/content';
+const idx = ['01', '03', '04', '05', '06', '08'];
+---
+<header class="hd" data-tone="light">
+  <div class="hd-bar" aria-hidden="true"></div>
+  <div class="hd-in">
+    <a class="hd-brand" href="#top" data-go="top" aria-label={`${site.name} — الرئيسية`}>
+      <Mark class="hd-mark" />
+      <span class="hd-name">
+        <span class="hd-name-1">الفيصل</span>
+        <span class="hd-name-2">للمحاماة والاستشارات القانونية</span>
+      </span>
+    </a>
+
+    <nav class="hd-nav" aria-label="القائمة الرئيسية">
+      <ul>
+        {nav.map((n, i) => (
+          <li>
+            <a href={n.href} data-go={n.href.slice(1)} data-i={idx[i]}>
+              {n.label}
+              {n.soon && <span class="soon-tag">قريبًا</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <span class="hd-ind" aria-hidden="true"></span>
+    </nav>
+
+    <div class="hd-end">
+      <button class="hd-burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="فتح القائمة">
+        <span></span><span></span>
+      </button>
+      <a class="btn btn-cta" href={site.consultUrl} target="_blank" rel="noopener">
+        <span class="btn-t">احجز استشارة</span>
+        <Arrow dir="out" />
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="menu" id="menu" aria-hidden="true">
+  <div class="menu-in">
+    <ol class="menu-list">
+      {nav.map((n, i) => (
+        <li>
+          <a href={n.href} data-go={n.href.slice(1)} tabindex="-1">
+            <span class="menu-i" dir="ltr">{idx[i]}</span>
+            <span class="menu-t">{n.label}</span>
+            {n.soon && <span class="soon-tag">قريبًا</span>}
+          </a>
+        </li>
+      ))}
+    </ol>
+    <div class="menu-foot">
+      <a href={`tel:${contact.phones[0].tel}`} dir="ltr" tabindex="-1">{contact.phones[0].display}</a>
+      <a href={`mailto:${contact.email}`} dir="ltr" tabindex="-1">{contact.email}</a>
+      <span>{contact.address.city} · {contact.address.line}</span>
+    </div>
+  </div>
+</div>
