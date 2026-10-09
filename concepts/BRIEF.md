@@ -62,3 +62,9 @@ interlocking details, not a single case* — «عندما تتعقد التفا�
   (composition, scale, rhythm, interaction) — a designed "scene", not a repeated template. Before building a section,
   write down its single idea; if it could belong to any other website, replace it.
 - **Never AI-generic.** If something looks like a default template, a stock UI kit or an "AI landing page", redo it.
+- **Clarification — one connected whole.** "Each section has its own idea" means variety *within one language*, not
+  different styles. The page must read as a single continuous story and a single design system: one palette, one type
+  scale, one motion vocabulary (the same easings, the same transition gesture), recurring brand motifs, and explicit
+  connections between sections (what ends one section begins the next — a line, a light, a shape or a word that carries
+  through). A visitor should feel one hand designed every part. If a section looks like it came from another website,
+  it is wrong even if it is beautiful.
