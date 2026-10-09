@@ -325,7 +325,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     u.uTurb.value = cur.turb;
     u.uWrite.value = cur.write;
     u.uRot.value = cur.rot;
-    u.uGain.value = cur.gain * introGain * (mobile ? 1.15 : 1);
+    u.uGain.value = cur.gain * introGain * (mobile ? 1.7 : 1.55);
     u.uDustC.value.set(cur.look[0], cur.look[1], cur.look[2] + 2);
     const dcam = Math.hypot(cur.cam[0] - cur.look[0], cur.cam[1] - cur.look[1], cur.cam[2] - cur.look[2]);
     u.uFocus.value = dcam;

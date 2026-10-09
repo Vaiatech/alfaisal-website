@@ -346,9 +346,9 @@ function initMatrix() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
     const cw = w / cols, ch = h / rows;
-    const s = Math.min(cw, ch) * 0.34;
+    const s = Math.min(cw, ch) * 0.45;
     const edge = Math.max(0, lit - cols);
-    const groups: [string, number[]][] = [['rgba(226,190,118,.11)', []], ['#AD832D', []], ['#E2BE76', []], ['#F4F0E9', []]];
+    const groups: [string, number[]][] = [['rgba(226,190,118,.3)', []], ['#C9A055', []], ['#F0D9A6', []], ['#F4F0E9', []]];
     for (let i = 0; i < total; i++) {
       const r = Math.floor(i / cols), c = i % cols;
       const x = w - (c + 0.5) * cw; // reading direction: right to left
@@ -387,7 +387,7 @@ function initNumbers() {
   setReels(reelNum(big), 0);
   $$('.lg-num').forEach((n) => setReels(reelNum(n), 0));
   ScrollTrigger.create({
-    trigger: '.numbers-lead', start: 'top 72%', once: true,
+    trigger: '.numbers', start: 'top 75%', once: true,
     onEnter: () => {
       spin(big, { duration: 2.6, ease: 'power3.out', onUpdate: (v) => matrix?.set(v), onComplete: () => {
         matrix?.set(matrix.total);
@@ -407,7 +407,7 @@ function initFields() {
     const f = $('.field', sec)!;
     gsap.fromTo(f, { '--open': 0 }, {
       '--open': 1, ease: 'none',
-      scrollTrigger: { trigger: sec, start: 'top 92%', end: 'top 22%', scrub: 0.4 },
+      scrollTrigger: { trigger: sec, start: 'top bottom', end: 'top 55%', scrub: 0.3 },
     });
   });
 }
@@ -435,7 +435,8 @@ function initBoard() {
     const mk = (d: string, cls: string) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('class', cls); svg.appendChild(p); return p; };
     let sx0: number, sy0: number, sx1: number, sy1: number;
     if (horizontal) {
-      const y = h.top + h.height / 2 - b.top;
+      const n = $('.hub-node', hub)!.getBoundingClientRect();
+      const y = n.top + n.height / 2 - b.top;
       sx0 = b.width + 2; sy0 = y; sx1 = h.right - b.left; sy1 = y;
     } else {
       const x = b.width - 6;
@@ -501,6 +502,7 @@ function initRail() {
   if (!rail || !MOTION) return;
   const steps = $$('[data-st]', rail);
   const track = $('.rail-track', rail)!;
+  const mstep = $('[data-mstep]');
   const fr = () => {
     const r = track.getBoundingClientRect();
     return steps.map((s) => {
@@ -518,6 +520,7 @@ function initRail() {
       let cur = -1;
       steps.forEach((s, i) => { const on = p >= fracs[i] - 0.004; s.classList.toggle('on', on); if (on) cur = i; });
       steps.forEach((s, i) => s.classList.toggle('cur', i === cur && p < 0.999));
+      mstep?.style.setProperty('--d', String(Math.max(1, cur + 1)));
     },
   });
   rail.style.setProperty('--p', '0');
@@ -577,7 +580,7 @@ function initOutro() {
   const words = $$('.ft-tag > *');
   gsap.set(words, { yPercent: 120, opacity: 0 });
   ScrollTrigger.create({
-    trigger: '.ft', start: 'top 55%', once: true,
+    trigger: '.ft', start: 'top 80%', once: true,
     onEnter: () => {
       const tl = writeTl(svg, 2.6);
       tl.to(words, { yPercent: 0, opacity: 1, duration: 0.8, ease: EO, stagger: 0.08 }, '-=0.6');

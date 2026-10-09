@@ -610,25 +610,6 @@ main, .outro { position: relative; z-index: 1; }
   font-weight: 700;
   color: var(--ink-3);
 }
-.hero__cue {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 1px;
-  height: 10vh;
-  background: linear-gradient(180deg, transparent, rgba(226, 190, 118, 0.45));
-  overflow: hidden;
-}
-.hero__cue i {
-  position: absolute;
-  left: -1px;
-  width: 3px;
-  height: 34%;
-  background: linear-gradient(180deg, transparent, var(--gold-pale));
-  box-shadow: 0 0 10px var(--gold-hi);
-  animation: drop 2.6s var(--ease-io) infinite;
-}
-@keyframes drop { 0% { transform: translateY(-100%); } 100% { transform: translateY(300%); } }
 
 @media (max-width: 860px) {
   .hero {
@@ -716,10 +697,11 @@ html.fx .story__core {
   z-index: 1;
 }
 @media (max-width: 760px) {
+  html.fx .story__core { top: calc(50% + var(--hdr) * 0.35 + 64px); }
   html.fx .story__center { width: 64vw; }
   .story__line { font-size: 1.05rem; line-height: 1.85; }
   html.fx .story__lines { height: 10.5em; }
-  .story__closing { font-size: 1.3rem; }
+  .story__closing { font-size: 1.2rem; }
   .chip { font-size: 0.92rem; gap: 8px; padding: 0.4em 0.85em 0.45em; }
 }
 
@@ -899,21 +881,24 @@ html.fx .xp__stage {
   height: 100svh;
   padding: 0;
   overflow: hidden;
-  --R: min(41vh, 27vw);
-  --cx: 17vw;
+  --R: min(36vh, 21vw);
+  --cx: 25vw;
   --cy: 55%;
   --base: 0deg;
 }
-html.fx .xp__head { position: absolute; top: calc(var(--hdr) + 5vh); right: var(--gutter); width: min(40vw, 38rem); z-index: 3; }
-html.fx .xp__list {
+html.fx .xp__col {
   position: absolute;
   right: var(--gutter);
-  top: calc(var(--hdr) + 5vh + 9.2rem);
+  top: calc(var(--hdr) + 4vh);
+  bottom: 5vh;
   width: min(40vw, 38rem);
-  margin: 0;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   z-index: 3;
 }
+html.fx .xp__title { font-size: clamp(1.7rem, 1rem + 1.9vw, 2.8rem); }
+html.fx .xp__list { margin-top: 4vh; display: block; }
 html.fx .xp__item { border-top: 1px solid var(--line-2); }
 html.fx .xp__item:last-child { border-bottom: 1px solid var(--line-2); }
 html.fx .xp__row { cursor: pointer; padding: 12px 0 10px; }
@@ -955,6 +940,10 @@ html.fx .xp__dial {
 .xp__ticks { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .xp__ticks .rot { transform: rotate(var(--rot)); transform-origin: 0 0; }
 .xp__ring { display: none; }
+.xp__lead { display: none; }
+html.fx .xp__lead { display: block; position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: visible; }
+.xp__lead path { fill: none; stroke: rgba(226, 190, 118, 0.55); stroke-width: 1; }
+.xp__lead circle { fill: var(--gold-pale); filter: drop-shadow(0 0 4px rgba(226, 190, 118, 0.9)); }
 .xp__num { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
 .xp__nm {
   position: absolute;
@@ -997,10 +986,10 @@ html.fx .xp__dial {
   box-shadow: 0 0 30px 6px rgba(226, 190, 118, 0.6);
 }
 @media (max-width: 860px) {
-  html.fx .xp__stage { --R: min(25vw, 13svh); --cx: 50vw; --cy: calc(var(--hdr) + 2svh + 92px + min(25vw, 13svh)); --base: 90deg; }
-  html.fx .xp__head { top: calc(var(--hdr) + 2svh); left: var(--gutter); width: auto; }
+  html.fx .xp__stage { --R: min(25vw, 13svh); --cx: 50vw; --cy: calc(var(--hdr) + 2svh + 104px + min(25vw, 13svh)); --base: 90deg; }
+  html.fx .xp__col { top: calc(var(--hdr) + 2svh); left: var(--gutter); width: auto; bottom: auto; display: block; }
   html.fx .xp__title { font-size: 1.6rem; }
-  html.fx .xp__list { top: calc(var(--hdr) + 2svh + 92px + 2 * min(25vw, 13svh) + 22px); left: var(--gutter); width: auto; }
+  html.fx .xp__list { margin-top: calc(2 * min(25vw, 13svh) + 34px); }
   .xp__h { font-size: 1.04rem; }
   html.fx .xp__row { padding: 8px 0 7px; }
   .xp__p { font-size: 0.94rem; line-height: 1.8; }
@@ -1073,10 +1062,11 @@ html.fx .mth__seal {
 }
 html.fx .mth.is-sealed .mth__seal { transform: rotate(45deg) scale(1); opacity: 1; box-shadow: 0 0 30px 6px rgba(226, 190, 118, 0.6); }
 @media (max-width: 860px) {
-  html.fx .mth__head { top: calc(var(--hdr) + 3svh); left: var(--gutter); width: auto; }
-  html.fx .mth__rail { top: 64%; left: calc(var(--gutter) + 10px); right: var(--gutter); }
+  html.fx .mth__head { top: calc(var(--hdr) + 12svh); left: var(--gutter); width: auto; }
+  html.fx .mth__rail { top: 61%; left: calc(var(--gutter) + 10px); right: var(--gutter); }
+  html.fx .mth__wave { top: calc(2.2rem + 6px - 160px); height: 320px; }
   .mth__steps { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .mth__w { font-size: 1.12rem; }
+  .mth__w { font-size: 1.2rem; }
   .mth__n { font-size: 0.95rem; }
   html.fx .mth__seal { left: -10px; }
 }
@@ -1084,7 +1074,7 @@ html.fx .mth.is-sealed .mth__seal { transform: rotate(45deg) scale(1); opacity: 
 /* Statement — reading turns the lights on */
 .stmt {
   position: relative;
-  min-height: 74svh;
+  min-height: 64svh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1109,7 +1099,7 @@ html.fx .mth.is-sealed .mth__seal { transform: rotate(45deg) scale(1); opacity: 
 /* =========================================================================
    6 · VALUES — found by light (one viewport)
    ========================================================================= */
-.val { position: relative; padding: 12vh var(--gutter) 12vh; overflow-x: clip; }
+.val { position: relative; padding: 10vh var(--gutter); overflow-x: clip; }
 .val__head { max-width: 40rem; }
 .val__head h2 { margin-top: 10px; }
 .val__wall {
@@ -1119,7 +1109,6 @@ html.fx .mth.is-sealed .mth__seal { transform: rotate(45deg) scale(1); opacity: 
   margin-top: 7vh;
 }
 .val__item { position: relative; display: flex; flex-direction: column; }
-.val__item:nth-child(n + 4) { transform: translateX(-6vw); }
 .val__word {
   position: relative;
   display: inline-block;
@@ -1179,7 +1168,6 @@ html.fx .val__lamp::before {
 }
 @media (max-width: 860px) {
   .val__wall { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3vh 6vw; margin-top: 5vh; }
-  .val__item:nth-child(n + 4) { transform: none; }
   .val__word { font-size: clamp(1.9rem, 9vw, 2.6rem); }
   .val__body { font-size: 0.92rem; line-height: 1.7; }
 }
@@ -1370,7 +1358,7 @@ html.fx .val__lamp::before {
    OUTRO
    ========================================================================= */
 .outro {
-  min-height: 86svh;
+  min-height: 80svh;
   display: grid;
   grid-template-rows: 1fr auto;
   justify-items: center;
@@ -1403,7 +1391,7 @@ html.fx .val__lamp::before {
 html.is-intro body { overflow: hidden; }
 html.is-intro .hdr { transform: translateY(-110%); }
 html.is-intro .hero__copy,
-html.is-intro .hero__cue { opacity: 0; }
+html.is-intro .link--hero { opacity: 0; }
 html.is-intro .m-pen,
 html.is-intro .m-scale { opacity: 0; }
 html.is-intro .hero__mark .write path { visibility: hidden; }
@@ -1420,4 +1408,37 @@ html.is-intro .hero__mark .write path { visibility: hidden; }
 .wiping {
   -webkit-mask-image: linear-gradient(to left, #000 calc(var(--wp, 0) * 150% - 50%), transparent calc(var(--wp, 0) * 150%));
   mask-image: linear-gradient(to left, #000 calc(var(--wp, 0) * 150% - 50%), transparent calc(var(--wp, 0) * 150%));
+}
+
+/* =========================================================================
+   THE THREAD — every hand-off is the same gold line with a bead of light
+   dropping from one scene into the next.
+   ========================================================================= */
+.link { position: relative; z-index: 4; height: 0; pointer-events: none; }
+.link::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -6vh;
+  width: 1px;
+  height: 12vh;
+  background: linear-gradient(180deg, rgba(226, 190, 118, 0), rgba(226, 190, 118, 0.55) 35%, rgba(226, 190, 118, 0.55) 65%, rgba(226, 190, 118, 0));
+}
+.link i {
+  position: absolute;
+  left: 50%;
+  top: -6vh;
+  width: 3px;
+  height: 3.6vh;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(246, 223, 166, 0), #fff6dd);
+  box-shadow: 0 0 10px rgba(226, 190, 118, 0.9);
+  animation: thread 3.4s var(--ease-io) infinite;
+}
+@keyframes thread {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(8.4vh); opacity: 0; }
 }

@@ -1,8 +1,8 @@
 ---
-// 05 · Idea: "From the first document to the last action". The expertise field collapses back
-// into the pillar, which now holds the title. Five verbs stand on one procedural rail that the
-// scroll draws from the first document to the last action; each verb locks on as the rail reaches it.
-// The rail ends in an ink field: «…بل بمنظومة.»
+// 05 · Idea: "From the first document to the last action". The expertise field folds back into the
+// pillar, which runs the full height of the scene: title at the top, the current step as a giant reel
+// numeral at the foot. Beside it, five verbs stand on one procedural rail that the scroll draws; each verb
+// locks on as the rail reaches it. The pillar then grows into the ink field: «…بل بمنظومة.»
 import Guides from '../Guides.astro';
 import Label from '../Label.astro';
 import Arrow from '../Arrow.astro';
@@ -13,25 +13,28 @@ import { method } from '../../data/content';
   <div class="grid method-grid">
     <div class="pillar method-pillar" data-tone="maroon">
       <Label index="05" text={method.label} class="rv" />
-      <h2 class="method-title d2">
+      <h2 class="method-title">
         <span class="ln"><span class="ln-i">{method.title[0]}</span></span>
         <span class="ln"><span class="ln-i">{method.title[1]}</span></span>
       </h2>
+      <span class="pillar-count" dir="ltr" aria-hidden="true">
+        <span class="vbig"><span class="rl"><span class="rl-s"><i>0</i></span></span><span class="rl" data-mstep style="--d:5"><span class="rl-s"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i></span></span></span>
+        <span class="vof">/ 05</span>
+      </span>
     </div>
-    <p class="method-body lead rv">{method.body}</p>
-  </div>
 
-  <div class="grid rail-wrap">
+    <p class="method-body lead rv">{method.body}</p>
+
     <div class="rail" data-rail>
       <span class="rail-track" aria-hidden="true"><b></b></span>
       <ol class="rail-steps">
-      {method.steps.map((s, i) => (
-        <li class="st" data-st>
-          <span class="st-node rh" aria-hidden="true"></span>
-          <span class="st-i" dir="ltr">{String(i + 1).padStart(2, '0')}</span>
-          <span class="st-t">{s}</span>
-        </li>
-      ))}
+        {method.steps.map((s, i) => (
+          <li class="st" data-st>
+            <span class="st-node rh" aria-hidden="true"></span>
+            <span class="st-i" dir="ltr">{String(i + 1).padStart(2, '0')}</span>
+            <span class="st-t">{s}</span>
+          </li>
+        ))}
       </ol>
     </div>
   </div>

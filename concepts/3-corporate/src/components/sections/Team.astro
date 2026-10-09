@@ -1,7 +1,7 @@
 ---
-// 06 · Idea: "The people behind the file". The ink statement field collapses into the pillar,
-// which now carries «فريقنا — قريبًا». Beside it, the firm's three practice-group leaders in one
-// frame system: the same tonal treatment, the same tight crop, the same keyline, rising in a stair.
+// 06 · Idea: "The people behind the file". The ink statement field folds into the pillar, which carries
+// the title and «فريقنا — قريبًا» and runs on into the values pillar below. Beside it, the firm's three
+// practice-group leaders in one frame system: the same tonal treatment, the same tight crop, the same keyline.
 import Guides from '../Guides.astro';
 import Label from '../Label.astro';
 import Mark from '../Mark.astro';
@@ -18,19 +18,20 @@ const people = [
     <div class="pillar team-pillar" data-tone="dark">
       <div class="relief" aria-hidden="true"><Mark class="relief-mark team-relief" calligraphyOnly /></div>
       <Label index="06" text="فريقنا" class="rv" />
-      <p class="team-soon d2">
-        <span class="ln"><span class="ln-i">قريبًا</span></span>
-      </p>
-      <p class="team-note rv">صفحة فريق الفيصل قيد الإعداد.</p>
-      <span class="team-soon-bar" aria-hidden="true"></span>
-    </div>
-
-    <div class="team-head">
-      <h2 class="team-title d2">
+      <h2 class="team-title">
         <span class="ln"><span class="ln-i">الأشخاص</span></span>
         <span class="ln"><span class="ln-i">خلف الملف</span></span>
       </h2>
-      <p class="team-cap rv">قادة مجموعات الممارسة</p>
+      <div class="team-soon-box">
+        <span class="team-soon-bar" aria-hidden="true"></span>
+        <p class="team-soon"><span class="ln"><span class="ln-i">قريبًا</span></span></p>
+        <p class="team-note rv">صفحة فريق الفيصل قيد الإعداد.</p>
+      </div>
+    </div>
+
+    <div class="team-head">
+      <p class="team-cap d3"><span class="ln"><span class="ln-i">قادة مجموعات الممارسة</span></span></p>
+      <span class="team-count" dir="ltr">03</span>
     </div>
 
     <ul class="portraits">
@@ -40,7 +41,7 @@ const people = [
             <div class="pt-frame">
               <img src={p.src} alt="أحد قادة مجموعات الممارسة في شركة الفيصل" width="720" height="900" loading="lazy" decoding="async" />
             </div>
-            <figcaption><span dir="ltr" class="tnum">{p.i}</span><span class="rh" aria-hidden="true"></span><span>مجموعة ممارسة</span></figcaption>
+            <figcaption><span dir="ltr" class="tnum">{p.i}</span><span class="rh" aria-hidden="true"></span><span>قائد مجموعة ممارسة</span></figcaption>
           </figure>
         </li>
       ))}

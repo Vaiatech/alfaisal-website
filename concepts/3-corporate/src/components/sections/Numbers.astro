@@ -7,7 +7,9 @@ import Guides from '../Guides.astro';
 import Label from '../Label.astro';
 import Num from '../Num.astro';
 import { stats } from '../../data/content';
+// Bars use a logarithmic scale so the small figures (17, 25, 40) stay legible next to 6,300; the ledger says so.
 const max = Math.max(...stats.items.map((s) => s.value));
+const w = (v: number) => (Math.log10(v) / Math.log10(max)).toFixed(4);
 ---
 <section class="sc numbers field-grow" id="numbers" data-tone="dark" data-name="الأرقام" data-i="02">
   <div class="field" aria-hidden="true"></div>
@@ -40,7 +42,7 @@ const max = Math.max(...stats.items.map((s) => s.value));
 
     <ol class="ledger" aria-label="أرقام الفيصل">
       {stats.items.map((s, i) => (
-        <li class="lg-row" style={`--w:${Math.max(s.value / max, 0.004).toFixed(4)}`}>
+        <li class="lg-row" style={`--w:${w(s.value)}`}>
           <span class="lg-i" dir="ltr">{String(i + 1).padStart(2, '0')}</span>
           <span class="lg-label">{s.label}</span>
           <span class="lg-bar" aria-hidden="true"><b></b></span>
@@ -48,5 +50,6 @@ const max = Math.max(...stats.items.map((s) => s.value));
         </li>
       ))}
     </ol>
+    <p class="ledger-note">أطوال الأشرطة على مقياس لوغاريتمي</p>
   </div>
 </section>

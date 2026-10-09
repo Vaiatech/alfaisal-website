@@ -3,7 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { Track, ease } from './director';
 import type { Stage } from './gl/stage';
-import { fitCamera, worldPerPixel, aimVanishing, LOGO_H, type V3 } from './gl/math';
+import { fitCamera, aimVanishing, LOGO_H, type V3 } from './gl/math';
 
 /* ─────────────────────────── setup ─────────────────────────── */
 const html = document.documentElement;
@@ -105,7 +105,7 @@ function targetY(id: string) {
   if (!el) return null;
   let y = el.getBoundingClientRect().top + window.scrollY;
   if (id === 'about' && sts.story) y = sts.story.start + (sts.story.end - sts.story.start) * 0.04;
-  if (id === 'method' && sts.method) y = sts.method.start + (sts.method.end - sts.method.start) * 0.05;
+  if (id === 'method' && sts.method) y = sts.method.start + (sts.method.end - sts.method.start) * 0.06;
   if (id === 'expertise' && sts.exp) y = sts.exp.start;
   return Math.min(y, ScrollTrigger.maxScroll(window));
 }
@@ -245,21 +245,31 @@ const storyLines = qsa('.story-line');
 const storyCopy = qs('.story-copy');
 const storyClose = qsa('.story-close .ln');
 function storyScene(p: number) {
-  const th = [0.03, 0.15, 0.3];
+  const th = [0.02, 0.12, 0.24];
   storyLines.forEach((l, i) => (l.style.opacity = (0.2 + 0.8 * smooth(map(p, th[i], th[i] + 0.08))).toFixed(3)));
-  const out = smooth(map(p, 0.5, 0.62));
+  const out = smooth(map(p, 0.44, 0.54));
   storyCopy.style.opacity = (1 - out).toFixed(3);
   storyCopy.style.visibility = out > 0.999 ? 'hidden' : '';
-  storyClose.forEach((l, i) => setR(l, 1.2 * map(p, 0.68 + i * 0.06, 0.8 + i * 0.06)));
+  storyClose.forEach((l, i) => setR(l, 1.2 * map(p, 0.64 + i * 0.07, 0.78 + i * 0.07)));
 }
 
 // 03a — the line pours into the engraving
 const engr = qs('.engr');
 const leadSub = qsa('.lead-sub .ln');
-function leadScene(p: number) {
-  engr.style.setProperty('--fill', smooth(map(p, 0.5, 0.8)).toFixed(4));
-  engr.style.setProperty('--sweep', (-0.3 + 1.7 * map(p, 0.6, 1)).toFixed(4));
-  leadSub.forEach((l, i) => setR(l, 1.2 * map(p, 0.62 + i * 0.08, 0.78 + i * 0.08)));
+const leadEl = qs('.lead');
+const ledgerWrap = qs('.ledger-wrap');
+/** one scene: the line pours into the engraving, the figure rises, the beam reads the ledger */
+function numbersScene(p: number) {
+  engr.style.setProperty('--fill', smooth(map(p, 0.17, 0.33)).toFixed(4));
+  engr.style.setProperty('--sweep', (-0.3 + 1.7 * map(p, 0.24, 0.5)).toFixed(4));
+  const subOut = smooth(map(p, 0.4, 0.46));
+  leadSub.forEach((l, i) => { setR(l, 1.2 * map(p, 0.22 + i * 0.05, 0.32 + i * 0.05)); l.style.opacity = (1 - subOut).toFixed(3); });
+  const lift = smooth(map(p, 0.42, 0.56));
+  const vh = window.innerHeight;
+  const dy = (mobile ? 0.27 : 0.29) * vh * lift;
+  leadEl.style.transform = lift > 0 ? `translate3d(0, ${(-dy).toFixed(1)}px, 0) scale(${(1 - (mobile ? 0.4 : 0.5) * lift).toFixed(4)})` : '';
+  setR(ledgerWrap, 1.2 * map(p, 0.5, 0.62));
+  ledgerScene(map(p, 0.6, 0.97));
 }
 
 // 03b — the ledger is read by a beam of light; each figure counts only while lit
@@ -320,7 +330,8 @@ function expScene(p: number) {
   const vw = VW();
   expItems.forEach((it) => {
     const r = it.getBoundingClientRect();
-    const k = 1 - smooth(Math.abs(r.right - vw * 0.62) / (vw * 0.55));
+    // only the area at the focus point is fully legible; its neighbours recede
+    const k = 1 - smooth(Math.abs(r.right - vw * 0.6) / (r.width * 0.85));
     it.style.setProperty('--lit', k.toFixed(3));
   });
 }
@@ -331,6 +342,10 @@ const methodCopy = qs('.method-copy');
 const methodState = qs('.method-state');
 const methodStateLines = qsa('.method-state .ln');
 const methodBtn = qs('.method-state .btn');
+const lsParts = qsa<SVGPathElement>('.ls-part');
+const lsSwing = qs('.ls-swing');
+const lsSvg = qs('.lscale');
+const swing = { amp: 9, target: 9, t: 0 };
 let curStep = -1;
 function methodScene(p: number) {
   const f = map(p, 0.04, 0.7) * 5;
@@ -339,8 +354,13 @@ function methodScene(p: number) {
     curStep = idx;
     steps.forEach((s, i) => { s.classList.toggle('on', i === idx); s.classList.toggle('done', i < idx); });
   }
-  const bal = f >= 4.999 ? 1 : Math.floor(f) / 5;
-  stage?.set({ balance: bal });
+  // each step draws one part of the logo's scale; its swing dies down step by step
+  lsParts.forEach((el) => { const k = +(el.dataset.s || 0); el.style.setProperty('--d', (1 - clamp01(f - k)).toFixed(4)); });
+  const bowl = clamp01(f - 3);
+  lsSvg.style.setProperty('--bf', (0.04 + bowl * 0.14).toFixed(3));
+  const amps = [9, 7, 4.5, 2.4, 1];
+  swing.target = f >= 4.999 ? 0 : amps[idx];
+  lsSvg.style.setProperty('--ha', (0.35 + 0.65 * smooth(map(f, 4.6, 5))).toFixed(3));
   const out = smooth(map(p, 0.73, 0.8));
   methodCopy.style.opacity = (1 - out).toFixed(3);
   methodCopy.style.visibility = out > 0.999 ? 'hidden' : '';
@@ -348,33 +368,33 @@ function methodScene(p: number) {
   methodStateLines.forEach((l, i) => setR(l, 1.2 * map(p, 0.76 + i * 0.07, 0.88 + i * 0.07)));
   methodBtn.style.opacity = smooth(map(p, 0.9, 0.97)).toFixed(3);
 }
+function swingTick(dt: number) {
+  swing.amp += (swing.target - swing.amp) * Math.min(1, dt * 1.6);
+  swing.t += dt;
+  lsSwing.style.setProperty('--sw', (swing.amp * Math.sin((swing.t * Math.PI * 2) / 2.6)).toFixed(3) + 'deg');
+}
 
 function setupScenes() {
   const vh = () => window.innerHeight;
   sts.story = ScrollTrigger.create({
-    trigger: '.story-pin', pin: true, start: 'top top', end: () => '+=' + vh() * (mobile ? 2.4 : 2.8), scrub: true,
+    trigger: '.story-pin', pin: true, start: 'top top', end: () => '+=' + vh() * (mobile ? 1.1 : 1.0), scrub: true,
     onUpdate: (s) => storyScene(s.progress), onRefresh: (s) => storyScene(s.progress),
   });
   storyClose.forEach((l) => l.classList.add('wv'));
   storyScene(0);
 
-  sts.lead = ScrollTrigger.create({
-    trigger: '.lead', pin: true, start: 'top top', end: () => '+=' + vh() * 1.4, scrub: true,
-    onUpdate: (s) => leadScene(s.progress), onRefresh: (s) => leadScene(s.progress),
+  sts.num = ScrollTrigger.create({
+    trigger: '.num-pin', pin: true, start: 'top top', end: () => '+=' + vh() * 1.15, scrub: true,
+    onUpdate: (s) => numbersScene(s.progress), onRefresh: (s) => { measureCells(); numbersScene(s.progress); },
   });
   leadSub.forEach((l) => l.classList.add('wv'));
-  leadScene(0);
-
-  sts.ledger = ScrollTrigger.create({
-    trigger: '.ledger-wrap', pin: true, start: 'top top', end: () => '+=' + vh() * 1.6, scrub: true,
-    onUpdate: (s) => ledgerScene(s.progress), onRefresh: (s) => { measureCells(); ledgerScene(s.progress); },
-  });
+  ledgerWrap.classList.add('wv');
   measureCells();
-  ledgerScene(0);
+  numbersScene(0);
 
   if (!mobile) {
     sts.exp = ScrollTrigger.create({
-      trigger: '.exp-pin', pin: true, start: 'top top', end: () => '+=' + Math.max(vh(), expDist() * 1.15), scrub: true, invalidateOnRefresh: true,
+      trigger: '.exp-pin', pin: true, start: 'top top', end: () => '+=' + vh() * 1.1, scrub: true, invalidateOnRefresh: true,
       onUpdate: (s) => expScene(s.progress), onRefresh: (s) => expScene(s.progress),
     });
     expScene(0);
@@ -386,11 +406,13 @@ function setupScenes() {
   }
 
   sts.method = ScrollTrigger.create({
-    trigger: '.method-pin', pin: true, start: 'top top', end: () => '+=' + vh() * (mobile ? 2.6 : 3.2), scrub: true,
+    trigger: '.method-pin', pin: true, start: 'top top', end: () => '+=' + vh() * (mobile ? 1.2 : 1.05), scrub: true,
     onUpdate: (s) => methodScene(s.progress), onRefresh: (s) => methodScene(s.progress),
   });
   methodStateLines.forEach((l) => l.classList.add('wv'));
   methodScene(0);
+  swing.amp = 9;
+  gsap.ticker.add((_t, dms) => swingTick(Math.min(0.05, dms / 1000)));
 
   // 06 — each value is engraved by the raking light as it crosses the frame
   qsa('.val').forEach((row) => {
@@ -406,7 +428,7 @@ function setupScenes() {
   // one gesture for every heading and block that enters
   const reveal = [
     ...qsa('.story .rv, .exp .rv, .method .rv, .values .rv'),
-    ...qsa('.values-head .label, .story-copy .label, .exp-head .label, .method-copy .label, .lead .label'),
+    ...qsa('.values-head .label, .story-copy .label, .exp-head .label, .method-copy .label, .num-label'),
     ...qsa('.contact > *'),
     ...(mobile ? qsa('.exp-text') : []),
   ];
@@ -435,8 +457,7 @@ async function layout() {
   chapters.forEach((c) => (c.top = docTop(c.el)));
 
   const S0 = sts.story.start, S1 = sts.story.end, SL = S1 - S0;
-  const L0 = sts.lead.start, L1 = sts.lead.end, LL = L1 - L0;
-  const G0 = sts.ledger.start, G1 = sts.ledger.end, GL = G1 - G0;
+  const N0 = sts.num.start, N1 = sts.num.end, NL = N1 - N0;
   const expEl = qs('#expertise');
   const E0 = sts.exp ? sts.exp.start : docTop(expEl) - vh * 0.3;
   const E1 = sts.exp ? sts.exp.end : docTop(expEl) + expEl.offsetHeight - vh * 0.7;
@@ -444,7 +465,7 @@ async function layout() {
   const valuesEl = qs('#values'), contactEl = qs('#contact');
   const V0 = docTop(valuesEl) - vh * 0.5;
   const C0 = docTop(contactEl) - vh * 0.6;
-  const O1 = maxS, O0 = Math.max(C0 + 10, O1 - vh * 1.05);
+  const O1 = maxS, O0 = Math.max(C0 + 10, O1 - vh * 0.95);
   outro = { O0, O1 };
 
   // hero: the particles sit exactly where the static mark would be
@@ -456,29 +477,22 @@ async function layout() {
 
   // story
   const A = mobile ? { cam: [0, 4.2, 31] as V3, look: [0, 4.2, 0] as V3 } : { cam: [2.3, 0, 15.5] as V3, look: [2.3, 0, 0] as V3 };
-  const B = mobile ? { cam: [0, 3.6, 27] as V3, look: [0, 3.6, 0] as V3 } : { cam: [2.0, -0.3, 13.2] as V3, look: [2.0, -0.3, 0] as V3 };
+  const B = mobile ? { cam: [0, 3.6, 27] as V3, look: [0, 3.6, 0] as V3 } : { cam: [2.0, -0.3, 13.6] as V3, look: [2.0, -0.3, 0] as V3 };
   const C = mobile ? { cam: [0, 0.5, 26] as V3, look: [0, 0.1, 0] as V3 } : { cam: [0, 1.0, 17.5] as V3, look: [0, 0.45, 0] as V3 };
   const Dk = mobile ? { cam: [0, 0.5, 25] as V3, look: [0, 0.1, 0] as V3 } : { cam: [0, 1.0, 16.5] as V3, look: [0, 0.45, 0] as V3 };
 
   // numbers: straight camera; the glyphs are sampled from the DOM number in its pinned place
   const ND = 14;
   const numCam: V3 = [0, 0, ND], numLook: V3 = [0, 0, 0];
-  const wppN = worldPerPixel(ND, vh);
-  const ledgerCam = shiftY(numCam, -(G0 - L1) * wppN);
-  const ledgerLook = shiftY(numLook, -(G0 - L1) * wppN);
 
-  // expertise
-  const expA = mobile ? { cam: [5, 0.6, 19] as V3, look: [4.2, 0.6, 0] as V3 } : { cam: [10, 0.9, 12] as V3, look: [8.8, 0.62, 0] as V3 };
-  const expB = mobile ? { cam: [-5, 0.6, 19] as V3, look: [-5.8, 0.6, 0] as V3 } : { cam: [-10, 0.9, 12] as V3, look: [-11.2, 0.62, 0] as V3 };
+  // expertise: the camera rides the line; the line sits on the rail (60% of the frame)
+  const expA = mobile ? { cam: [5, 0.6, 19] as V3, look: [4.2, 0.6, 0] as V3 } : { cam: [10, 0.8, 12] as V3, look: [8.8, 0.8, 0] as V3 };
+  const expB = mobile ? { cam: [-5, 0.6, 19] as V3, look: [-5.8, 0.6, 0] as V3 } : { cam: [-10, 0.8, 12] as V3, look: [-11.2, 0.8, 0] as V3 };
 
-  // method: straight camera; the scale is placed inside .method-visual
-  const MD = 13;
-  const mCam: V3 = [0, -30, MD], mLook: V3 = [0, -30, 0];
-  const wppM = worldPerPixel(MD, vh);
-  const mvEl = qs('.method-visual');
-  const mvr = mvEl.getBoundingClientRect(), mpr = qs('.method-pin').getBoundingClientRect();
-  const mRect = { x: mvr.left, y: mvr.top - mpr.top, w: mvr.width, h: mvr.height };
-  const mcx = ((mRect.x + mRect.w / 2) / vw) * 100, mcy = ((mRect.y + mRect.h * 0.3) / vh) * 100;
+  // method: the air around the scale
+  const mCam: V3 = [0, -30, 13], mLook: V3 = [0, -30, 0];
+  const mvr = qs('.method-visual').getBoundingClientRect(), mpr = qs('.method-pin').getBoundingClientRect();
+  const mcx = ((mvr.left + mvr.width / 2) / vw) * 100, mcy = ((mvr.top - mpr.top + mvr.height * 0.42) / vh) * 100;
 
   // outro: camera pulls back to the full signature
   const oRect = rectAtScroll(qs('.outro-mark'), O1);
@@ -493,52 +507,53 @@ async function layout() {
   track.clear();
   const k = (at: number, v: Record<string, number | number[]>, e = ease.io) => track.key(at, v, e);
   // ── film ──
-  k(0, { near: 9, par: 1, seq: 0, cam: hero.cam, look: hero.look, spread: 0.25, turb: 0, mouseK: 1, write: 1, scaleIn: 0, rot: 0, gain: 1 });
-  k(heroFollow, { seq: 0.3, cam: shiftY(hero.cam, -heroFollow * hero.wpp * 0.55), look: shiftY(hero.look, -heroFollow * hero.wpp * 0.55), turb: 1.8, mouseK: 0 }, ease.lin);
-  k(S0, { seq: 1, cam: A.cam, look: A.look, turb: 0.6, rot: 0 });
-  k(S0 + SL * 0.42, { seq: 1, cam: B.cam, look: B.look, rot: 1.3 });
-  k(S0 + SL * 0.5, { seq: 1, spread: 1.0, turb: 0.9 });
-  k(S0 + SL * 0.8, { seq: 2, cam: C.cam, look: C.look, rot: 1.7 });
-  k(S1, { seq: 2, spread: 0.18, cam: Dk.cam, look: Dk.look, turb: 0.9 });
-  k(L0, { seq: 2, cam: numCam, look: numLook, spread: 0.18 });
-  k(L0 - vh * 0.2, { par: 1 });
-  k(L0 + LL * 0.2, { par: 0 });
-  k(L0 + LL * 0.42, { seq: 3, turb: 0.7 });
-  k(L1, { seq: 3, cam: numCam, look: numLook });
-  k(G0, { seq: 3, cam: ledgerCam, look: ledgerLook }, ease.lin);
-  k(G0 + GL * 0.3, { seq: 4, turb: 0.5, par: 0 });
-  k(G0 + GL * 0.5, { par: 1 });
-  k(G1, { seq: 4, cam: shiftY(ledgerCam, -3), look: shiftY(ledgerLook, -3), spread: 0.18, gain: 1 });
-  k(E0, { seq: 5, spread: mobile ? 0.7 : 1.15, cam: expA.cam, look: expA.look, gain: mobile ? 0.6 : 1 });
-  k(E1, { seq: 5, cam: expB.cam, look: expB.look, scaleIn: 0 }, sts.exp ? ease.lin : ease.io);
-  k(M0, { seq: 6, cam: mCam, look: mLook, scaleIn: 1, gain: 1 });
-  k(M1, { seq: 6, cam: mCam, look: mLook, scaleIn: 1 });
-  k(M1 + vh * 0.5, { scaleIn: 0.5 }, ease.lin);
-  k(M1 + vh, { cam: shiftY(mCam, -vh * wppM), look: shiftY(mLook, -vh * wppM), scaleIn: 0 }, ease.lin);
-  k(V0, { seq: 6, cam: shiftY(mCam, -vh * wppM - 6), look: shiftY(mLook, -vh * wppM - 6) });
+  k(0, { near: 9, par: 1, seq: 0, cam: hero.cam, look: hero.look, spread: 0.25, turb: 0, mouseK: 1, write: 1, rot: 0, gain: 1 });
+  k(heroFollow, { seq: 0.3, cam: shiftY(hero.cam, -heroFollow * hero.wpp * 0.55), look: shiftY(hero.look, -heroFollow * hero.wpp * 0.55), turb: 1.6, mouseK: 0 }, ease.lin);
+  k(S0, { seq: 1, cam: A.cam, look: A.look, turb: 0.5, rot: 0 });
+  k(S0 + SL * 0.4, { seq: 1, cam: B.cam, look: B.look, rot: 1.1 });
+  k(S0 + SL * 0.46, { seq: 1, spread: 1.0, turb: 0.8 });
+  k(S0 + SL * 0.74, { seq: 2, cam: C.cam, look: C.look, rot: 1.5 });
+  k(S1, { seq: 2, spread: 0.18, cam: Dk.cam, look: Dk.look, turb: 0.8 });
+  k(N0 - vh * 0.2, { par: 1 });
+  k(N0, { seq: 2, cam: numCam, look: numLook, spread: 0.18 });
+  k(N0 + NL * 0.08, { par: 0 });
+  k(N0 + NL * 0.17, { seq: 3, turb: 0.6 });
+  k(N0 + NL * 0.42, { seq: 3, cam: numCam, look: numLook });
+  k(N0 + NL * 0.54, { seq: 4, turb: 0.4, par: 0 });
+  k(N0 + NL * 0.66, { par: 1 });
+  k(N1, { seq: 4, cam: shiftY(numCam, -2), look: shiftY(numLook, -2), spread: 0.18, gain: 1 });
+  k(E0, { seq: 5, spread: mobile ? 0.5 : 0.34, cam: expA.cam, look: expA.look, gain: mobile ? 0.55 : 0.9 });
+  k(E1, { seq: 5, cam: expB.cam, look: expB.look }, sts.exp ? ease.lin : ease.io);
+  k(M0, { seq: 6, cam: mCam, look: mLook, gain: 0.9 });
+  k(M1, { seq: 6, cam: shiftY(mCam, -1.2), look: shiftY(mLook, -1.2) });
+  k(V0, { seq: 6, cam: shiftY(mCam, -8), look: shiftY(mLook, -8) });
   k(Math.max(V0 + 10, C0 - vh * 0.9), { seq: 6, write: 1, near: 9 });
   k(C0, { near: 19, seq: 7, spread: 0.5, cam: horizon.cam, look: horizon.look, gain: 0.6 });
   k(O0, { seq: 7, write: 0, cam: horizon.cam2, look: horizon.look, mouseK: 0, spread: 0.3 });
-  k(O1, { near: 9, par: 0.3, seq: 8, write: 1, cam: out.cam, look: out.look, mouseK: 1, gain: 1.25 });
+  k(O1, { near: 9, par: 0, seq: 8, write: 1, cam: out.cam, look: out.look, mouseK: 1, gain: 1.15 });
 
-  // ── light ──
-  k(0, { kx: hcx, ky: hcy, ka: 1, fa: 0.55, da: 0, ba: [30, 21, 17], bb: [11, 8, 7] });
-  k(S0, { kx: mobile ? 50 : 34, ky: mobile ? 72 : 50, ka: 0.6, fa: 0.95, ba: [22, 14, 13], bb: [9, 6, 6] });
-  k(S1, { kx: 50, ky: 56, ka: 0.75, fa: 0.7 });
-  k(L0 + LL * 0.5, { kx: 50, ky: 50, ka: 1, fa: 1, ba: [66, 17, 20], bb: [20, 7, 8] });
-  k(G0 + GL * 0.3, { ka: 0.55, fa: 0.8, ba: [46, 13, 15], bb: [14, 7, 7] });
-  k(E0, { kx: 50, ky: 57, ka: 0.8, fa: 0.45, ba: [27, 19, 16], bb: [10, 8, 7] });
-  k(M0, { kx: mcx, ky: mcy, ka: 1.15, fa: 0.5, ba: [31, 22, 18], bb: [9, 7, 6] });
-  k(V0, { kx: 76, ky: 38, ka: 0.6, fa: 0.6, ba: [36, 25, 18], bb: [12, 9, 7], da: 0 });
-  k(C0, { kx: 50, ky: 50, ka: 1.1, da: 0.45, fa: 0.5 });
-  k(O0, { da: 0.85, ka: 1, ky: 52 });
-  k(O1, { kx: 50, ky: ocy, ka: 1.1, da: 1, fa: 0.6, ba: [34, 24, 19], bb: [12, 9, 8] });
+  // ── light: one clean ink world; gold light placed behind each focal element ──
+  const INK_A = [17, 19, 26], INK_B = [7, 8, 11];
+  k(0, { kx: hcx, ky: hcy, ka: 1, fa: 0.6, da: 0, ba: INK_A, bb: INK_B });
+  k(S0, { kx: mobile ? 50 : 36, ky: mobile ? 72 : 50, ka: 0.7, ba: [14, 16, 22] });
+  k(S1, { kx: 50, ky: mobile ? 56 : 58, ka: 0.8 });
+  k(N0 + NL * 0.2, { kx: 50, ky: 50, ka: 1.05, ba: INK_A });
+  k(N0 + NL * 0.56, { kx: 50, ky: mobile ? 66 : 68, ka: 0.6 });
+  k(E0, { kx: 62, ky: 60, ka: 0.75 });
+  k(M0, { kx: mcx, ky: mcy, ka: 1.05 });
+  k(M1, { ka: 1.1 });
+  k(V0, { kx: 74, ky: 40, ka: 0.5, da: 0 });
+  k(C0, { kx: 50, ky: 50, ka: 0.95, da: 0.4 });
+  k(O0, { da: 0.8, ka: 0.9, ky: 52 });
+  k(O1, { kx: 50, ky: ocy, ka: 1.1, da: 1, ba: INK_A, bb: INK_B });
   track.finalize();
 
   if (stage) {
     stage.resize();
-    stage.placeScale(mRect, mCam, MD);
-    const er = engr.getBoundingClientRect(), lr = qs('.lead').getBoundingClientRect();
+    const prevT = leadEl.style.transform;
+    leadEl.style.transform = '';
+    const er = engr.getBoundingClientRect(), lr = qs('.num-pin').getBoundingClientRect();
+    leadEl.style.transform = prevT;
     stage.sampleNumber(engr, { x: er.left, y: er.top - lr.top, w: er.width, h: er.height }, numCam, ND);
     stage.setWords(qsa('.story-words li'), mobile ? 1.05 : 2.15, mobile);
     if (introK > 0) {
@@ -590,7 +605,7 @@ function drive() {
   }
   stage.set({
     seq: g('seq') as number, cam, look, spread: g('spread') as number, turb: g('turb') as number,
-    mouseK: g('mouseK') as number, write: g('write') as number, scaleIn: g('scaleIn') as number,
+    mouseK: g('mouseK') as number, write: g('write') as number,
     rot: g('rot') as number, gain: (g('gain') as number) * gainMul, par: g('par') as number, near: g('near') as number,
   });
 }

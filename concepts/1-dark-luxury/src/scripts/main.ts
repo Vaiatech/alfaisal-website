@@ -331,7 +331,7 @@ function runIntro() {
     .to(l1, { yPercent: 0, duration: 1.3, ease: EASE.out, stagger: 0.08 }, move + 0.85)
     .to(l2, { yPercent: 0, duration: 1.3, ease: EASE.out, stagger: 0.06 }, move + 1.05)
     .add(() => body.forEach((b, i) => wipeIn(b, { delay: i * 0.15 })), move + 1.25)
-    .fromTo('.hero__cue', { opacity: 0 }, { opacity: 1, duration: 1 }, move + 1.8)
+    .fromTo('.link--hero', { opacity: 0 }, { opacity: 1, duration: 1 }, move + 1.8)
     .add(() => {
       lenis?.start();
       paths.forEach((p) => p.removeAttribute('style'));
@@ -437,7 +437,7 @@ function setupStory() {
   window.addEventListener('resize', measure);
 
   const hdrH = () => (isMobile() ? 66 : 84);
-  const cy = () => H / 2 + hdrH() * 0.35;
+  const cy = () => H / 2 + hdrH() * 0.35 + (isMobile() ? 64 : 0);
   const pos = (i: number, p: number, t: number) => {
     const sc = (isMobile() ? scatterM : scatterD)[i];
     const sx = sc[0] * W, sy = sc[1] * H;
@@ -543,7 +543,7 @@ function setupStory() {
     .fromTo(lines[2], { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.08 }, 0.56)
     .to(lines[2], { opacity: 0, y: -16, duration: 0.05 }, 0.8)
     .to(head, { opacity: 0, y: -30, duration: 0.08 }, 0.8)
-    .fromTo(lines[3], { opacity: 0, y: 24 }, { opacity: 1, y: () => (isMobile() ? -96 : -40), duration: 0.1 }, 0.86)
+    .fromTo(lines[3], { opacity: 0, y: 24 }, { opacity: 1, y: () => (isMobile() ? 106 : -40), duration: 0.1 }, 0.86)
     .fromTo(core, { scale: 0, rotation: 45 }, { scale: 1, rotation: 45, duration: 0.08, ease: 'back.out(2)' }, 0.86);
 
   ScrollTrigger.create({
@@ -576,7 +576,7 @@ function setupNumbers() {
   const unit = $('.lead-num__unit');
   gsap.set([pre, unit], { opacity: 0, x: 30 });
   ScrollTrigger.create({
-    trigger: '.lead-num', start: 'top 78%', once: true,
+    trigger: '.lead-num', start: 'top 95%', once: true,
     onEnter: () => {
       gsap.to(pre, { opacity: 1, x: 0, duration: 1.2, ease: EASE.out });
       leadOdo.play(0.1);
@@ -683,6 +683,34 @@ function setupExpertise() {
     else window.scrollTo(0, y);
   }));
   gsap.from([ticks, $('.xp__num', dial)], { opacity: 0, scale: 0.92, duration: 1.8, ease: EASE.out, scrollTrigger: { trigger: '.xp', start: 'top 70%', once: true } as ScrollTrigger.Vars });
+
+  // the pointer's leader: a gold line from the instrument to the area it names
+  const lead = document.createElementNS(SVGNS, 'svg');
+  lead.setAttribute('class', 'xp__lead');
+  lead.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS(SVGNS, 'path');
+  const dot = document.createElementNS(SVGNS, 'circle');
+  dot.setAttribute('r', '2.5');
+  lead.append(path, dot);
+  stage.appendChild(lead);
+  const ly = { v: -1 };
+  let vis = false;
+  ScrollTrigger.create({ trigger: '.xp', start: 'top bottom', end: 'bottom top', onToggle: (x) => { vis = x.isActive; } });
+  gsap.ticker.add(() => {
+    if (!vis || isMobile()) { path.setAttribute('d', ''); return; }
+    const sr = stage.getBoundingClientRect();
+    const dr = dial.getBoundingClientRect();
+    const px = dr.right - sr.left + 6, py = dr.top + dr.height / 2 - sr.top;
+    const row = $('.xp__row', items[Math.max(0, active)]);
+    const rr = row.getBoundingClientRect();
+    const tx = rr.left - sr.left - 18;
+    const ty = rr.top + rr.height / 2 - sr.top;
+    ly.v = ly.v < 0 ? ty : lerp(ly.v, ty, 0.14);
+    const mx = px + (tx - px) * 0.55;
+    path.setAttribute('d', `M${px},${py} C${mx},${py} ${mx},${ly.v} ${tx},${ly.v}`);
+    dot.setAttribute('cx', String(tx));
+    dot.setAttribute('cy', String(ly.v));
+  });
 }
 
 /* ------------------------------------------------------------------ *
@@ -734,7 +762,7 @@ function setupMethod() {
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    const amp = H * 0.34;
+    const amp = H * (isMobile() ? 0.3 : 0.34);
     const left = sealX, right = Math.min(W, startX + W * 0.06);
     // noise ahead of the front (x < front), one calm line behind it (x > front)
     const ampAt = (x: number) => {

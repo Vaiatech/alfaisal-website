@@ -1,6 +1,7 @@
 ---
-// Outro · Idea: "The signature". The page closes the way it opened: the calligraphy writes itself,
-// this time across the ink footer at architectural scale, and signs the page. Then the tagline locks in.
+// Outro · Idea: "The signature". The page closes the way it opened: the full mark — calligraphy, pen and
+// scale — writes itself on the ink footer, uncropped, like a signature at the foot of a document.
+// The firm's name, menu and contact sit beside it on the grid; the tagline locks in last.
 import Mark from './Mark.astro';
 import Guides from './Guides.astro';
 import Arrow from './Arrow.astro';
@@ -8,12 +9,15 @@ import { nav, site, contact } from '../data/content';
 ---
 <footer class="ft" data-tone="dark" id="end">
   <Guides />
-  <div class="ft-sign">
-    <Mark id="outro-mark" class="ft-mark" write />
-  </div>
   <div class="grid ft-grid">
+    <div class="ft-sign">
+      <Mark id="outro-mark" class="ft-mark" write />
+    </div>
     <div class="ft-id">
-      <p class="ft-name">{site.name}</p>
+      <p class="ft-name">
+        <span>شركة الفيصل</span>
+        <span>للمحاماة والاستشارات القانونية</span>
+      </p>
       <p class="ft-tag">
         {site.tagline.map((t, i) => (<><span class="ft-tw">{t}</span>{i < 2 && <span class="rh" aria-hidden="true"></span>}</>))}
       </p>
