@@ -291,6 +291,9 @@ const leadLines = closing.lead.split(/(?<=…)\s+/);
               </defs>
               <ellipse class="ls-halo" cx="834" cy="24" rx="40" ry="40" fill="url(#ls-halo)" />
               <g class="ls-swing">
+                <g class="ls-ghost">
+                  <path d="M834 32 V188 M832 33 L764 171 M836 33 L904 171 M763 169 V190 H905 V169 M786 210 H882 Q864 228 834 229.5 Q804 228 786 210 Z" />
+                </g>
                 <path class="ls-part" data-s="0" pathLength="1" d="M834 32 V188" />
                 <path class="ls-part" data-s="1" pathLength="1" d="M832 33 L764 171" />
                 <path class="ls-part" data-s="1" pathLength="1" d="M836 33 L904 171" />
@@ -342,10 +345,6 @@ const leadLines = closing.lead.split(/(?<=…)\s+/);
         </p>
         <h2 class="t-display rv">{closing.title}</h2>
         <p class="contact-body"><span class="ln">{closing.body[0]}</span><span class="ln">{closing.body[1]}</span></p>
-        <div class="contact-act">
-          <a class="btn btn-solid" href={site.consultUrl} target="_blank" rel="noopener"><span>احجز استشارة</span><i class="btn-line" aria-hidden="true"></i></a>
-          <a class="btn" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener"><span>واتساب</span><i class="btn-line" aria-hidden="true"></i></a>
-        </div>
         <dl class="contact-grid">
           <div>
             <dt>اتصل بنا</dt>
@@ -369,6 +368,10 @@ const leadLines = closing.lead.split(/(?<=…)\s+/);
             </dd>
           </div>
         </dl>
+        <div class="contact-act">
+          <a class="btn btn-solid" href={site.consultUrl} target="_blank" rel="noopener"><span>احجز استشارة</span><i class="btn-line" aria-hidden="true"></i></a>
+          <a class="btn" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener"><span>واتساب</span><i class="btn-line" aria-hidden="true"></i></a>
+        </div>
       </section>
 
       <!-- Outro · the camera pulls back to the signature -->

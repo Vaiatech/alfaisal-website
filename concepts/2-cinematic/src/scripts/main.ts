@@ -467,7 +467,7 @@ async function layout() {
   const valuesEl = qs('#values'), contactEl = qs('#contact');
   const V0 = docTop(valuesEl) - vh * 0.5;
   const C0 = docTop(contactEl) - vh * 0.6;
-  const O1 = maxS, O0 = Math.max(C0 + 10, O1 - vh * 0.95);
+  const O1 = maxS, O0 = Math.max(C0 + 10, O1 - vh * 0.72);
   outro = { O0, O1 };
 
   // hero: the particles sit exactly where the static mark would be
@@ -488,8 +488,8 @@ async function layout() {
   const numCam: V3 = [0, 0, ND], numLook: V3 = [0, 0, 0];
 
   // expertise: the camera rides the line; the line sits on the rail (60% of the frame)
-  const expA = mobile ? { cam: [5, 0.6, 19] as V3, look: [4.2, 0.6, 0] as V3 } : { cam: [10, 0.8, 12] as V3, look: [8.8, 0.8, 0] as V3 };
-  const expB = mobile ? { cam: [-5, 0.6, 19] as V3, look: [-5.8, 0.6, 0] as V3 } : { cam: [-10, 0.8, 12] as V3, look: [-11.2, 0.8, 0] as V3 };
+  const expA = mobile ? { cam: [5, 0.6, 19] as V3, look: [4.2, 0.6, 0] as V3 } : { cam: [10, 0.62, 12] as V3, look: [8.8, 0.62, 0] as V3 };
+  const expB = mobile ? { cam: [-5, 0.6, 19] as V3, look: [-5.8, 0.6, 0] as V3 } : { cam: [-10, 0.62, 12] as V3, look: [-11.2, 0.62, 0] as V3 };
 
   // method: the air around the scale
   const mCam: V3 = [0, -30, 13], mLook: V3 = [0, -30, 0];
@@ -509,7 +509,7 @@ async function layout() {
   track.clear();
   const k = (at: number, v: Record<string, number | number[]>, e = ease.io) => track.key(at, v, e);
   // ── film ──
-  k(0, { near: 9, par: 1, seq: 0, cam: hero.cam, look: hero.look, spread: 0.25, turb: 0, mouseK: 1, write: 1, rot: 0, gain: 1 });
+  k(0, { far: 400, near: 9, par: 1, seq: 0, cam: hero.cam, look: hero.look, spread: 0.25, turb: 0, mouseK: 1, write: 1, rot: 0, gain: 1 });
   k(heroFollow, { seq: 0.3, cam: shiftY(hero.cam, -heroFollow * hero.wpp * 0.55), look: shiftY(hero.look, -heroFollow * hero.wpp * 0.55), turb: 1.6, mouseK: 0 }, ease.lin);
   k(S0, { seq: 1, cam: A.cam, look: A.look, turb: 0.5, rot: 0 });
   k(S0 + SL * 0.4, { seq: 1, cam: B.cam, look: B.look, rot: 1.1 });
@@ -529,10 +529,10 @@ async function layout() {
   k(M0, { seq: 6, cam: mCam, look: mLook, gain: 0.9 });
   k(M1, { seq: 6, cam: shiftY(mCam, -1.2), look: shiftY(mLook, -1.2) });
   k(V0, { seq: 6, cam: shiftY(mCam, -8), look: shiftY(mLook, -8) });
-  k(Math.max(V0 + 10, C0 - vh * 0.9), { seq: 6, write: 1, near: 9 });
-  k(C0, { near: 19, seq: 7, spread: 0.5, cam: horizon.cam, look: horizon.look, gain: 0.6 });
-  k(O0, { seq: 7, write: 0, cam: horizon.cam2, look: horizon.look, mouseK: 0, spread: 0.3 });
-  k(O1, { near: 9, par: 0, seq: 8, write: 1, cam: out.cam, look: out.look, mouseK: 1, gain: 1.15 });
+  k(Math.max(V0 + 10, C0 - vh * 0.9), { seq: 6, write: 1, near: 9, far: 400 });
+  k(C0, { far: 34, near: 19, seq: 7, spread: 0.5, cam: horizon.cam, look: horizon.look, gain: 0.6 });
+  k(O0, { far: 34, seq: 7, write: 0, cam: horizon.cam2, look: horizon.look, mouseK: 0, spread: 0.3 });
+  k(O1, { far: 400, near: 9, par: 0, seq: 8, write: 1, cam: out.cam, look: out.look, mouseK: 1, gain: 1.15 });
 
   // ── light: one clean ink world; gold light placed behind each focal element ──
   const INK_A = [17, 19, 26], INK_B = [7, 8, 11];
@@ -610,7 +610,7 @@ function drive() {
   stage.set({
     seq: g('seq') as number, cam, look, spread: g('spread') as number, turb: g('turb') as number,
     mouseK: g('mouseK') as number, write: g('write') as number,
-    rot: g('rot') as number, gain: (g('gain') as number) * gainMul, par: g('par') as number, near: g('near') as number,
+    rot: g('rot') as number, gain: (g('gain') as number) * gainMul, par: g('par') as number, near: g('near') as number, far: g('far') as number,
   });
 }
 

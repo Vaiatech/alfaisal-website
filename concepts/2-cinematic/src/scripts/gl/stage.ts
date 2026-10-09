@@ -16,6 +16,7 @@ export type Frame = {
   gain: number;
   par: number;
   near: number;
+  far: number;
 };
 
 /** The journey of the particles, in scroll order: signature → knot → line → number → air → line → air → line to the horizon → signature */
@@ -195,7 +196,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     uTime: { value: 0 }, uFrom: { value: 0 }, uTo: { value: 0 }, uMix: { value: 0 },
     uSpread: { value: 0.3 }, uTurb: { value: 0 }, uSize: { value: mobile ? 23 : 23 }, uPx: { value: 1 },
     uGain: { value: 0 }, uWrite: { value: 1 }, uMouseK: { value: 0 }, uFocus: { value: 18 }, uDof: { value: 0.035 },
-    uRot: { value: 0 }, uNear: { value: 9 }, uTR: { value: TR }, uPathL: { value: PATH_L }, uNodes: { value: NODES },
+    uRot: { value: 0 }, uNear: { value: 9 }, uFar: { value: 400 }, uTR: { value: TR }, uPathL: { value: PATH_L }, uNodes: { value: NODES },
     uMouse: { value: new THREE.Vector3(99, 99, 0) }, uMouseVel: { value: new THREE.Vector3() }, uDustC: { value: new THREE.Vector3() },
     uLA: { value: LA.map((a) => new THREE.Vector3(...a)) }, uLP: { value: LP.map((a) => new THREE.Vector3(...a)) }, uRM: { value: RM },
   };
@@ -215,7 +216,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
   step(0.94);
 
   // ── State ─────────────────────────────────────────────────────────────
-  const cur: Frame = { seq: 0, cam: [0, 0, 20], look: [0, 0, 0], spread: 0.3, turb: 0, mouseK: 0, write: 1, rot: 0, gain: 0, par: 1, near: 9 };
+  const cur: Frame = { seq: 0, cam: [0, 0, 20], look: [0, 0, 0], spread: 0.3, turb: 0, mouseK: 0, write: 1, rot: 0, gain: 0, par: 1, near: 9, far: 400 };
   let target: Frame = { ...cur, cam: [...cur.cam] as V3, look: [...cur.look] as V3 };
   const mouse = { x: 0, y: 0, active: false };
   const mWorld = new THREE.Vector3(99, 99, 0), mPrev = new THREE.Vector3(99, 99, 0), mVel = new THREE.Vector3();
@@ -311,6 +312,8 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     cur.par = lerp(cur.par, target.par ?? 1, ks);
     cur.near = lerp(cur.near, target.near ?? 9, ks);
     u.uNear.value = cur.near;
+    cur.far = lerp(cur.far, target.far ?? 400, ks);
+    u.uFar.value = cur.far;
 
     // subtle parallax from the pointer
     const px = mouse.active ? mouse.x * cur.par : 0, py = mouse.active ? mouse.y * cur.par : 0;

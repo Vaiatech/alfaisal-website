@@ -18,6 +18,7 @@ uniform float uFocus;
 uniform float uDof;
 uniform float uRot;
 uniform float uNear;
+uniform float uFar;
 uniform float uTR;
 uniform float uPathL;
 uniform float uNodes;
@@ -129,7 +130,7 @@ void main() {
   vec4 mv = viewMatrix * vec4(p, 1.0);
   float dist = max(-mv.z, 0.1);
   float coc = abs(dist - uFocus) * uDof;
-  float near = smoothstep(1.5, uNear, dist);
+  float near = smoothstep(1.5, uNear, dist) * (1.0 - smoothstep(uFar * 0.62, uFar, dist));
   gl_Position = projectionMatrix * mv;
   float glow = step(aRnd.y, 0.035) * (1.0 - lw * 0.7);
   gl_PointSize = clamp(aMeta.w * uSize * uPx * (1.0 + coc * 1.3) * (1.0 + glow * 2.4) / dist, 0.0, 44.0);

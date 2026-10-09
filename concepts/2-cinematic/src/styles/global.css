@@ -326,7 +326,7 @@ main { position: relative; }
 .beam::before { content: ''; position: absolute; top: 0; bottom: 0; right: -2px; width: 18vw; background: linear-gradient(to left, rgba(226, 190, 118, 0.1), transparent); }
 
 /* 04 Expertise — along the path: one area in focus at a time */
-.exp-pin { --rail: 58%; }
+.exp-pin { --rail: 53%; }
 .exp-track { display: flex; height: 100%; width: max-content; padding-inline: var(--gut) 30vw; will-change: transform; }
 .exp-head { flex: none; width: min(520px, 34vw); align-self: flex-start; padding-top: calc(var(--hdr) + 12vh); margin-inline-end: 2vw; }
 .exp-head h2 { margin-top: 18px; }
@@ -351,6 +351,7 @@ main { position: relative; }
 .ls-bar { stroke-width: 2.2; }
 .ls-bowl { fill: rgba(226, 190, 118, var(--bf, 0.16)); stroke-width: 1.3; }
 .ls-swing { filter: drop-shadow(0 0 2.5px rgba(240, 205, 140, 0.8)) drop-shadow(0 0 12px rgba(226, 190, 118, 0.35)); transform-box: view-box; transform-origin: 834px 23px; transform: rotate(var(--sw, 0deg)); }
+.ls-ghost path { fill: none; stroke: rgba(226, 190, 118, 0.16); stroke-width: 0.8; stroke-linejoin: round; }
 .ls-knot { fill: var(--gold-l); filter: drop-shadow(0 0 6px rgba(240, 205, 140, 0.9)); }
 .ls-halo { opacity: var(--ha, 0.6); }
 .method-copy h2 { margin-block: 18px 30px; }
@@ -386,12 +387,12 @@ main { position: relative; }
 .val-b { grid-area: b; font-size: var(--t-lead); color: var(--cream-2); line-height: 1.8; margin-top: 2px; }
 
 /* 07 Contact — the open door */
-.contact { min-height: 100vh; padding: 13vh var(--gut) 8vh; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.contact { min-height: 100vh; padding: 13vh var(--gut) 20vh; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .contact-lead { margin-top: 5vh; font-size: var(--t-h3); line-height: 1.95; color: var(--gold-l); }
 .contact h2 { margin-top: 3vh; }
 .contact-body { margin-top: 2.5vh; font-size: var(--t-lead); color: var(--cream-2); }
-.contact-act { margin-top: 5vh; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
-.contact-grid { margin-top: 8vh; width: min(1080px, 100%); display: grid; grid-template-columns: repeat(3, 1fr); text-align: right; }
+.contact-act { margin-top: 6vh; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.contact-grid { margin-top: 6vh; width: min(1080px, 100%); display: grid; grid-template-columns: repeat(3, 1fr); text-align: right; }
 .contact-grid > div { padding: 26px 2.4vw; position: relative; }
 .contact-grid > div + div::before { content: ''; position: absolute; right: 0; top: 22px; bottom: 22px; width: 1px; background: linear-gradient(to bottom, transparent, var(--line), transparent); }
 .contact-grid dt { font-size: var(--t-label); font-weight: 700; color: var(--gold-l); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
