@@ -351,6 +351,8 @@ function runIntro() {
       $$('[mask]', svg).forEach((g) => g.removeAttribute('mask'));
       gsap.set(penclip, { attr: { height: 840 } });
       startHeroSpecular(svg);
+      // deep link (e.g. /#method): travel there with the house transition
+      if (location.hash && location.hash.length > 1 && document.querySelector(location.hash)) navigate(location.hash);
     }, move + 1.6);
 
   const skip = () => { if (tl.progress() < 0.9) tl.timeScale(5); };
@@ -786,9 +788,6 @@ function setupMethod() {
     let best = 0, bd = 1e9;
     xs.forEach((x, i) => { const d = Math.abs(x - W / 2); if (d < bd) { bd = d; best = i; } });
     steps.forEach((s, i) => s.classList.toggle('is-on', i === best && bd < W * 0.32));
-    // light follows the wave-front
-    const front = clamp((W / 2 - xs[0]) / (xs[xs.length - 1] - xs[0] || 1));
-    void front;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     // calm(x): 0 at step 1 → 1 at step 5 (RTL: x decreases along the journey)

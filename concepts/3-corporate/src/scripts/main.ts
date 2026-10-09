@@ -27,7 +27,6 @@ if (MOTION) {
   gsap.ticker.add((t) => lenis!.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
   (window as any).__lenis = lenis;
-  (window as any).__ST = ScrollTrigger;
 }
 
 /* =========================================================================
@@ -142,7 +141,6 @@ function initReveals() {
     }
   }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
   items.forEach((el) => io.observe(el));
-  (window as any).__io = io; (window as any).__ioItems = items.length;
 }
 
 /* =========================================================================
