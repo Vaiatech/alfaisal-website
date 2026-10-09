@@ -1,0 +1,231 @@
+{
+ "lanterns": {
+  "w": 2400,
+  "h": 3600,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#887867",
+  "lqip": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAAAQBgCdASoYACQAPu1yqlGppyOiqrgKATAdiWUAygNT3RW1BPyIZHYoMLblRcimnueeEOuo1tktWwAA/qw7ETLEU3SuMJpLbm2WDEbedPsWpXM2a9Nlqxly1Ywph7kEPXJoX2HXm8IqtYOYE+xBXQcHEwAAAA==",
+  "alt": "فانوسان وظلّاهما على جدار جيري"
+ },
+ "rawshan-single": {
+  "w": 2400,
+  "h": 3595,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#453e3c",
+  "lqip": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAADQBQCdASoYACQAPu1crE2ppKSiMBqqqTAdiWUAv7AWm1L0wZkgXBDY3u2aOX4bcLkod0eP8OggAMp46BZapfzGQ8aixVXK7I7TbTpnBgwj1aeLJ9qyE8xrwP/gxqXHaB21lPSjjXJPMh2LasXcgEBkOJRk9A53sFmNb1IA",
+  "alt": "روشان خشبي بارز على جدار من الحجر المنقبي"
+ },
+ "rawshan-alley": {
+  "w": 2400,
+  "h": 3595,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#555b5b",
+  "lqip": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAABQBgCdASoYACQAPu1iqU2ppaOiMBqqqTAdiWUAy9dVwaDIZq8gjoSl9FPE3qu82X4PZvK6PzkrmfT4AAD+OmEbJgxtCDeVZ4cr34ILbYqjjNXFEMZaB3L2DSCGmFqhNkt6KbfYcevSwaehmrflOg6uhjvNROBqsQqFG9QAAAA=",
+  "alt": "نظرة إلى الأعلى بين رواشين متقابلة في جدة التاريخية"
+ },
+ "rawshan-diagonal": {
+  "w": 2400,
+  "h": 3595,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#4d4c4b",
+  "lqip": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAACQBQCdASoYACQAPt1Yo02opSMiNUgBEBuJZQDN/CCQkNUdmTrod3c5F3m45cKcVlhmaRo6QAD+9DLdIQTgKdjlgBBSc3ps1zg5mY/ic9wYFuRj4iLCgnqXgXOsZkDvmYKPzqd3SXDfi9kZVaB8nVJj8PgAAA==",
+  "alt": "رواشين خشبية في ضوء مائل"
+ },
+ "rawshan-facade": {
+  "w": 2400,
+  "h": 3595,
+  "widths": [
+   480,
+   960,
+   1440,
+   2000
+  ],
+  "color": "#27272a",
+  "lqip": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAADwBACdASoYACQAPulgp02pJaOiNVgIASAdCWkA0UQT7jpZiaO9qA+4ftNlVv+gCYAA/uzkO285iM1AMgIr/Loq2TJSe4ALewlYQeNPO1/idd4EWvgdEujmRY7RsjFkKZz0RegAAAA=",
+  "alt": "واجهة حجرية تتكرر فيها نوافذ الرواشين"
+ },
+ "balad-golden": {
+  "w": 2400,
+  "h": 3600,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#1f1d1c",
+  "lqip": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAAAQBQCdASoYACQAPuFcpk2opSOjNVv4ARAcCUAWhoQpoKWLiCPBoBp9U/7CTwLfPfIAAP7ww838q/yyEVQOkX1OmgomW07djh8UV8/g87/YDnDo8zogrseLMigAhiinm7joMZwAL/yla2ANBovwAA==",
+  "alt": "مبانٍ تاريخية برواشين خضراء في ضوء العصر"
+ },
+ "door": {
+  "w": 2400,
+  "h": 3984,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#3d3b3e",
+  "lqip": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAADwBQCdASoYACgAPu1qqE8ppiOiMBqqqTAdiWcAzfw5//Z1ivIAlifQoKmADhRxx71ZAdNVn1r0AAD547hGafJPcNrQsLMO5+2OSaxta+ujxC6SCXM+WcQY/z2O9Eyju71YaSgb9CgDjLHDtG6gcg8+msXClAAA",
+  "alt": "باب خشبي قديم في جدار من الحجر"
+ },
+ "files": {
+  "w": 2400,
+  "h": 3199,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#4f4f4d",
+  "lqip": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAADwBACdASoYACAAPu1qr1CppaQiqAqpMB2JZwAAkA3WO1xQZzlxIYu5RYodj17oqJAA/vd4gB3TBelxku9Ct+a3CokLUXZvBjqmAz/TsaL3zc5qZOVQHZne8YqtmngamMEXRj1+Jju4aCUwKB+KUtWhWpgQlo5FZe/hAxr9B8AAAA==",
+  "alt": "كومة من الملفات الورقية القديمة"
+ },
+ "script-pen": {
+  "w": 2400,
+  "h": 3623,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#5e6064",
+  "lqip": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAQBgCdASoYACQAPs1Yn02npaKiOrzIAPAZiWkAz6Akd/ffEOJVqJcZTLQ6NoChtDIi5w91JpetFaAA/qIy7l2Jm+tHKtnwyI070D5M5c2fd4lbaCuBa/gwSHzwdfAURcpIqBtgeYqg1OzI0v7r8RJ0AAA=",
+  "alt": "ريشة كتابة على ورقة تمارين خط عربي"
+ },
+ "hands-docs": {
+  "w": 2400,
+  "h": 1600,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#7a7164",
+  "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADwAwCdASoYABAAPu1orU6ppiSiMAgBMB2JQBfJBDwBa1VzaYPN/FMAAP7w+UiCEnzXgkearw7XomqoRr4uYoH3R/VH2o934AJI5lo0j0gxelnMZitaSdyDNQcbgAAA",
+  "alt": "يدان تراجعان مستندات على مكتب"
+ },
+ "tower": {
+  "w": 2400,
+  "h": 3200,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#444546",
+  "lqip": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAACwBQCdASoYACAAPt1ep02opSOiN/qoARAbiWcAyRARQBVhesJqFQDdzTBMAv15Ou0F4eiis0gAypHWALCwOWeggTSuJU5DsQ/FJ9oPuyqtfjiR/XJR+2au/M2jLwG5yTbgtlAhySeqCdIIm9PhajrqT8Nb7nLgAAA=",
+  "alt": "برج خرساني في ضوء مائل"
+ },
+ "dune": {
+  "w": 2400,
+  "h": 3541,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#5f544c",
+  "lqip": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABQBQCdASoYACMAPuFipk2opiOiNVv4ARAcCWUAvhHnwWhtEUr5lU5I1dcQdqVYraKi52AA9x7NxA3jxaJNyfhDjEJHn9WDWjIsYgCsgmtsS16OT1ll1RllGLCNZEzUxh1aH4TcQkBI4qZ3DwAAAA==",
+  "alt": "ظل على كثيب رملي"
+ },
+ "marble": {
+  "w": 2400,
+  "h": 3600,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#0c0f15",
+  "lqip": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAAAwAwCdASoYACQAPu10slOppqSkJWgBMB2JaQDRgBBF2K+AAP7wb3RWUIhVXJeOXXjWWxIp4GDZkogAAAA=",
+  "alt": "رخام داكن بعروق ذهبية"
+ },
+ "seals": {
+  "w": 2400,
+  "h": 1600,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#3d3e44",
+  "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADQAwCdASoYABAALrV2u12jqampiYC0SzgABTq1sinP7QcW+2uYBgAA/viMTNF5BGCbTSQCwlaH4m28yvdznac/jiJY4SbmG+Jvwk6ZWiAAAA==",
+  "alt": "مظاريف سوداء مختومة بالشمع"
+ },
+ "nib": {
+  "w": 2400,
+  "h": 1350,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#17171c",
+  "lqip": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAABwAwCdASoYAA4APu1yrU+pp6QiMAgBMB2JYwDCgGlgBEFwmhAA/v1T9jb11fiLrAH6VVxmH4SvCsXaWLg/vhkJ008mG5oSAAA=",
+  "alt": "سنّ قلم حبر على خلفية سوداء"
+ },
+ "bokeh": {
+  "w": 2400,
+  "h": 3600,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#282522",
+  "lqip": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAACQBQCdASoYACQAPtVYok2oJSMiNUwBABqJQBe6BZp7hzbvf7nawAYm9RzfPRm+OwR0BrqgYAD+9FLq4d19iqRkibPpWAuN9hAqJBcmKtO6rjqwbsOeH71EKOIXnc/OcFGh27u14DBO1oxyFK0/L2eoR7Zi40dT0oFmPrQ5Jj4rwzRq96p600IFhHs8fkpYITJKKwyzMo9UQAAA",
+  "alt": "ضوء ذهبي خارج البؤرة"
+ },
+ "lattice-light": {
+  "w": 2400,
+  "h": 1600,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#0b1118",
+  "lqip": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAADQAwCdASoYABAAPu1orU6ppiSiMAgBMB2JZwC7ACHe060APecU6AAA/vKez3x7QjDvaeJsy25ux7JEC19A4si8/DgAAA==",
+  "alt": "ضوء يعبر مشربية ويرسم نقوشه على الأرض"
+ },
+ "glass-desert": {
+  "w": 2400,
+  "h": 4266,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#57524f",
+  "lqip": "data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAAAQBgCdASoYACsAPtFYoU2oJaMiOrzIAQAaCWMAwcwslD5UxwE+COU85gf+OdwU9Qfc+ABjiD3h4gAA/tpcKLkehwIJk8I7/yjv2k2C4LP06Fj61RupNQ6FuIXnbQjRUmvcjwIiCQZhvEbHQBn2IPJpCCQ580Q9Dx0WY5RGBbuegBudAAA=",
+  "alt": "صخور الصحراء منعكسة على زجاج حديث في العلا"
+ },
+ "hero-nib-poster": {
+  "w": 1920,
+  "h": 1080,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "color": "#88775a",
+  "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAACwAwCdASoYAA4APu1krU2ppaSiMAgBMB2JYgCdAGlpRRyD0epo8AD+xeT2E/hxIe5d0MGhL+K/lV6yl75HO9KYDkdxZbFgvqrwslOwrL6AhFAAAAA=",
+  "alt": "سنّ ريشة يكتب بالحبر على الورق"
+ }
+}

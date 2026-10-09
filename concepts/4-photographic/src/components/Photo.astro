@@ -1,0 +1,33 @@
+---
+// One photograph from the graded shoot: AVIF/WebP srcset, intrinsic size, blurred placeholder.
+import media from '../lib/media.json';
+
+interface Props {
+  slug: keyof typeof media;
+  sizes?: string;
+  alt?: string;
+  class?: string;
+  pos?: string; // object-position (crop logic: subject on a third)
+  eager?: boolean;
+  decorative?: boolean;
+}
+const { slug, sizes = '100vw', alt, class: cls = '', pos = '50% 50%', eager = false, decorative = false } = Astro.props;
+const m = (media as Record<string, { w: number; h: number; widths: number[]; color: string; lqip: string; alt: string }>)[slug];
+const set = (ext: string) => m.widths.map((w) => `/media/img/${slug}-${w}.${ext} ${w}w`).join(', ');
+const largest = m.widths[m.widths.length - 1];
+---
+<span class={`ph ${cls}`} style={`--ph-c:${m.color};--ph-lq:url(${m.lqip});--ph-pos:${pos}`} data-slug={slug}>
+  <picture>
+    <source type="image/avif" srcset={set('avif')} sizes={sizes} />
+    <source type="image/webp" srcset={set('webp')} sizes={sizes} />
+    <img
+      src={`/media/img/${slug}-${Math.min(960, largest)}.webp`}
+      width={m.w}
+      height={m.h}
+      alt={decorative ? '' : (alt ?? m.alt)}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
+      decoding="async"
+    />
+  </picture>
+</span>

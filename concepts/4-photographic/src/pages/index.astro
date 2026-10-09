@@ -1,0 +1,446 @@
+---
+import '../styles/global.css';
+import Photo from '../components/Photo.astro';
+import { site, contact, nav, hero, stats, story, expertise, method, values, closing, formatNumber } from '../../../shared/content';
+import { logoPaths, strokes, MARK_VB } from '../lib/logo';
+
+const year = new Date().getFullYear();
+const pad = (n: number) => String(n).padStart(2, '0');
+
+// Digits as rolling reels (no-JS: CSS shows the final digit). Latin digits, LTR-isolated.
+const reels = (n: number) =>
+  [...formatNumber(n)].map((ch) => (/\d/.test(ch) ? { d: Number(ch) } : { sep: ch }));
+
+// Hero title: «…» closes the first line; the long second line is set on two balanced lines.
+const [heroL1, heroL2] = hero.title;
+const heroL2Words = heroL2.split(' ');
+const heroL2a = heroL2Words.slice(0, 3).join(' '); // تحتاج إلى منظومة
+const heroL2b = heroL2Words.slice(3).join(' ');    // قانونية متكاملة
+
+// Numbers subtitle: the word «ملف» carries into the next scene («ليست كل الملفات قضية»).
+const [sub1, sub2] = stats.subtitle;
+const sub2Parts = sub2.split('ملف');
+
+// Story title: highlight «الملفات» (the hand-off word).
+const storyParts = story.title.split('الملفات');
+
+// The nine figures, each on a plate from the same shoot.
+const frames = [
+  { slug: 'rawshan-facade', pos: '50% 40%' },
+  { slug: 'door', pos: '50% 62%' },
+  { slug: 'files', pos: '50% 40%' },
+  { slug: 'glass-desert', pos: '50% 70%' },
+  { slug: 'hands-docs', pos: '40% 50%' },
+  { slug: 'lanterns', pos: '45% 62%' },
+  { slug: 'rawshan-single', pos: '50% 45%' },
+  { slug: 'script-pen', pos: '60% 50%' },
+  { slug: 'seals', pos: '50% 50%' },
+] as const;
+
+// Six practice areas → six plates.
+const plates = [
+  { slug: 'files', pos: '50% 45%', cap: 'ملفات مؤرشفة' },
+  { slug: 'door', pos: '50% 60%', cap: 'باب عتيق في جدار حجري' },
+  { slug: 'tower', pos: '50% 35%', cap: 'خرسانة في ضوء مائل' },
+  { slug: 'rawshan-diagonal', pos: '50% 40%', cap: 'رواشين، جدة التاريخية' },
+  { slug: 'lanterns', pos: '50% 62%', cap: 'فانوسان وظلّان' },
+  { slug: 'hands-docs', pos: '42% 50%', cap: 'قراءة المستند معًا' },
+] as const;
+
+const valueSlugs = [
+  { slug: 'lattice-light', pos: '24% 88%' },
+  { slug: 'seals', pos: '50% 50%' },
+  { slug: 'nib', pos: '52% 50%' },
+  { slug: 'glass-desert', pos: '50% 60%' },
+  { slug: 'bokeh', pos: '50% 40%' },
+  { slug: 'marble', pos: '50% 50%' },
+] as const;
+
+const leadLines = closing.lead.split(/(?<=…)\s+/);
+const methodTitle = method.title;
+const [stmt1, stmt2] = method.statement;
+
+const navIndex = (href: string) => {
+  const i = nav.findIndex((n) => n.href === href);
+  return pad(i + 1);
+};
+const sections: Record<string, string> = { '#top': 'الرئيسية', '#about': 'من نحن', '#expertise': 'خبراتنا', '#method': 'منهجيتنا', '#contact': 'تواصل معنا' };
+---
+<!doctype html>
+<html lang="ar" dir="rtl" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{site.name}</title>
+    <meta name="description" content={site.description} />
+    <meta name="theme-color" content="#04070d" />
+    <link rel="canonical" href={site.url} />
+    <meta property="og:title" content={site.name} />
+    <meta property="og:description" content={site.description} />
+    <meta property="og:locale" content="ar_SA" />
+    <meta property="og:image" content="/media/img/rawshan-alley-960.webp" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Only the faces used above the fold: Arabic 800 (headline), 700 (eyebrow/nav), 400 (body). -->
+    <link rel="preload" href="/fonts/almarai-arabic-800.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/almarai-arabic-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/almarai-arabic-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" as="image" type="image/avif" imagesrcset="/media/img/hero-nib-poster-480.avif 480w, /media/img/hero-nib-poster-960.avif 960w, /media/img/hero-nib-poster-1440.avif 1440w" imagesizes="100vw" />
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.remove('no-js');
+        d.classList.add('js');
+        var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (/[?&]motion=0/.test(location.search)) rm = true;
+        if (rm) d.classList.add('rm');
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- Logo paths, defined once. -->
+    <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+      <defs>
+        <path id="lg-cal" d={logoPaths.calligraphy} />
+        <path id="lg-pen" d={logoPaths.pen} />
+        <path id="lg-scale" d={logoPaths.scale} />
+        <path id="lg-band" d={logoPaths.penband} />
+        <linearGradient id="g-gold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f3d9a2" />
+          <stop offset="0.45" stop-color="#d8b067" />
+          <stop offset="1" stop-color="#a87d2c" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- ============ INTRO: the calligraphy writes itself, then its nib becomes the real nib ============ -->
+    <div class="intro" id="intro" aria-hidden="true">
+      <div class="intro__stage">
+        <div class="intro__mark" id="intro-mark">
+          <svg viewBox={MARK_VB}>
+            <defs>
+              <mask id="m-write" maskUnits="userSpaceOnUse" x="0" y="-20" width="1031" height="900">
+                {strokes.map((s) => (
+                  <path class="wstroke" d={s.d} fill="none" stroke="#fff" stroke-width={s.w} stroke-linecap="round" stroke-linejoin="round" style={`stroke-dasharray:${s.l + 2};stroke-dashoffset:${s.l + 2}`} data-l={s.l + 2} />
+                ))}
+              </mask>
+            </defs>
+            <use href="#lg-cal" fill="url(#g-gold)" mask="url(#m-write)" />
+            <g class="intro__pen"><use href="#lg-pen" fill="#f1e9dc" /><use href="#lg-band" fill="#bd882c" /></g>
+            <use class="intro__scale" href="#lg-scale" fill="url(#g-gold)" />
+          </svg>
+        </div>
+        <p class="intro__name">{site.name}</p>
+        <div class="intro__bar"><i></i></div>
+        <button class="intro__skip" type="button" tabindex="-1">تخطَّ</button>
+      </div>
+    </div>
+
+    <!-- ============ HEADER ============ -->
+    <header class="site-head" id="head">
+      <a class="brand" href="#top" data-go="#top" aria-label={site.name}>
+        <svg viewBox={MARK_VB} aria-hidden="true"><use href="#lg-cal" fill="url(#g-gold)" /><use href="#lg-pen" fill="#f1e9dc" /><use href="#lg-band" fill="#bd882c" /><use href="#lg-scale" fill="url(#g-gold)" /></svg>
+        <span class="brand__txt"><strong>شركة الفيصل</strong><span>للمحاماة والاستشارات القانونية</span></span>
+      </a>
+      <nav class="nav" aria-label="القائمة الرئيسية">
+        <ol>
+          {nav.map((n) => (
+            <li><a href={n.href} data-go={n.href} data-soon={n.soon ? '' : undefined}>{n.label}{n.soon && <span class="soon-tag">قريبًا</span>}</a></li>
+          ))}
+        </ol>
+      </nav>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="sheet-menu"><i aria-hidden="true"></i><span>القائمة</span></button>
+    </header>
+    <a class="btn head-cta" href={site.consultUrl} target="_blank" rel="noopener">احجز استشارة</a>
+
+    <div class="sheet-menu" id="sheet-menu" aria-hidden="true">
+      <Photo slug="rawshan-single" sizes="100vw" pos="50% 40%" decorative />
+      <div class="sheet-menu__shade"></div>
+      <ol>
+        {nav.map((n, i) => (
+          <li><a href={n.href} data-go={n.href} data-soon={n.soon ? '' : undefined} tabindex="-1"><small class="num">{pad(i + 1)}</small><span>{n.label}</span>{n.soon && <em>قريبًا</em>}</a></li>
+        ))}
+      </ol>
+      <div class="sheet-menu__foot">
+        <a href={`tel:${contact.phones[0].tel}`} class="phone" tabindex="-1">{contact.phones[0].display}</a>
+        <a href={`mailto:${contact.email}`} tabindex="-1">{contact.email}</a>
+      </div>
+    </div>
+
+    <div class="soon-note" id="soon-note" role="status" aria-live="polite"><span class="rh"></span><span><strong>فريقنا</strong> — صفحة الفريق قريبًا.</span></div>
+
+    <!-- veil: the rhombus aperture -->
+    <div class="veil" id="veil" aria-hidden="true">
+      <div class="veil__fill"></div>
+      <svg class="veil__edge" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon points="50,50 50,50 50,50 50,50" fill="none" stroke="#e2be76" stroke-width="0.25" vector-effect="non-scaling-stroke" /></svg>
+      <div class="veil__label"><div><span class="num"></span><strong></strong></div></div>
+    </div>
+
+    <main id="main">
+      <!-- ============ 1 · HERO — ink on paper ============ -->
+      <div class="hero-wrap" id="hero-wrap">
+      <section class="scene hero" id="top" data-scene="hero" aria-labelledby="hero-title">
+        <div class="hero__media" id="hero-media">
+          <Photo slug="hero-nib-poster" sizes="100vw" pos="57% 72%" eager />
+          <video class="hero__video" id="hero-video" muted loop playsinline preload="none" aria-hidden="true" data-mp4="/media/video/hero-nib.mp4" data-webm="/media/video/hero-nib.webm"></video>
+          <div class="hero__shade"></div>
+        </div>
+        <p class="hero__plate caption"><b class="num">01</b>حبرٌ على ورق</p>
+        <div class="hero__inner">
+          <div class="hero__col" id="hero-col">
+            <p class="label hero__eyebrow" data-rise><span class="rh"></span>{hero.eyebrow}</p>
+            <h1 class="hero__title" id="hero-title">
+              <span class="line-mask"><span class="t1">{heroL1}</span></span>
+              <span class="line-mask"><span class="t2 gild">{heroL2a}</span></span>
+              <span class="line-mask"><span class="t3 gild">{heroL2b}</span></span>
+            </h1>
+            <div class="hero__body" id="hero-body">
+              {hero.body.map((p) => <p class="pretty" data-ink>{p}</p>)}
+            </div>
+          </div>
+        </div>
+        <div class="hero__foot">
+          <p class="tagline" data-rise>{site.tagline.map((t, i) => <>{i > 0 && <i aria-hidden="true"></i>}<span>{t}</span></>)}</p>
+          <a class="btn--ghost btn" href="#contact" data-go="#contact" data-rise><span>{hero.cta}</span><i class="ar" aria-hidden="true"></i></a>
+          <p class="hero__cue" aria-hidden="true"><span>مرّر لتقرأ الملف</span><i></i></p>
+        </div>
+        <span class="knot hero__knot" id="hero-knot" aria-hidden="true"></span>
+      </section>
+      </div>
+
+      <!-- ============ 2 · NUMBERS — the contact sheet ============ -->
+      <section class="scene numbers" id="numbers" aria-labelledby="numbers-label">
+        <span class="thread" id="numbers-thread" aria-hidden="true"></span>
+        <div class="wrap numbers__grid">
+          <div class="tally" id="tally">
+            <p class="label" id="numbers-label"><span class="rh"></span>{stats.label}</p>
+            <p class="tally__pre">{stats.lead.prefix}</p>
+            <p class="tally__num" aria-label={`${formatNumber(stats.lead.value)} ${stats.lead.unit}`}>
+              <span class="tally__digits" aria-hidden="true">
+                <span class="odo" data-odo={stats.lead.value}>
+                  {reels(stats.lead.value).map((r) => 'd' in r
+                    ? <span class="dg" style={`--d:${r.d}`}><span class="reel">{[...Array(20)].map((_, i) => <b>{i % 10}</b>)}</span></span>
+                    : <span class="sep">{r.sep}</span>)}
+                </span>
+              </span>
+              <span class="tally__unit" aria-hidden="true">{stats.lead.unit}</span>
+            </p>
+            <p class="tally__sub">
+              <span class="br">{sub1}</span>
+              <span class="br">{sub2Parts[0]}<span class="hl">ملف</span>{sub2Parts[1]}</span>
+            </p>
+          </div>
+          <div>
+            <ol class="sheet" id="sheet">
+              {stats.items.map((it, i) => (
+                <li class="frame" tabindex="0">
+                  <Photo slug={frames[i].slug} pos={frames[i].pos} sizes="(max-width: 760px) 33vw, 22vw" decorative />
+                  <span class="frame__crop" aria-hidden="true"></span>
+                  <span class="frame__no num" aria-hidden="true">{pad(i + 1)}</span>
+                  <span class="frame__txt">
+                    <strong class="frame__num">
+                      <span class="sr">{formatNumber(it.value)}</span>
+                      <span class="odo" data-odo={it.value} aria-hidden="true">
+                        {reels(it.value).map((r) => 'd' in r
+                          ? <span class="dg" style={`--d:${r.d}`}><span class="reel">{[...Array(20)].map((_, k) => <b>{k % 10}</b>)}</span></span>
+                          : <span class="sep">{r.sep}</span>)}
+                      </span>
+                    </strong>
+                    <span class="frame__lbl">{it.label}</span>
+                  </span>
+                  <span class="frame__flash" aria-hidden="true"></span>
+                </li>
+              ))}
+            </ol>
+            <p class="sheet__note" aria-hidden="true"><span>تسعة أرقام من سجل العمل</span><span class="num">09 / 09</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 3 · STORY — the rawshan assembles ============ -->
+      <section class="scene story" id="about" aria-labelledby="story-title">
+        <div class="story__pin" id="story-pin">
+          <div class="story__panel" id="story-panel">
+            <Photo slug="rawshan-alley" sizes="(max-width: 760px) 100vw, 50vw" pos="50% 50%" />
+            <svg class="lattice" id="lattice" aria-hidden="true"></svg>
+            <div class="story__glow" id="story-glow"></div>
+            <p class="caption"><b class="num">02</b>رواشين متقابلة، جدة التاريخية</p>
+          </div>
+          <div class="story__copy">
+            <p class="label"><span class="rh"></span>{story.label}</p>
+            <h2 class="h1 story__title" id="story-title">{storyParts[0]}<span class="hl">الملفات</span>{storyParts[1]}</h2>
+            <div class="story__body">
+              <p class="pretty" data-ink>{story.body[0]}</p>
+              <p class="pretty muted" data-ink>{story.body[1]}</p>
+            </div>
+            <ol class="words" id="words" aria-label="تفاصيل الملف">
+              {story.words.map((w) => <li>{w}</li>)}
+            </ol>
+            <p class="lead" style="margin-bottom:18px" data-ink>{story.body[2]}</p>
+            <p class="story__close" id="story-close"><span>{story.closing[0]}</span><span>{story.closing[1]}</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 4 · EXPERTISE — six plates, one lens ============ -->
+      <section class="scene expertise" id="expertise" aria-labelledby="exp-title">
+        <div class="wrap expertise__grid">
+          <div class="expertise__list">
+            <header class="expertise__head">
+              <p class="label"><span class="rh"></span>{expertise.label}</p>
+              <h2 class="h1 balance" id="exp-title">{expertise.title}</h2>
+            </header>
+            <ol class="plates" id="plates">
+              {expertise.items.map((it, i) => (
+                <li class="plate" data-i={i}>
+                  <span class="plate__no num">{pad(i + 1)}</span>
+                  <div class="plate__ph"><Photo slug={plates[i].slug} pos={plates[i].pos} sizes="100vw" decorative /></div>
+                  <h3 class="plate__t">{it.title}</h3>
+                  <p class="plate__b pretty">{it.body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div class="viewfinder-col" aria-hidden="true">
+            <div class="viewfinder" id="viewfinder">
+              <div class="vf__frame">
+                {plates.map((p, i) => (
+                  <div class={`vf__img${i === 0 ? ' is-shown' : ''}`} data-i={i}><Photo slug={p.slug} pos={p.pos} sizes="48vw" decorative /></div>
+                ))}
+                <div class="vf__shade"></div>
+                <span class="vf__corners"></span>
+                <div class="vf__meta">
+                  <p class="caption" id="vf-cap"><b class="num">03</b>{plates[0].cap}</p>
+                  <p class="vf__count"><span id="vf-n">01</span><small>/ 06</small></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 5 · METHOD — one day of light across a dune ============ -->
+      <section class="scene method" id="method" aria-labelledby="method-title">
+        <div class="method__pin" id="method-pin">
+          <div class="method__media" id="method-media">
+            <Photo slug="dune" sizes="100vw" pos="50% 60%" decorative />
+            <canvas class="method__canvas" id="dune-canvas" aria-hidden="true"></canvas>
+          </div>
+          <div class="method__shade"></div>
+          <div class="method__top">
+            <div>
+              <p class="label"><span class="rh"></span>{method.label}</p>
+              <h2 class="h1 method__title" id="method-title"><span class="br">{methodTitle[0]}</span><span class="br">{methodTitle[1]}</span></h2>
+            </div>
+            <p class="method__body pretty">{method.body}</p>
+          </div>
+          <div class="method__step" id="method-step" aria-hidden="true">
+            <p class="method__stepno"><span id="step-no">01</span> / 05</p>
+            <p class="method__word" id="method-word">{method.steps.map((s) => <span>{s}</span>)}</p>
+          </div>
+          <div class="ruler" id="ruler">
+            <div class="ruler__track"><i class="ruler__fill" id="ruler-fill"></i></div>
+            <ol>
+              {method.steps.map((s, i) => <li><small class="num">{pad(i + 1)}</small><span>{s}</span></li>)}
+            </ol>
+          </div>
+          <div class="method__statement" id="method-statement">
+            <p>{stmt1}</p>
+            <p class="naskh gild">{stmt2}</p>
+            <a class="btn btn--ghost" href="#about" data-go="#about"><span>{method.cta}</span><i class="ar" aria-hidden="true"></i></a>
+          </div>
+          <p class="method__caption caption" aria-hidden="true"><b class="num">04</b>ظلّ يعبر الكثيب</p>
+        </div>
+      </section>
+
+      <!-- ============ 6 · VALUES — six materials, one screen ============ -->
+      <section class="scene values" id="values" aria-labelledby="values-title">
+        <div class="wrap">
+          <header class="values__head">
+            <div>
+              <p class="label"><span class="rh"></span>{values.label}</p>
+              <h2 class="h1" id="values-title">{values.title}</h2>
+            </div>
+            <p class="values__hint">ست خامات من عملنا اليومي: ضوء، وختم، وقلم، وزجاج، وذهب، وحجر.</p>
+          </header>
+          <ul class="slats" id="slats">
+            {values.items.map((v, i) => (
+              <li class={`slat${i === 0 ? ' is-open' : ''}`} tabindex="0" aria-expanded={i === 0 ? 'true' : 'false'}>
+                <Photo slug={valueSlugs[i].slug} pos={valueSlugs[i].pos} sizes="(max-width: 760px) 100vw, 40vw" decorative />
+                <span class="slat__no num">{pad(i + 1)}</span>
+                <span class="rh" aria-hidden="true"></span>
+                <span class="slat__txt"><strong class="slat__t">{v.title}</strong><span class="slat__b" style="display:block">{v.body}</span></span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ 7 · CLOSING — the lights come on ============ -->
+      <section class="scene closing" id="contact" aria-labelledby="closing-title">
+        <div class="closing__media" id="closing-media">
+          <Photo slug="balad-golden" sizes="(max-width: 760px) 100vw, 50vw" pos="50% 30%" />
+          <div class="closing__shade"></div>
+          <p class="caption closing__cap"><b class="num">06</b>آخر ضوء على رواشين البلد</p>
+        </div>
+        <div class="wrap closing__inner">
+          <p class="label"><span class="rh"></span>{closing.label}</p>
+          <p class="closing__lead" style="margin-top:22px">{leadLines.map((l) => <span>{l}</span>)}</p>
+          <h2 class="closing__title gild" id="closing-title">{closing.title}</h2>
+          <p class="closing__body">{closing.body.map((b) => <span>{b}</span>)}</p>
+          <div class="closing__cta">
+            <a class="btn" href={site.consultUrl} target="_blank" rel="noopener">احجز استشارة<span class="rh" style="background:#04070d;width:6px;height:6px"></span></a>
+            <a class="btn btn--ghost" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener"><span>راسلنا عبر واتساب</span><i class="ar" aria-hidden="true"></i></a>
+          </div>
+        </div>
+        <div class="wrap contact">
+          <div class="contact__grid">
+            <div class="contact__cell">
+              <p class="contact__k"><span class="rh"></span>العنوان</p>
+              <p class="contact__v"><span>{contact.address.line}</span><span class="muted" style="font-weight:400">{contact.address.city}، {contact.address.country}</span><a href={contact.mapsUrl} target="_blank" rel="noopener" style="color:var(--lamp);font-size:.9rem;margin-top:6px">افتح الخريطة ←</a></p>
+            </div>
+            <div class="contact__cell">
+              <p class="contact__k"><span class="rh"></span>الهاتف</p>
+              <p class="contact__v">{contact.phones.map((p) => <a href={`tel:${p.tel}`}><span class="phone num">{p.display}</span><small>{p.label}</small></a>)}</p>
+            </div>
+            <div class="contact__cell">
+              <p class="contact__k"><span class="rh"></span>البريد</p>
+              <p class="contact__v"><a href={`mailto:${contact.email}`} class="num" dir="ltr">{contact.email}</a></p>
+            </div>
+          </div>
+          <p class="team-note" id="team"><span class="rh rh--line"></span><strong>فريقنا</strong><span>تعريف بفريق الفيصل يُنشر قريبًا.</span><em>قريبًا</em></p>
+        </div>
+      </section>
+
+      <!-- ============ OUTRO ============ -->
+      <footer class="outro" id="outro">
+        <div class="outro__mark" id="outro-mark" aria-hidden="true">
+          <svg viewBox={MARK_VB}>
+            <defs>
+              <mask id="m-write2" maskUnits="userSpaceOnUse" x="0" y="-20" width="1031" height="900">
+                {strokes.map((s) => (
+                  <path class="wstroke2" d={s.d} fill="none" stroke="#fff" stroke-width={s.w} stroke-linecap="round" stroke-linejoin="round" data-l={s.l + 2} />
+                ))}
+              </mask>
+            </defs>
+            <use href="#lg-cal" fill="url(#g-gold)" mask="url(#m-write2)" />
+            <g class="outro__pen"><use href="#lg-pen" fill="#f1e9dc" /><use href="#lg-band" fill="#bd882c" /></g>
+            <use class="outro__scale" href="#lg-scale" fill="url(#g-gold)" />
+          </svg>
+        </div>
+        <p class="outro__name">{site.name}</p>
+        <p class="outro__tag">{site.tagline.map((t, i) => <>{i > 0 && <i aria-hidden="true"></i>}<span>{t}</span></>)}</p>
+        <div class="wrap outro__meta">
+          <span>سجل تجاري <bdi class="num">{site.commercialRegistry}</bdi></span>
+          <span>{contact.address.city} · <a href={`https://${site.domain}`}>{site.domain}</a></span>
+          <span>© <bdi class="num">{year}</bdi> جميع الحقوق محفوظة</span>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      import '../scripts/main.ts';
+    </script>
+  </body>
+</html>

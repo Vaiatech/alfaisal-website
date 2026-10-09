@@ -1,0 +1,166 @@
+{
+ "note": "Every photograph and clip used on the page. src = original download URL (Pexels/Mixkit). Grading params feed scripts/grade.py (one LUT for the whole shoot).",
+ "images": [
+  {
+   "slug": "rawshan-single",
+   "id": "31367601",
+   "host": "pexels",
+   "title": "Traditional Arabian wooden window (roshan)",
+   "author": "Muhannad al zabidi",
+   "exposure": -0.1,
+   "gnd": 0.5,
+   "gnd_to": 0.45,
+   "ar": "روشان خشبي بارز على جدار من الحجر المنقبي"
+  },
+  {
+   "slug": "rawshan-alley",
+   "id": "31367599",
+   "host": "pexels",
+   "title": "Looking up between rawasheen, historic Jeddah",
+   "exposure": -0.35,
+   "ar": "نظرة إلى الأعلى بين رواشين متقابلة في جدة التاريخية"
+  },
+  {
+   "slug": "rawshan-diagonal",
+   "id": "31367600",
+   "host": "pexels",
+   "title": "Rawasheen in raking light",
+   "exposure": -0.15,
+   "gnd": 0.3,
+   "gnd_to": 0.6,
+   "ar": "رواشين خشبية في ضوء مائل"
+  },
+  {
+   "slug": "rawshan-facade",
+   "id": "31367598",
+   "host": "pexels",
+   "title": "Coral-stone facade with roshan windows",
+   "exposure": 0.1,
+   "ar": "واجهة حجرية تتكرر فيها نوافذ الرواشين"
+  },
+  {
+   "slug": "balad-golden",
+   "id": "28558788",
+   "host": "pexels",
+   "title": "Al-Balad, golden hour",
+   "exposure": -0.05,
+   "gnd": 0.3,
+   "gnd_to": 0.4,
+   "ar": "مبانٍ تاريخية برواشين خضراء في ضوء العصر"
+  },
+  {
+   "slug": "lanterns",
+   "id": "11843618",
+   "host": "pexels",
+   "title": "Two lanterns and their shadows on a lime-plaster wall",
+   "exposure": -0.45,
+   "ar": "فانوسان وظلّاهما على جدار جيري"
+  },
+  {
+   "slug": "door",
+   "id": "11843621",
+   "host": "pexels",
+   "title": "Old wooden door in a coral-stone wall",
+   "exposure": -0.3,
+   "gnd": 0.3,
+   "gnd_to": 0.5,
+   "ar": "باب خشبي قديم في جدار من الحجر"
+  },
+  {
+   "slug": "files",
+   "id": "17846111",
+   "host": "pexels",
+   "title": "A pile of old paper files",
+   "author": "Adil Khan Marwat",
+   "exposure": -0.15,
+   "ar": "كومة من الملفات الورقية القديمة"
+  },
+  {
+   "slug": "script-pen",
+   "id": "29079518",
+   "host": "pexels",
+   "title": "Dip pen on an Arabic script practice sheet",
+   "exposure": -0.6,
+   "ar": "ريشة كتابة على ورقة تمارين خط عربي"
+  },
+  {
+   "slug": "hands-docs",
+   "id": "7821543",
+   "host": "pexels",
+   "title": "Hands reviewing documents",
+   "exposure": -0.35,
+   "ar": "يدان تراجعان مستندات على مكتب"
+  },
+  {
+   "slug": "tower",
+   "id": "32191170",
+   "host": "pexels",
+   "title": "Concrete tower in raking light",
+   "exposure": -0.2,
+   "gnd": 0.35,
+   "gnd_to": 0.5,
+   "ar": "برج خرساني في ضوء مائل"
+  },
+  {
+   "slug": "dune",
+   "id": "19896998",
+   "host": "pexels",
+   "title": "Shadow on a sunlit dune",
+   "exposure": -0.25,
+   "ar": "ظل على كثيب رملي"
+  },
+  {
+   "slug": "marble",
+   "id": "8350474",
+   "host": "pexels",
+   "title": "Dark marble with gold veining",
+   "exposure": 0.1,
+   "ar": "رخام داكن بعروق ذهبية"
+  },
+  {
+   "slug": "seals",
+   "id": "17262454",
+   "host": "pexels",
+   "title": "Black envelopes closed with wax seals",
+   "author": "Andrei Ciubotariu",
+   "exposure": 0.0,
+   "ar": "مظاريف سوداء مختومة بالشمع"
+  },
+  {
+   "slug": "nib",
+   "id": "19875634",
+   "host": "pexels",
+   "title": "Fountain-pen nib on black",
+   "author": "Luis Alberto Garcia Garcia",
+   "exposure": 0.1,
+   "ar": "سنّ قلم حبر على خلفية سوداء"
+  },
+  {
+   "slug": "bokeh",
+   "id": "6315054",
+   "host": "pexels",
+   "title": "Gold light, out of focus",
+   "exposure": -0.1,
+   "ar": "ضوء ذهبي خارج البؤرة"
+  },
+  {
+   "slug": "lattice-light",
+   "id": "18453549",
+   "host": "pexels",
+   "title": "Lattice light pattern on a floor",
+   "exposure": 0.1,
+   "ar": "ضوء يعبر مشربية ويرسم نقوشه على الأرض"
+  },
+  {
+   "slug": "glass-desert",
+   "id": "30137370",
+   "host": "pexels",
+   "title": "Desert rock reflected in modern glass, AlUla",
+   "author": "Fatih Dağlı",
+   "exposure": -0.25,
+   "gnd": 0.35,
+   "gnd_to": 0.5,
+   "ar": "صخور الصحراء منعكسة على زجاج حديث في العلا"
+  }
+ ]
+}
