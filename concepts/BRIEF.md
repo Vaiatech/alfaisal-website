@@ -52,3 +52,13 @@ interlocking details, not a single case* — «عندما تتعقد التفا�
   `ffmpeg -c:v libx264 -pix_fmt yuv420p -crf 18 -movflags +faststart`). Exclude `node_modules` and `dist` via a `.gitignore`.
 - Final report: what the concept is (2–3 sentences), the signature ideas, palette + type decisions, how each motion
   requirement is met, known limitations, and the exact commands to run it.
+
+## Added by the client (applies to all three concepts)
+- **Type engineering is part of the craft.** Treat typography like a font engineer would: a deliberate Almarai scale
+  (400/700/800 only) tuned per size, Arabic-correct line-heights (marks like ُ must never clip), balanced headings with no
+  stranded words, set line breaks for lines with «…», consistent bidi handling for numbers/phones/email, tabular figures
+  where digits line up, no letter-spacing on Arabic, fonts preloaded only where used. Consider Naskh as a deliberate accent.
+- **New creative ideas in every section.** Each section gets its own art direction and its own architecture
+  (composition, scale, rhythm, interaction) — a designed "scene", not a repeated template. Before building a section,
+  write down its single idea; if it could belong to any other website, replace it.
+- **Never AI-generic.** If something looks like a default template, a stock UI kit or an "AI landing page", redo it.
