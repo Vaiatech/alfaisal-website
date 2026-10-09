@@ -20,7 +20,7 @@ import { stats, formatNumber } from '../../data/site';
     </div>
 
     <ol class="ledger" data-ledger>
-      {stats.items.map((item, i) => (
+      {stats.items.map((item) => (
         <li class="ledger__item" data-ledger-item>
           <span class="ledger__rule" aria-hidden="true"></span>
           <p class="ledger__num num" aria-label={`${formatNumber(item.value)}+`}>

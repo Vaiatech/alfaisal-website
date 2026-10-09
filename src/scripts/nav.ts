@@ -145,8 +145,10 @@ function sectionTitle(target: HTMLElement, link: HTMLElement) {
 
 function jumpTo(target: HTMLElement) {
   const header = $('[data-header]');
-  const offset = target.id === 'top' ? 0 : -((header?.offsetHeight ?? 70) + 8);
-  const y = target.id === 'top' ? 0 : target.getBoundingClientRect().top + scrollY() + offset;
+  // Land with the section's label just under the header, not its top padding.
+  const anchor = target.querySelector('.eyebrow') ?? target;
+  const offset = -((header?.offsetHeight ?? 70) + 40);
+  const y = target.id === 'top' ? 0 : Math.max(0, anchor.getBoundingClientRect().top + scrollY() + offset);
   if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
   else window.scrollTo(0, y);
   ScrollTrigger.update();
