@@ -37,6 +37,7 @@ let introK = 0; // 1 = camera held at the loader's mark
 let introCam: { cam: V3; look: V3 } | null = null;
 let outro = { O0: 0, O1: 1 };
 let aim = { C0: 0, C1: 1, O0: 0, O1: 1 };
+let storyR = { S0: 0, S1: 1 };
 const ctaEl = document.querySelector('.contact-act .btn-solid') as HTMLElement;
 
 /* ─────────────────────────── reveal gesture: the RTL light wipe ─────────────────────────── */
@@ -457,6 +458,7 @@ async function layout() {
   chapters.forEach((c) => (c.top = docTop(c.el)));
 
   const S0 = sts.story.start, S1 = sts.story.end, SL = S1 - S0;
+  storyR = { S0, S1 };
   const N0 = sts.num.start, N1 = sts.num.end, NL = N1 - N0;
   const expEl = qs('#expertise');
   const E0 = sts.exp ? sts.exp.start : docTop(expEl) - vh * 0.3;
@@ -585,6 +587,8 @@ function drive() {
   hud.style.opacity = op > 0.05 ? '0' : '';
   updateHud(s);
   if (!stage) return;
+  // the seven words belong to the pinned story scene only
+  stage.setWordVis(smooth(map(s, storyR.S0 - 40, storyR.S0 + (storyR.S1 - storyR.S0) * 0.06)) * (1 - smooth(map(s, storyR.S1 + 60, storyR.S1 + window.innerHeight * 0.45))));
   let cam = g('cam') as V3, look = g('look') as V3;
   // contact: the line of light vanishes exactly on the consultation button
   const wIn = smooth(map(s, aim.C0, aim.C1)) * (1 - smooth(map(s, aim.O0, aim.O0 + (aim.O1 - aim.O0) * 0.45)));

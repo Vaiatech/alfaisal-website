@@ -221,7 +221,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
   const mWorld = new THREE.Vector3(99, 99, 0), mPrev = new THREE.Vector3(99, 99, 0), mVel = new THREE.Vector3();
   let vw = 1, vh = 1, time = 0, running = true;
   const words: { el: HTMLElement; w: number; h: number; tK: number; tT: number; path: V3 }[] = [];
-  let introGain = 0;
+  let introGain = 0, wordVis = 0;
   // adaptive quality
   let ftAcc = 0, ftN = 0, quality = 1, drewEmpty = false;
 
@@ -252,7 +252,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     const pts: { x: number; y: number; s: number; o: number }[] = [];
     // morph between knot (seq 1) and line (seq 2), staggered like the particles
     const s = cur.seq;
-    const vis = clamp01((s - 0.55) / 0.35) * clamp01((2.75 - s) / 0.4);
+    const vis = clamp01((s - 0.55) / 0.35) * clamp01((2.75 - s) / 0.4) * wordVis;
     const m0 = clamp01(s - 1);
     const camPos = camera.position;
     words.forEach((w, i) => {
@@ -384,6 +384,7 @@ export async function createStage(canvas: HTMLCanvasElement, opts: Opts) {
     set(f: Partial<Frame>) { target = { ...target, ...f } as Frame; },
     snap() { Object.assign(cur, { ...target, cam: [...target.cam] as V3, look: [...target.look] as V3 }); },
     setIntroGain(g: number) { introGain = g; },
+    setWordVis(v: number) { wordVis = v; },
     setPointer(x: number, y: number, active: boolean) { mouse.x = x; mouse.y = y; mouse.active = active; },
     setRunning(r: boolean) { running = r; if (r) last = performance.now(); },
     get seq() { return cur.seq; },
