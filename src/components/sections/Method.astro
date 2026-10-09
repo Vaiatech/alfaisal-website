@@ -1,0 +1,113 @@
+---
+import Eyebrow from '../Eyebrow.astro';
+import Arrow from '../Arrow.astro';
+import { method } from '../../data/site';
+---
+<section class="section method" id="method" aria-labelledby="method-title">
+  <div class="wrap railed">
+    <Eyebrow index="04" label={method.label} />
+    <div class="method__head">
+      <h2 id="method-title" class="display h2" data-reveal="lines">{method.title}</h2>
+      <p class="method__body lede" data-reveal="fade">{method.body}</p>
+    </div>
+
+    <ol class="steps" data-steps>
+      {method.steps.map((step, i) => (
+        <li class="step" data-step>
+          <span class="node step__node" data-thread-node aria-hidden="true"></span>
+          {i === method.steps.length - 1 && <span class="thread-via step__via" data-thread-node aria-hidden="true"></span>}
+          <span class="step__idx">{String(i + 1).padStart(2, '0')}</span>
+          <span class="display step__word">{step}</span>
+        </li>
+      ))}
+    </ol>
+
+    <div class="method__close">
+      <span class="thread-via close__via close__via--end" data-thread-node aria-hidden="true"></span>
+      <span class="thread-via close__via close__via--rail" data-thread-node aria-hidden="true"></span>
+      <p class="display method__statement">
+        <span data-reveal="lines">{method.statement[0]}</span>
+        <span class="method__key" data-reveal="lines">{method.statement[1]}</span>
+      </p>
+      <a class="link method__cta" href="#values" data-nav data-reveal="fade">
+        {method.cta}
+        <Arrow class="link__arrow" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .method__head {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 24px clamp(40px, 7vw, 120px);
+    align-items: end;
+  }
+  .method__head :global(.h2) { max-width: 14ch; }
+  .method__body { max-width: 36ch; }
+
+  .steps {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin-top: clamp(72px, 10vw, 150px);
+  }
+  .step { position: relative; padding-top: 44px; }
+  .step__node { position: absolute; top: 0; inset-inline-start: 0; margin-top: -5.5px; }
+  .step__idx {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gold-ink);
+    direction: ltr;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 6px;
+  }
+  .step__word {
+    font-size: clamp(2.2rem, 1.2rem + 3.4vw, 4.6rem);
+    line-height: 1.25;
+    color: var(--ink-3);
+    transition: color 0.8s var(--ease-out);
+  }
+  .step.is-on .step__word { color: var(--ink); }
+  :global(.no-motion) .step__word { color: var(--ink); }
+
+  .method__close {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 32px;
+    margin-top: clamp(80px, 11vw, 168px);
+    padding-top: clamp(40px, 5vw, 64px);
+    border-top: 1px solid var(--line);
+  }
+  .step__via { left: 0; top: 0; }
+  .method__close { position: relative; }
+  .close__via { top: -1px; }
+  .close__via--end { left: 0; }
+  .close__via--rail { inset-inline-start: calc(-1 * var(--rail-gap)); }
+  .method__statement { font-size: var(--step-3); line-height: 1.5; max-width: 24ch; }
+  .method__statement > span { display: block; }
+  .method__key { color: var(--gold); }
+  .method__cta :global(.link__arrow) { width: 16px; height: 16px; transition: transform 0.5s var(--ease-out); }
+  .method__cta:hover :global(.link__arrow) { transform: translateX(-5px); }
+
+  @media (max-width: 900px) {
+    .method__head { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; margin-top: 56px; }
+    .step {
+      display: flex;
+      align-items: baseline;
+      gap: 18px;
+      padding-top: 0;
+      padding-block: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .step__node { top: 50%; inset-inline-start: calc(-1 * var(--rail-gap) - 5.5px); }
+    .step__idx { margin: 0; min-width: 2ch; }
+    .step__word { font-size: 2.3rem; }
+    .step__via, .close__via { display: none; }
+  }
+</style>

@@ -1,0 +1,17 @@
+---
+// Defines every logo part once; <Logo> instances reference them with <use>.
+import raw from '../../brand/alfaisal-logo.svg?raw';
+
+const parts = [...raw.matchAll(/<g id="(\w+)" fill="[^"]+">(.*?)<\/g>/gs)].map((m) => ({
+  id: m[1],
+  body: m[2],
+}));
+---
+<svg class="logo-sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <defs>
+    {parts.map((p) => <g id={`lgp-${p.id}`} set:html={p.body} />)}
+  </defs>
+</svg>
+<style>
+  .logo-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+</style>

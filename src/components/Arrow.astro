@@ -1,0 +1,6 @@
+---
+// Points toward the reading direction (left in RTL).
+interface Props { class?: string }
+const { class: c = 'btn__arrow' } = Astro.props;
+---
+<svg class={c} viewBox="0 0 16 16" aria-hidden="true"><path d="M14 8H2.5M7 3.5 2.5 8 7 12.5" fill="none" stroke="currentColor" stroke-width="1.3" /></svg>

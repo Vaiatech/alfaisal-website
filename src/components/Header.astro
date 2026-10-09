@@ -1,0 +1,214 @@
+---
+import Logo from './Logo.astro';
+import { nav, site, contact } from '../data/site';
+---
+<header class="hdr" data-header>
+  <div class="hdr__inner wrap">
+    <a href="#top" class="hdr__brand" data-nav aria-label="شركة الفيصل للمحاماة — الرئيسية">
+      <Logo variant="mark" uid="hdr" decorative class="hdr__mark" />
+      <span class="hdr__name">
+        <span class="hdr__name-main">الفيصل</span>
+        <span class="hdr__name-sub">للمحاماة والاستشارات القانونية</span>
+      </span>
+    </a>
+
+    <nav class="hdr__nav" aria-label="القائمة الرئيسية">
+      <ul class="hdr__list">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} class="hdr__link" data-nav data-soon={item.soon ? '' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <span class="hdr__indicator" aria-hidden="true"></span>
+    </nav>
+
+    <div class="hdr__actions">
+      <button class="theme-btn" type="button" data-theme-toggle aria-label="تبديل المظهر بين الفاتح والداكن">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.25" />
+          <path class="theme-btn__half" d="M12 3.75a8.25 8.25 0 0 1 0 16.5z" fill="currentColor" />
+        </svg>
+      </button>
+      <a class="btn hdr__consult" href={site.consultUrl} data-external>
+        <span class="hdr__consult-long">احجز استشارة</span>
+        <span class="hdr__consult-short">استشارة</span>
+        <svg class="btn__arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M12.5 3.5 3.5 12.5M3.5 5v7.5H11" fill="none" stroke="currentColor" stroke-width="1.3" /></svg>
+      </a>
+      <button class="menu-btn" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu" aria-label="فتح القائمة">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mmenu" id="mobile-menu" data-menu aria-hidden="true">
+  <nav class="mmenu__nav wrap" aria-label="القائمة">
+    <ol class="mmenu__list">
+      {nav.map((item, i) => (
+        <li class="mmenu__item">
+          <a href={item.href} data-nav data-soon={item.soon ? '' : undefined} tabindex="-1">
+            <span class="mmenu__idx">{String(i + 1).padStart(2, '0')}</span>
+            <span class="mmenu__label">{item.label}</span>
+            {item.soon && <span class="mmenu__soon">قريبًا</span>}
+          </a>
+        </li>
+      ))}
+    </ol>
+    <div class="mmenu__foot">
+      <a href={`tel:${contact.phones[0].tel}`} tabindex="-1"><bdi>{contact.phones[0].display}</bdi></a>
+      <a href={`mailto:${contact.email}`} tabindex="-1">{contact.email}</a>
+    </div>
+  </nav>
+</div>
+
+<style>
+  .hdr {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 60;
+    height: var(--header-h);
+    transition: height 0.5s var(--ease-out), background-color 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+  }
+  .hdr::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    border-bottom: 1px solid var(--line);
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-out);
+  }
+  :global(.is-scrolled) .hdr { --header-h: 70px; }
+  :global(.is-scrolled) .hdr::before { opacity: 1; }
+  :global(.menu-open) .hdr::before { opacity: 0; }
+
+  .hdr__inner {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 2.6vw, 40px);
+  }
+
+  .hdr__brand { display: flex; align-items: center; gap: 12px; flex: none; }
+  :global(.hdr__mark) { width: 44px; height: 44px; transition: width 0.5s var(--ease-out), height 0.5s var(--ease-out); }
+  :global(.is-scrolled .hdr__mark) { width: 38px; height: 38px; }
+  .hdr__name { display: flex; flex-direction: column; line-height: 1.15; }
+  .hdr__name-main { font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; }
+  .hdr__name-sub { font-size: 0.72rem; color: var(--ink-2); margin-top: 3px; }
+
+  .hdr__nav { position: relative; margin-inline: auto; }
+  .hdr__list { display: flex; gap: clamp(18px, 2.2vw, 36px); }
+  .hdr__link {
+    position: relative;
+    display: block;
+    padding-block: 10px;
+    font-size: 0.94rem;
+    font-weight: 400;
+    color: var(--ink-2);
+    transition: color 0.35s var(--ease-out);
+  }
+  .hdr__link:hover, .hdr__link:focus-visible, .hdr__link.is-active { color: var(--ink); }
+  .hdr__indicator {
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    background: var(--gold);
+    transform-origin: left;
+    opacity: 0;
+    transition: transform 0.6s var(--ease-out), width 0.6s var(--ease-out), opacity 0.4s;
+  }
+
+  .hdr__actions { display: flex; align-items: center; gap: 10px; flex: none; }
+  .hdr__consult { height: 44px; --pad-x: 20px; }
+  .hdr__consult-short { display: none; }
+
+  .theme-btn {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+    border-radius: 50%;
+    transition: background-color 0.35s;
+  }
+  .theme-btn:hover { background: var(--line); }
+  .theme-btn svg { width: 20px; height: 20px; transition: transform 0.8s var(--ease-out); }
+  :global([data-theme='dark']) .theme-btn svg { transform: rotate(180deg); }
+
+  .menu-btn { display: none; width: 44px; height: 44px; position: relative; }
+  .menu-btn span {
+    position: absolute;
+    left: 11px;
+    right: 11px;
+    height: 1.25px;
+    background: var(--ink);
+    transition: transform 0.5s var(--ease-out), top 0.5s var(--ease-out);
+  }
+  .menu-btn span:first-child { top: 17px; }
+  .menu-btn span:last-child { top: 26px; left: 17px; }
+  :global(.menu-open) .menu-btn span:first-child { top: 21.5px; transform: rotate(45deg); }
+  :global(.menu-open) .menu-btn span:last-child { top: 21.5px; left: 11px; transform: rotate(-45deg); }
+
+  /* mobile menu */
+  .mmenu {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: var(--bg);
+    padding-top: calc(var(--header-h) + 24px);
+    visibility: hidden;
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 0.7s var(--ease-in-out), visibility 0s linear 0.7s;
+  }
+  :global(.menu-open) .mmenu {
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 0.7s var(--ease-in-out), visibility 0s;
+  }
+  .mmenu__nav { height: 100%; display: flex; flex-direction: column; padding-bottom: 32px; }
+  .mmenu__list { border-top: 1px solid var(--line); }
+  .mmenu__item { border-bottom: 1px solid var(--line); overflow: hidden; }
+  .mmenu__item a { display: flex; align-items: baseline; gap: 18px; padding-block: 14px; }
+  .mmenu__idx { font-size: 0.75rem; color: var(--gold-ink); direction: ltr; min-width: 2ch; }
+  .mmenu__label { font-family: var(--font-display); font-size: clamp(1.8rem, 7vw, 2.6rem); line-height: 1.3; }
+  .mmenu__soon { margin-inline-start: auto; font-size: 0.75rem; color: var(--ink-3); }
+  .mmenu__foot { margin-top: auto; display: flex; flex-direction: column; gap: 6px; color: var(--ink-2); font-size: 0.95rem; }
+  .mmenu__item > a > * {
+    display: inline-block;
+    transform: translateY(110%);
+    transition: transform 0.7s var(--ease-out);
+  }
+  :global(.menu-open) .mmenu__item > a > * { transform: none; }
+  :global(.menu-open) .mmenu__item:nth-child(1) > a > * { transition-delay: 0.18s; }
+  :global(.menu-open) .mmenu__item:nth-child(2) > a > * { transition-delay: 0.23s; }
+  :global(.menu-open) .mmenu__item:nth-child(3) > a > * { transition-delay: 0.28s; }
+  :global(.menu-open) .mmenu__item:nth-child(4) > a > * { transition-delay: 0.33s; }
+  :global(.menu-open) .mmenu__item:nth-child(5) > a > * { transition-delay: 0.38s; }
+  :global(.menu-open) .mmenu__item:nth-child(6) > a > * { transition-delay: 0.43s; }
+
+  @media (max-width: 1180px) {
+    .hdr__name-sub { display: none; }
+  }
+  @media (max-width: 1024px) {
+    .hdr__nav { display: none; }
+    .menu-btn { display: block; }
+    .hdr__actions { margin-inline-start: auto; }
+  }
+  @media (max-width: 520px) {
+    .hdr__consult-long { display: none; }
+    .hdr__consult-short { display: inline; }
+    .hdr__consult { --pad-x: 14px; height: 40px; }
+    .hdr__consult .btn__arrow { display: none; }
+    :global(.hdr__mark) { width: 38px !important; height: 38px !important; }
+    .theme-btn { width: 40px; height: 40px; }
+    .hdr__actions { gap: 4px; }
+  }
+</style>

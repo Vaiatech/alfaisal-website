@@ -1,0 +1,117 @@
+---
+import Eyebrow from '../Eyebrow.astro';
+import { story } from '../../data/site';
+---
+<section class="section story" id="about" aria-labelledby="story-title">
+  <div class="wrap railed">
+    <Eyebrow index="02" label={story.label} />
+    <div class="story__grid">
+      <div class="story__copy">
+        <h2 id="story-title" class="display h2" data-reveal="lines">{story.title}</h2>
+        <div class="story__body">
+          {story.body.map((p, i) => (
+            <p class:list={[i === story.body.length - 1 && 'story__accent']} data-reveal="fade">{p}</p>
+          ))}
+        </div>
+      </div>
+
+      <div class="board" data-board aria-hidden="true">
+        <svg class="board__lines" preserveAspectRatio="none">
+          <path class="board__tangle" d="" />
+          <path class="board__spine" d="" />
+        </svg>
+        {story.words.map((w) => (
+          <span class="board__chip" data-chip>
+            <span class="node node--chip"></span>
+            <span>{w}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <p class="display story__closing" data-reveal="lines">
+      <span class="story__closing-mark" aria-hidden="true"></span>{story.closing}
+    </p>
+  </div>
+</section>
+
+<style>
+  .story__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    gap: clamp(40px, 7vw, 120px);
+    align-items: center;
+  }
+  .story__body {
+    display: grid;
+    gap: 16px;
+    margin-top: clamp(24px, 3vw, 40px);
+    max-width: 46ch;
+    font-size: var(--step-1);
+    font-weight: 400;
+    line-height: 1.9;
+    color: var(--ink-2);
+  }
+  .story__accent { color: var(--ink); font-weight: 500; }
+
+  .board {
+    position: relative;
+    height: clamp(420px, 44vw, 600px);
+    border-inline-start: 1px solid var(--line);
+    border-inline-end: 1px solid var(--line);
+  }
+  .board::before,
+  .board::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    height: 1px;
+    background: var(--line);
+  }
+  .board::before { top: 0; }
+  .board::after { bottom: 0; }
+  .board__lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .board__tangle { fill: none; stroke: var(--gold); stroke-width: 1; opacity: 0.55; vector-effect: non-scaling-stroke; }
+  .board__spine { fill: none; stroke: var(--gold); stroke-width: 1.25; vector-effect: non-scaling-stroke; }
+  .board__chip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 16px 8px;
+    background: var(--bg);
+    border: 1px solid var(--line-2);
+    font-size: var(--step-0);
+    font-weight: 500;
+    white-space: nowrap;
+    will-change: transform;
+    transition: border-color 0.6s var(--ease-out), background-color 0.6s var(--ease-out);
+  }
+  .node--chip { width: 7px; height: 7px; }
+  .board.is-ordered .board__chip { border-color: var(--gold); }
+  .board.is-ordered .node--chip { background: var(--gold); }
+
+  .story__closing {
+    position: relative;
+    margin-top: clamp(72px, 10vw, 150px);
+    font-size: var(--step-3);
+    line-height: 1.5;
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+  .story__closing-mark {
+    position: absolute;
+    inset-inline-start: calc(-1 * var(--rail-gap));
+    top: 0.82em;
+    width: calc(var(--rail-gap) - 14px);
+    height: 1px;
+    background: var(--gold);
+  }
+
+  @media (max-width: 900px) {
+    .story__grid { grid-template-columns: 1fr; }
+    .board { height: 440px; }
+  }
+</style>

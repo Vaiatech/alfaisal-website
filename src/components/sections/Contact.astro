@@ -1,0 +1,104 @@
+---
+import Eyebrow from '../Eyebrow.astro';
+import Arrow from '../Arrow.astro';
+import { closing, contact, site } from '../../data/site';
+---
+<section class="section contact" id="contact" aria-labelledby="contact-title">
+  <div class="wrap railed">
+    <Eyebrow index="06" label={closing.label} />
+    <p class="contact__lead" data-reveal="fade">{closing.lead}</p>
+    <h2 id="contact-title" class="display contact__title" data-reveal="lines">{closing.title}</h2>
+    <p class="contact__body lede" data-reveal="fade">
+      {closing.body[0]}<br />{closing.body[1]}
+    </p>
+
+    <div class="contact__grid">
+      <div class="cblock" data-reveal="fade">
+        <h3 class="cblock__label">الهاتف</h3>
+        <ul class="cblock__list">
+          {contact.phones.map((p) => (
+            <li>
+              <a class="cblock__phone num" href={`tel:${p.tel}`}>{p.display}</a>
+              <span class="cblock__hint">{p.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="cblock" data-reveal="fade">
+        <h3 class="cblock__label">البريد الإلكتروني</h3>
+        <a class="cblock__link" href={`mailto:${contact.email}`}><bdi>{contact.email}</bdi></a>
+        <h3 class="cblock__label cblock__label--gap">الموقع الإلكتروني</h3>
+        <span class="cblock__link"><bdi>{site.domain}</bdi></span>
+      </div>
+      <div class="cblock" data-reveal="fade">
+        <h3 class="cblock__label">العنوان</h3>
+        <address class="cblock__addr">
+          {contact.address.country} – {contact.address.city}<br />{contact.address.line}
+        </address>
+        <a class="link cblock__map" href={contact.mapsUrl} target="_blank" rel="noopener">
+          افتح في خرائط Google
+          <Arrow class="link__arrow" />
+        </a>
+      </div>
+    </div>
+
+    <div class="contact__actions" data-reveal="fade">
+      <a class="btn" href={`tel:${contact.phones[0].tel}`}>
+        اتصل بنا
+        <svg class="btn__arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.6 2.5 7 5.8 5.4 7a7.6 7.6 0 0 0 3.6 3.6l1.2-1.6 3.3 1.4-.5 2.6c-5.6.2-10.2-4.4-10-10z" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round" /></svg>
+      </a>
+      <a class="btn btn--ghost" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener">
+        واتساب
+        <svg class="btn__arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.6 13.4 3.4 10.6A5.9 5.9 0 1 1 5.6 12.7z" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round" /></svg>
+      </a>
+      <a class="btn btn--ghost" href={site.consultUrl} data-external>
+        احجز استشارة
+        <svg class="btn__arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M12.5 3.5 3.5 12.5M3.5 5v7.5H11" fill="none" stroke="currentColor" stroke-width="1.3" /></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact { padding-bottom: clamp(48px, 5vw, 80px); }
+  .contact__lead { font-family: var(--font-display); font-size: var(--step-1); color: var(--ink-2); max-width: 40ch; }
+  .contact__title {
+    margin-top: clamp(16px, 2vw, 28px);
+    font-size: var(--step-5);
+    line-height: 1.22;
+    font-weight: 500;
+  }
+  .contact__body { margin-top: clamp(18px, 2vw, 28px); }
+
+  .contact__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px clamp(24px, 4vw, 64px);
+    margin-top: clamp(56px, 7vw, 104px);
+    padding-top: clamp(32px, 4vw, 48px);
+    border-top: 1px solid var(--line-2);
+  }
+  .cblock__label { font-size: var(--step--1); font-weight: 500; color: var(--ink-2); margin-bottom: 14px; }
+  .cblock__label--gap { margin-top: 28px; }
+  .cblock__list { display: grid; gap: 6px; }
+  .cblock__list li { display: flex; align-items: baseline; gap: 12px; }
+  .cblock__phone {
+    font-size: var(--step-2);
+    line-height: 1.35;
+    transition: color 0.3s;
+  }
+  .cblock__phone:hover { color: var(--gold); }
+  .cblock__hint { font-size: 0.75rem; color: var(--ink-3); }
+  .cblock__link { font-size: var(--step-1); transition: color 0.3s; word-break: break-word; }
+  a.cblock__link:hover { color: var(--gold); }
+  .cblock__addr { font-style: normal; font-size: var(--step-1); line-height: 1.8; }
+  .cblock__map { margin-top: 16px; font-size: var(--step--1); }
+  .cblock__map :global(.link__arrow) { width: 14px; height: 14px; }
+
+  .contact__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(48px, 6vw, 80px); }
+
+  @media (max-width: 900px) {
+    .contact__grid { grid-template-columns: 1fr; }
+    .contact__actions .btn { flex: 1 1 100%; justify-content: space-between; }
+  }
+</style>

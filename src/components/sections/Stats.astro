@@ -1,0 +1,119 @@
+---
+import Eyebrow from '../Eyebrow.astro';
+import { stats, formatNumber } from '../../data/site';
+---
+<section class="section stats" id="numbers" aria-labelledby="stats-title">
+  <div class="wrap railed">
+    <Eyebrow index="01" label={stats.label} />
+
+    <div class="stats__lead">
+      <h2 id="stats-title" class="display stats__title">
+        <span class="stats__prefix" data-reveal="fade">{stats.lead.prefix}</span>
+        <span class="stats__row">
+          <span class="stats__big num" aria-label={`${formatNumber(stats.lead.value)}+`}>
+            <span class="odo" data-odo={stats.lead.value} aria-hidden="true">{formatNumber(stats.lead.value)}</span><span class="stats__plus" aria-hidden="true">+</span>
+          </span>
+          <span class="stats__unit" data-reveal="fade">{stats.lead.unit}</span>
+        </span>
+      </h2>
+      <p class="stats__sub" data-reveal="lines">{stats.subtitle}</p>
+    </div>
+
+    <ol class="ledger" data-ledger>
+      {stats.items.map((item, i) => (
+        <li class="ledger__item" data-ledger-item>
+          <span class="ledger__rule" aria-hidden="true"></span>
+          <p class="ledger__num num" aria-label={`${formatNumber(item.value)}+`}>
+            <span class="odo" data-odo={item.value} aria-hidden="true">{formatNumber(item.value)}</span><span class="ledger__plus" aria-hidden="true">+</span>
+          </p>
+          <p class="ledger__label">{item.label}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .stats__lead {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+    align-items: end;
+    gap: 24px clamp(32px, 6vw, 96px);
+  }
+  .stats__title { font-weight: 500; }
+  .stats__prefix { display: block; font-size: var(--step-2); color: var(--ink-2); line-height: 1.2; }
+  .stats__row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 clamp(14px, 2vw, 28px); }
+  .stats__big {
+    display: inline-flex;
+    align-items: baseline;
+    font-size: clamp(5rem, 2.4rem + 11vw, 13.5rem);
+    line-height: 1.02;
+    font-weight: 500;
+    color: var(--gold);
+    letter-spacing: -0.02em;
+  }
+  .stats__plus { font-size: 0.48em; margin-inline-start: 0.04em; transform: translateY(-0.62em); display: inline-block; font-weight: 400; }
+  .stats__unit { font-size: var(--step-4); line-height: 1; }
+  .stats__sub {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.55;
+    color: var(--ink);
+    padding-bottom: 0.6em;
+    max-width: 18ch;
+    justify-self: end;
+    text-wrap: balance;
+  }
+
+  .ledger {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: clamp(24px, 4vw, 64px);
+    margin-top: clamp(64px, 9vw, 128px);
+  }
+  .ledger__item {
+    position: relative;
+    display: grid;
+    padding-block: clamp(22px, 2.4vw, 32px) clamp(30px, 3vw, 44px);
+  }
+  .ledger__rule {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: var(--line-2);
+    transform-origin: right;
+  }
+  .ledger__rule::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.9s var(--ease-out);
+  }
+  .ledger__item:hover .ledger__rule::after { transform: scaleX(1); }
+  .ledger__num {
+    font-size: clamp(2.6rem, 1.6rem + 3.2vw, 4.4rem);
+    line-height: 1.15;
+    font-weight: 500;
+    color: var(--ink);
+    display: flex;
+    align-items: baseline;
+    justify-self: start;
+    width: max-content;
+  }
+  .ledger__plus { color: var(--gold); font-size: 0.6em; transform: translateY(-0.45em); display: inline-block; margin-inline-start: 0.04em; }
+  .ledger__label { color: var(--ink-2); font-size: var(--step-0); }
+
+  @media (max-width: 900px) {
+    .stats__lead { grid-template-columns: 1fr; }
+    .stats__sub { justify-self: start; max-width: 22ch; }
+    .ledger { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 520px) {
+    .ledger { grid-template-columns: 1fr 1fr; column-gap: 18px; }
+    .ledger__num { font-size: 2.3rem; }
+    .ledger__label { font-size: 0.9rem; }
+  }
+</style>

@@ -1,0 +1,91 @@
+---
+import Eyebrow from '../Eyebrow.astro';
+import { expertise } from '../../data/site';
+---
+<section class="section expertise" id="expertise" aria-labelledby="expertise-title">
+  <div class="wrap railed">
+    <Eyebrow index="03" label={expertise.label} />
+    <div class="expertise__grid">
+      <div class="expertise__aside">
+        <h2 id="expertise-title" class="display h2" data-reveal="lines">{expertise.title}</h2>
+      </div>
+
+      <ol class="areas">
+        {expertise.items.map((item, i) => (
+          <li class="area" data-reveal="area">
+            <span class="area__idx">{String(i + 1).padStart(2, '0')}</span>
+            <div class="area__text">
+              <h3 class="display area__title">{item.title}</h3>
+              <p class="area__body">{item.body}</p>
+            </div>
+            <span class="area__line" aria-hidden="true"></span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .expertise__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(40px, 7vw, 120px);
+    align-items: start;
+  }
+  .expertise__aside { position: sticky; top: calc(var(--header-h) + 56px); }
+  .expertise__aside :global(.h2) { max-width: 11ch; }
+
+  .areas { border-top: 1px solid var(--line-2); }
+  .area {
+    position: relative;
+    display: grid;
+    grid-template-columns: 3.2rem minmax(0, 1fr);
+    align-items: baseline;
+    padding-block: clamp(26px, 3vw, 40px);
+    border-bottom: 1px solid var(--line);
+  }
+  .area__idx {
+    font-size: 0.78rem;
+    color: var(--gold-ink);
+    direction: ltr;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.4s;
+  }
+  .area__title {
+    font-size: var(--step-3);
+    line-height: 1.3;
+    font-weight: 500;
+    transition: transform 0.7s var(--ease-out), color 0.4s;
+  }
+  .area__body {
+    margin-top: 8px;
+    max-width: 44ch;
+    color: var(--ink-2);
+    font-weight: 400;
+    transition: transform 0.7s var(--ease-out) 0.04s;
+  }
+  .area__line {
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.9s var(--ease-out);
+  }
+  @media (hover: hover) {
+    .area:hover .area__line { transform: scaleX(1); }
+    .area:hover .area__title,
+    .area:hover .area__body { transform: translateX(-10px); }
+    .area:hover .area__idx { color: var(--gold); }
+  }
+
+  @media (max-width: 900px) {
+    .expertise__grid { grid-template-columns: 1fr; }
+    .expertise__aside { position: static; }
+    .area { grid-template-columns: 2.4rem minmax(0, 1fr); }
+  }
+</style>

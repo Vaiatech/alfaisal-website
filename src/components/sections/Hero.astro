@@ -1,0 +1,134 @@
+---
+import Logo from '../Logo.astro';
+import Arrow from '../Arrow.astro';
+import { hero, site } from '../../data/site';
+---
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="wrap railed hero__grid">
+    <div class="hero__copy">
+      <p class="hero__eyebrow" data-reveal="fade" data-hero>
+        <span class="hero__dash" aria-hidden="true"></span>{hero.eyebrow}
+      </p>
+      <h1 id="hero-title" class="display hero__title">
+        <span class="hero__line" data-hero-line>{hero.title[0]}</span>
+        <span class="hero__line" data-hero-line>تحتاج إلى <span class="hero__key">منظومة</span> قانونية متكاملة</span>
+      </h1>
+      <div class="hero__body">
+        {hero.body.map((p) => <p data-reveal="fade" data-hero>{p}</p>)}
+      </div>
+      <div class="hero__foot" data-reveal="fade" data-hero>
+        <a class="btn" href="#contact" data-nav>
+          {hero.cta}
+          <Arrow />
+        </a>
+        <p class="hero__tagline">
+          {site.tagline.map((t, i) => (
+            <>
+              {i > 0 && <span class="node node--sm" aria-hidden="true"></span>}
+              <span>{t}</span>
+            </>
+          ))}
+        </p>
+      </div>
+      <span class="thread-via hero__start-m" data-thread-start-m aria-hidden="true"></span>
+    </div>
+
+    <div class="hero__art" data-hero-art>
+      <Logo variant="mark" uid="hero" decorative class="hero__mark" />
+      <span class="hero__nib" data-thread-start aria-hidden="true"></span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-top: calc(var(--header-h) + clamp(24px, 4vw, 56px));
+    padding-bottom: clamp(56px, 8vw, 120px);
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7.4fr) minmax(0, 4.6fr);
+    align-items: center;
+    column-gap: clamp(32px, 6vw, 112px);
+  }
+
+  .hero__copy { position: relative; }
+  .hero__start-m { inset-inline-start: calc(-1 * var(--rail-gap)); bottom: -24px; }
+  .hero__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--ink-2);
+    margin-bottom: clamp(24px, 3vw, 40px);
+  }
+  .hero__dash { width: 36px; height: 1px; background: var(--gold); flex: none; }
+
+  .hero__title {
+    font-size: clamp(2.5rem, 1.5rem + 3.2vw, 4.5rem);
+    line-height: 1.38;
+    font-weight: 500;
+    text-wrap: balance;
+  }
+  .hero__line { display: block; }
+  .hero__key { color: var(--gold); }
+
+  .hero__body {
+    display: grid;
+    gap: 14px;
+    max-width: 58ch;
+    margin-top: clamp(26px, 3vw, 40px);
+    color: var(--ink-2);
+    font-size: var(--step-0);
+    font-weight: 400;
+  }
+
+  .hero__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 22px 36px;
+    margin-top: clamp(32px, 4vw, 52px);
+  }
+  .hero__tagline {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    color: var(--ink);
+  }
+  .node--sm { width: 7px; height: 7px; background: var(--gold); border: 0; }
+
+  .hero__art {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 520px, 62svh);
+  }
+  :global(.hero__mark) { width: 100%; height: auto; aspect-ratio: 830 / 835; overflow: visible; }
+  /* pen-nib tip in the mark's viewBox (741.5, 775.1) → percentages */
+  .hero__nib {
+    position: absolute;
+    left: 77.29%;
+    top: 94.02%;
+    width: 1px;
+    height: 1px;
+  }
+
+  @media (max-width: 900px) {
+    .hero { align-items: flex-start; min-height: auto; }
+    .hero__grid { grid-template-columns: 1fr; }
+    .hero__art {
+      grid-row: 1;
+      justify-self: end;
+      width: min(48vw, 240px);
+      margin-bottom: 28px;
+    }
+    .hero__title { font-size: clamp(2.1rem, 8.6vw, 3rem); }
+  }
+</style>

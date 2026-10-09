@@ -1,0 +1,104 @@
+---
+import Logo from './Logo.astro';
+---
+<!-- First-visit intro: the pen writes the mark, then hands it to the hero. -->
+<div class="intro" data-intro aria-hidden="true">
+  <div class="intro__bg" data-intro-bg></div>
+  <div class="intro__stage">
+    <Logo variant="mark" uid="intro" writing decorative class="intro__mark" />
+  </div>
+  <p class="intro__name" data-intro-name>شركة الفيصل للمحاماة والاستشارات القانونية</p>
+  <button class="intro__skip" type="button" data-intro-skip tabindex="-1">تخطٍّ</button>
+</div>
+
+<!-- Section / page transition: a sheet of paper sweeps across, gold edge leading. -->
+<div class="curtain" data-curtain aria-hidden="true">
+  <span class="curtain__edge"></span>
+  <p class="curtain__title display" data-curtain-title></p>
+</div>
+
+<div class="toast" data-toast role="status" aria-live="polite"></div>
+
+<style>
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: none;
+  }
+  .intro__bg { position: absolute; inset: 0; background: var(--bg); }
+  :global(html.has-intro) .intro { display: block; }
+  .intro__stage {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  :global(.intro__mark) {
+    width: min(46vmin, 380px);
+    height: auto;
+    aspect-ratio: 830 / 835;
+    overflow: visible;
+    transform-origin: 0 0;
+  }
+  .intro__name {
+    position: absolute;
+    inset-inline: 0;
+    bottom: clamp(32px, 7vh, 72px);
+    text-align: center;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    opacity: 0;
+  }
+  .intro__skip {
+    position: absolute;
+    top: 24px;
+    inset-inline-end: var(--gutter);
+    font-size: 0.8rem;
+    color: var(--ink-3);
+    padding: 8px 4px;
+    opacity: 0;
+    transition: color 0.3s, opacity 0.6s;
+  }
+  :global(html.intro-ready) .intro__skip { opacity: 1; }
+  .intro__skip:hover { color: var(--ink); }
+
+  .curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    display: grid;
+    place-items: center;
+    background: var(--bg);
+    visibility: hidden;
+    clip-path: inset(0 0 0 100%);
+    pointer-events: none;
+  }
+  .curtain__edge {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    background: var(--gold);
+  }
+  .curtain__title { font-size: var(--step-4); opacity: 0; }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    z-index: 130;
+    padding: 14px 22px;
+    background: var(--btn-bg);
+    color: var(--btn-ink);
+    font-size: var(--step--1);
+    border-top: 1px solid var(--gold);
+    transform: translate(-50%, calc(100% + 48px));
+    visibility: hidden;
+    transition: transform 0.6s var(--ease-out), visibility 0s linear 0.6s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.is-on { transform: translate(-50%, 0); visibility: visible; transition: transform 0.6s var(--ease-out); }
+</style>

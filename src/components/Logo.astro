@@ -1,0 +1,69 @@
+---
+import strokes from '../assets/calligraphy-strokes.json';
+
+interface Props {
+  /** mark = calligraphy + pen + scale; full = with wordmark, rule and tagline */
+  variant?: 'mark' | 'full';
+  /** unique prefix for mask / clip ids */
+  uid: string;
+  /** render hidden, ready for the pen-writing animation */
+  writing?: boolean;
+  class?: string;
+  label?: string;
+  decorative?: boolean;
+}
+
+const {
+  variant = 'mark',
+  uid,
+  writing = false,
+  class: className = '',
+  label = 'شعار شركة الفيصل للمحاماة',
+  decorative = false,
+} = Astro.props;
+
+const viewBox = variant === 'mark' ? '100 -10 830 835' : '-4 -8 1039 1210';
+const w = (s: number) => (s + 0.5).toFixed(1);
+---
+<svg
+  class:list={['logo-svg', `logo-svg--${variant}`, className]}
+  viewBox={viewBox}
+  data-uid={uid}
+  data-writing={writing ? '' : undefined}
+  role={decorative ? undefined : 'img'}
+  aria-hidden={decorative ? 'true' : undefined}
+  aria-label={decorative ? undefined : label}
+  focusable="false"
+>
+  {writing && (
+    <defs>
+      <mask id={`${uid}-ink`} maskUnits="userSpaceOnUse" x="0" y="-40" width="1031" height="900">
+        <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+          {strokes.map((s) => (
+            <path class="ink-stroke" data-l={s.l} d={s.d} stroke-width={w(s.w)} pathLength="1" stroke-dasharray="1 1.1" stroke-dashoffset="1.05" />
+          ))}
+        </g>
+      </mask>
+      <clipPath id={`${uid}-pen`}>
+        <rect class="pen-clip" x="520" y="0" width="420" height={0} />
+      </clipPath>
+    </defs>
+  )}
+  <g class="lg-pen-g" clip-path={writing ? `url(#${uid}-pen)` : undefined}>
+    <use href="#lgp-pen" class="lg-pen" />
+    <use href="#lgp-penband" class="lg-band" />
+  </g>
+  <g class="lg-callig-g" mask={writing ? `url(#${uid}-ink)` : undefined}>
+    <use href="#lgp-calligraphy" class="lg-callig" />
+  </g>
+  <g class="lg-scale-g" style={writing ? 'opacity:0' : undefined}>
+    <use href="#lgp-scale" class="lg-scale" />
+  </g>
+  {variant === 'full' && (
+    <>
+      <g class="lg-word-g"><use href="#lgp-wordmark" class="lg-word" /></g>
+      <g class="lg-rule-g"><use href="#lgp-rule" class="lg-rule" /></g>
+      <g class="lg-tag-g"><use href="#lgp-tagline" class="lg-tag" /></g>
+    </>
+  )}
+</svg>

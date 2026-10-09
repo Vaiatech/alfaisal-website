@@ -1,0 +1,346 @@
+/* ─────────────────────────────────────────────────────────────
+   Al-Faisal — design tokens & base
+   Palette is taken from the logo itself:
+     gold   #AD832D  (calligraphy)      maroon #8A1C1C (pen, wordmark)
+     ink    #4A1410  (tagline) → warmed toward a near-black for text
+   One background per theme. Hierarchy comes from type, rule and space.
+   ───────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: 'Naskh';
+  src: url('/fonts/naskh-arabic.woff2') format('woff2-variations');
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FEFC;
+}
+@font-face {
+  font-family: 'Naskh';
+  src: url('/fonts/naskh-latin.woff2') format('woff2-variations');
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+@font-face { font-family: 'Plex'; src: url('/fonts/plex-arabic-300.woff2') format('woff2'); font-weight: 300; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+@font-face { font-family: 'Plex'; src: url('/fonts/plex-arabic-400.woff2') format('woff2'); font-weight: 400; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+@font-face { font-family: 'Plex'; src: url('/fonts/plex-arabic-500.woff2') format('woff2'); font-weight: 500; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+@font-face { font-family: 'Plex'; src: url('/fonts/plex-arabic-600.woff2') format('woff2'); font-weight: 600; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+@font-face { font-family: 'Plex'; src: url('/fonts/plex-latin-300.woff2') format('woff2'); font-weight: 300; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2212; }
+@font-face { font-family: 'Plex'; src: url('/fonts/plex-latin-400.woff2') format('woff2'); font-weight: 400; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2212; }
+@font-face { font-family: 'Plex'; src: url('/fonts/plex-latin-500.woff2') format('woff2'); font-weight: 500; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2212; }
+@font-face { font-family: 'Plex'; src: url('/fonts/plex-latin-600.woff2') format('woff2'); font-weight: 600; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2212; }
+
+:root {
+  color-scheme: light;
+  --bg: #f8f5ef;
+  --ink: #1e1714;
+  --ink-2: #5e5249;
+  --ink-3: #9a8e83;
+  --line: rgb(30 23 20 / 0.12);
+  --line-2: rgb(30 23 20 / 0.24);
+  --gold: #ad832d;
+  --gold-ink: #7e5f1f;
+  --maroon: #8a1c1c;
+  --accent-ink: var(--maroon);
+  --btn-bg: #1e1714;
+  --btn-ink: #f8f5ef;
+  --selection: rgb(173 131 45 / 0.28);
+  --grain-opacity: 0.045;
+  --grain-blend: multiply;
+
+  /* logo parts */
+  --logo-gold: #ad832d;
+  --logo-gold-2: #bd882c;
+  --logo-pen: #8a1c1c;
+  --logo-word: #8a1c1c;
+  --logo-tag: #4a1410;
+
+  --font-display: 'Naskh', 'Noto Naskh Arabic', 'Geeza Pro', serif;
+  --font-text: 'Plex', 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+
+  --step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-0: clamp(1rem, 0.96rem + 0.18vw, 1.125rem);
+  --step-1: clamp(1.15rem, 1.06rem + 0.4vw, 1.375rem);
+  --step-2: clamp(1.45rem, 1.2rem + 1vw, 2.1rem);
+  --step-3: clamp(2rem, 1.45rem + 2.3vw, 3.4rem);
+  --step-4: clamp(2.5rem, 1.6rem + 3.9vw, 5.1rem);
+  --step-5: clamp(3.4rem, 1.8rem + 7vw, 8.75rem);
+
+  --gutter: clamp(20px, 4.4vw, 64px);
+  --rail-gap: clamp(28px, 4.2vw, 72px);
+  --maxw: 1400px;
+  --header-h: 84px;
+  --section-y: clamp(96px, 13vw, 200px);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #13100e;
+  --ink: #efe8dc;
+  --ink-2: #a89c8e;
+  --ink-3: #6e655c;
+  --line: rgb(239 232 220 / 0.11);
+  --line-2: rgb(239 232 220 / 0.22);
+  --gold: #c39a4c;
+  --gold-ink: #c9a25a;
+  --accent-ink: #c9a25a;
+  --btn-bg: #efe8dc;
+  --btn-ink: #13100e;
+  --selection: rgb(201 162 90 / 0.3);
+  --grain-opacity: 0.06;
+  --grain-blend: screen;
+
+  --logo-gold: #b8893a;
+  --logo-gold-2: #c39a4c;
+  --logo-pen: #efe8dc;
+  --logo-word: #efe8dc;
+  --logo-tag: #cfc5b7;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--bg);
+  scroll-padding-top: calc(var(--header-h) + 24px);
+}
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--step-0);
+  font-weight: 400;
+  line-height: 1.85;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.6s var(--ease-out), color 0.6s var(--ease-out);
+}
+
+/* paper grain — static, one layer, barely there */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.45 0 0 0 0 0.4 0 0 0 1.6 -0.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection { background: var(--selection); color: inherit; }
+
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+h1, h2, h3, h4, p, ul, ol, figure, blockquote { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  inset-inline-start: 16px;
+  top: 12px;
+  z-index: 200;
+  padding: 10px 18px;
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  transform: translateY(-160%);
+  transition: transform 0.3s var(--ease-out);
+}
+.skip-link:focus { transform: none; }
+
+/* ── layout primitives ─────────────────────────────────────── */
+
+.page { position: relative; }
+
+.wrap {
+  position: relative;
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+/* content that hangs off the gold rail on the inline-start (right) side */
+.railed { padding-inline-start: calc(var(--gutter) + var(--rail-gap)); }
+
+.section { position: relative; padding-block: var(--section-y); }
+
+/* ── type ──────────────────────────────────────────────────── */
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.32;
+  color: var(--ink);
+}
+.h2 { font-size: clamp(2.3rem, 1.45rem + 2.6vw, 4.1rem); }
+.h3 { font-size: var(--step-2); }
+.lede { font-size: var(--step-1); line-height: 1.85; color: var(--ink-2); font-weight: 400; }
+.muted { color: var(--ink-2); }
+.num { font-family: var(--font-display); font-variant-numeric: lining-nums tabular-nums; direction: ltr; unicode-bidi: isolate; }
+.gold { color: var(--gold); }
+
+/* eyebrow: rail node + index + label */
+.eyebrow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: clamp(28px, 3.4vw, 48px);
+  font-size: var(--step--1);
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.eyebrow__index { font-variant-numeric: tabular-nums; color: var(--gold-ink); direction: ltr; }
+.eyebrow__bar { width: 28px; height: 1px; background: var(--line-2); }
+
+/* rhombus — the calligrapher's dot (نقطة), used as the site's only bullet */
+.node {
+  width: 11px;
+  height: 11px;
+  flex: none;
+  transform: rotate(45deg);
+  border: 1px solid var(--gold);
+  background: var(--bg);
+  transition: background-color 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+}
+.node.is-on { background: var(--gold); }
+.thread-via { position: absolute; width: 1px; height: 1px; pointer-events: none; }
+.eyebrow > .node {
+  position: absolute;
+  inset-inline-start: calc(-1 * var(--rail-gap) - 5.5px);
+  top: 50%;
+  margin-top: -5.5px;
+}
+
+/* ── buttons & links ───────────────────────────────────────── */
+
+.btn {
+  --pad-x: 26px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 52px;
+  padding-inline: var(--pad-x);
+  font-size: var(--step--1);
+  font-weight: 500;
+  border: 1px solid var(--btn-bg);
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.45s var(--ease-out), border-color 0.45s var(--ease-out);
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.55s var(--ease-out);
+}
+.btn:hover::before, .btn:focus-visible::before { transform: scaleX(1); }
+.btn:hover, .btn:focus-visible { border-color: var(--gold); color: #fff; }
+.btn--ghost { background: transparent; color: var(--ink); border-color: var(--line-2); }
+.btn--ghost:hover { color: #fff; }
+.btn__arrow { width: 16px; height: 16px; flex: none; transition: transform 0.45s var(--ease-out); }
+.btn:hover .btn__arrow { transform: translateX(-4px); }
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: 4px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.link::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0.28);
+  transform-origin: right;
+  transition: transform 0.6s var(--ease-out), background-color 0.4s;
+}
+.link:hover::after, .link:focus-visible::after { transform: scaleX(1); background: var(--gold); }
+
+/* ── reveal states (set before JS paints; JS animates them in) ── */
+.js [data-reveal] { opacity: 0; }
+.js .no-reveal [data-reveal] { opacity: 1; }
+.split-line { overflow: clip; overflow-clip-margin: 0.25em; padding-block: 0.06em; }
+
+/* ── logo part fills (shared by every logo instance) ───────── */
+.lg-pen { fill: var(--logo-pen); }
+.lg-callig, .lg-scale { fill: var(--logo-gold); }
+.lg-band, .lg-rule { fill: var(--logo-gold-2); }
+.lg-word { fill: var(--logo-word); }
+.lg-tag { fill: var(--logo-tag); }
+.logo-svg use { transition: fill 0.6s var(--ease-out); }
+
+@media (max-width: 900px) {
+  :root { --header-h: 68px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* theme switch: the new theme spreads from the toggle like ink */
+.theme-switching body { transition: none; }
+::view-transition-old(root),
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-new(root) { animation: ink-spread 0.9s cubic-bezier(0.65, 0, 0.35, 1) both; }
+@keyframes ink-spread {
+  from { clip-path: circle(0 at var(--vt-x, 90%) var(--vt-y, 40px)); }
+  to { clip-path: circle(var(--vt-r, 150vmax) at var(--vt-x, 90%) var(--vt-y, 40px)); }
+}
+
+/* intro hand-off: hide what the intro will reveal */
+html.has-intro .hdr { opacity: 0; transform: translateY(-12px); }
+html.has-intro [data-hero-art] { opacity: 0; }
+.js [data-hero-line] { opacity: 0; }
+
+/* odometer */
+.odo { display: inline-flex; direction: ltr; }
+.odo--live { line-height: 1.1; }
+.odo__col { display: inline-block; height: 1.1em; overflow: hidden; }
+.odo__strip { display: flex; flex-direction: column; will-change: transform; }
+.odo__strip > span { display: block; height: 1.1em; line-height: 1.1em; text-align: center; }
+.odo__sep { display: inline-block; height: 1.1em; line-height: 1.1em; }

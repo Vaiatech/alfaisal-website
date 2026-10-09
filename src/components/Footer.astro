@@ -1,0 +1,112 @@
+---
+import Logo from './Logo.astro';
+import { nav, site, contact } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="ftr" data-footer>
+  <div class="wrap railed ftr__inner">
+    <div class="ftr__sign">
+      <Logo variant="full" uid="ftr" class="ftr__logo" />
+      <span class="thread-via ftr__via" data-thread-node aria-hidden="true"></span>
+      <span class="ftr__rule-end" data-thread-end aria-hidden="true"></span>
+    </div>
+
+    <div class="ftr__cols">
+      <nav class="ftr__col" aria-label="روابط التذييل">
+        <h2 class="ftr__h">الصفحات</h2>
+        <ul>
+          {nav.map((n) => (
+            <li><a class="ftr__a" href={n.href} data-nav data-soon={n.soon ? '' : undefined}>{n.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <div class="ftr__col">
+        <h2 class="ftr__h">تواصل</h2>
+        <ul>
+          {contact.phones.map((p) => (
+            <li><a class="ftr__a num" href={`tel:${p.tel}`}>{p.display}</a></li>
+          ))}
+          <li><a class="ftr__a" href={`mailto:${contact.email}`}><bdi>{contact.email}</bdi></a></li>
+        </ul>
+      </div>
+      <div class="ftr__col">
+        <h2 class="ftr__h">العنوان</h2>
+        <p class="ftr__p">{contact.address.city}<br />{contact.address.line}</p>
+        <a class="btn ftr__consult" href={site.consultUrl} data-external>
+          احجز استشارة
+          <svg class="btn__arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M12.5 3.5 3.5 12.5M3.5 5v7.5H11" fill="none" stroke="currentColor" stroke-width="1.3" /></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="ftr__base">
+      <p>© {year} {site.name}. جميع الحقوق محفوظة.</p>
+      <p class="ftr__meta">
+        <span>سجل تجاري <bdi class="num">{site.commercialRegistry}</bdi></span>
+        <span class="ftr__dot" aria-hidden="true"></span>
+        <bdi>{site.domain}</bdi>
+      </p>
+      <button class="ftr__top" type="button" data-to-top>
+        العودة إلى الأعلى
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.5V2.5M3.5 7 8 2.5 12.5 7" fill="none" stroke="currentColor" stroke-width="1.3" /></svg>
+      </button>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr { position: relative; padding-top: clamp(64px, 8vw, 120px); padding-bottom: 32px; }
+  .ftr__inner {
+    display: grid;
+    grid-template-columns: minmax(200px, 270px) minmax(0, 1fr);
+    gap: clamp(40px, 5vw, 72px) clamp(48px, 8vw, 140px);
+    align-items: end;
+  }
+  .ftr__sign { position: relative; width: 100%; }
+  :global(.ftr__logo) { width: 100%; height: auto; aspect-ratio: 1039 / 1210; overflow: visible; }
+  /* right end of the logo's gold rule (1027, 1081) in its viewBox → percentages */
+  .ftr__via { top: 90%; inset-inline-start: calc(-1 * var(--rail-gap)); }
+  .ftr__rule-end { position: absolute; left: 99.23%; top: 90%; width: 1px; height: 1px; }
+
+  .ftr__cols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px clamp(24px, 4vw, 64px);
+    padding-bottom: 6px;
+  }
+  .ftr__h { font-size: var(--step--1); font-weight: 500; color: var(--ink-2); margin-bottom: 16px; }
+  .ftr__col ul { display: grid; gap: 8px; }
+  .ftr__a { color: var(--ink); transition: color 0.3s; }
+  .ftr__a:hover { color: var(--gold); }
+  .ftr__p { line-height: 1.9; }
+  .ftr__consult { margin-top: 24px; height: 46px; }
+
+  .ftr__base {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .ftr__meta { display: flex; align-items: center; gap: 14px; }
+  .ftr__dot { width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg); }
+  .ftr__top { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); }
+  .ftr__top svg { width: 14px; height: 14px; transition: transform 0.5s var(--ease-out); }
+  .ftr__top:hover svg { transform: translateY(-4px); }
+
+  @media (max-width: 1100px) {
+    .ftr__inner { grid-template-columns: 1fr; }
+    .ftr__sign { width: 240px; }
+    .ftr__cols { padding-top: 32px; border-top: 1px solid var(--line-2); }
+  }
+  @media (max-width: 700px) {
+    .ftr__cols { grid-template-columns: 1fr 1fr; }
+    .ftr__col:last-child { grid-column: 1 / -1; }
+    .ftr__sign { width: 200px; }
+  }
+</style>

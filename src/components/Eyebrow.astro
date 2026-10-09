@@ -1,0 +1,10 @@
+---
+interface Props { index: string; label: string; id?: string }
+const { index, label, id } = Astro.props;
+---
+<p class="eyebrow" id={id} data-reveal="fade">
+  <span class="node" data-thread-node aria-hidden="true"></span>
+  <span class="eyebrow__index">{index}</span>
+  <span class="eyebrow__bar" aria-hidden="true"></span>
+  <span>{label}</span>
+</p>

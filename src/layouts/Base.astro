@@ -1,0 +1,104 @@
+---
+import '../styles/global.css';
+import LogoSprite from '../components/LogoSprite.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Overlays from '../components/Overlays.astro';
+import Thread from '../components/Thread.astro';
+import { site, contact } from '../data/site';
+
+interface Props { title?: string; description?: string }
+const { title = site.name, description = site.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImage = new URL('/og.jpg', site.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LegalService',
+  name: site.name,
+  url: site.url,
+  logo: new URL('/apple-touch-icon.png', site.url).href,
+  image: ogImage,
+  email: contact.email,
+  telephone: contact.phones.map((p) => p.tel),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: contact.address.line,
+    addressLocality: contact.address.city,
+    addressCountry: 'SA',
+  },
+  areaServed: 'SA',
+  slogan: site.tagline.join(' | '),
+};
+---
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#f8f5ef" data-theme-color />
+    <meta name="format-detection" content="telephone=no" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ar_SA" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link rel="preload" href="/fonts/naskh-arabic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/plex-arabic-300.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/plex-arabic-500.woff2" as="font" type="font/woff2" crossorigin />
+
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        try {
+          var t = localStorage.getItem('alf-theme');
+          if (t === 'dark' || t === 'light') d.setAttribute('data-theme', t);
+        } catch (e) {}
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) d.classList.add('no-motion');
+        var seen = false;
+        try { seen = sessionStorage.getItem('alf-intro') === '1'; } catch (e) {}
+        if (!reduce && !seen && !location.hash) {
+          d.classList.add('has-intro');
+          if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        }
+        // Failsafe: if the app script never boots, show the page as-is.
+        setTimeout(function () {
+          if (!window.__alfBooted) d.classList.remove('js', 'has-intro');
+        }, 6000);
+      })();
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">تخطَّ إلى المحتوى</a>
+    <LogoSprite />
+    <Overlays />
+    <Header />
+    <div class="page" data-page>
+      <Thread />
+      <main id="main">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    <script>
+      import '../scripts/app';
+    </script>
+  </body>
+</html>
