@@ -65,25 +65,25 @@ import { hero, site } from '../../data/site';
     align-items: center;
     gap: 14px;
     font-size: var(--step--1);
-    font-weight: 500;
+    font-weight: var(--w-bold);
     color: var(--ink-2);
     margin-bottom: clamp(24px, 3vw, 40px);
   }
   .hero__dash { width: 36px; height: 1px; background: var(--gold); flex: none; }
 
   .hero__title {
-    font-size: clamp(2.5rem, 1.5rem + 3.2vw, 4.5rem);
-    line-height: 1.38;
-    font-weight: 500;
+    font-size: clamp(2.3rem, 1.35rem + 2.45vw, 3.7rem);
+    line-height: 1.32;
+    font-weight: var(--w-heavy);
     text-wrap: balance;
   }
-  .hero__line { display: block; }
+  .hero__line { display: block; text-wrap: balance; }
   .hero__key { color: var(--gold); }
 
   .hero__body {
     display: grid;
     gap: 14px;
-    max-width: 58ch;
+    max-width: 46ch;
     margin-top: clamp(26px, 3vw, 40px);
     color: var(--ink-2);
     font-size: var(--step-0);
@@ -131,6 +131,6 @@ import { hero, site } from '../../data/site';
       width: min(48vw, 240px);
       margin-bottom: 28px;
     }
-    .hero__title { font-size: clamp(2.1rem, 8.6vw, 3rem); }
+    .hero__title { font-size: clamp(2.3rem, 9.4vw, 3rem); }
   }
 </style>

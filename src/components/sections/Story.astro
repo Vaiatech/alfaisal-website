@@ -29,8 +29,8 @@ import { story } from '../../data/site';
       </div>
     </div>
 
-    <p class="display story__closing" data-reveal="lines">
-      <span class="story__closing-mark" aria-hidden="true"></span>{story.closing}
+    <p class="display accent story__closing" data-reveal="lines">
+      <span class="story__closing-mark" aria-hidden="true"></span>{story.closing.map((l) => <span class="story__closing-line">{l}</span>)}
     </p>
   </div>
 </section>
@@ -52,7 +52,7 @@ import { story } from '../../data/site';
     line-height: 1.9;
     color: var(--ink-2);
   }
-  .story__accent { color: var(--ink); font-weight: 500; }
+  .story__accent { color: var(--ink); font-weight: var(--w-bold); }
 
   .board {
     position: relative;
@@ -84,7 +84,7 @@ import { story } from '../../data/site';
     background: var(--bg);
     border: 1px solid var(--line-2);
     font-size: var(--step-0);
-    font-weight: 500;
+    font-weight: var(--w-bold);
     white-space: nowrap;
     will-change: transform;
     transition: border-color 0.6s var(--ease-out), background-color 0.6s var(--ease-out);
@@ -97,10 +97,11 @@ import { story } from '../../data/site';
     position: relative;
     margin-top: clamp(72px, 10vw, 150px);
     font-size: var(--step-3);
-    line-height: 1.5;
-    max-width: 22ch;
+    line-height: 1.4;
+    max-width: none;
     text-wrap: balance;
   }
+  .story__closing-line { display: block; }
   .story__closing-mark {
     position: absolute;
     inset-inline-start: calc(-1 * var(--rail-gap));

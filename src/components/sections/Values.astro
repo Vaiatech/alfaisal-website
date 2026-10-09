@@ -22,7 +22,7 @@ const total = String(values.items.length).padStart(2, '0');
         {values.items.map((v, i) => (
           <li class="vword" data-vword>
             <span class="vword__idx num">{String(i + 1).padStart(2, '0')}</span>
-            <h3 class="display vword__name">{v.title}</h3>
+            <h3 class="display accent vword__name">{v.title}</h3>
             <p class="vword__desc">{v.body}</p>
             {i < values.items.length - 1 && <span class="vword__dot" aria-hidden="true"></span>}
           </li>
@@ -88,7 +88,7 @@ const total = String(values.items.length).padStart(2, '0');
   .vword__name {
     font-size: clamp(4.2rem, 1rem + 10vw, 11.5rem);
     line-height: 1.25;
-    font-weight: 500;
+    font-weight: var(--w-bold);
     white-space: nowrap;
     color: color-mix(in srgb, var(--ink) calc(12% + var(--a) * 88%), transparent);
   }

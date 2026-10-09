@@ -3,7 +3,7 @@ import { getLattice } from './lattice';
 
 // Arabic letters join, so text is only ever split into lines — never letters.
 function splitLines(el: HTMLElement) {
-  return SplitText.create(el, { type: 'lines', mask: 'lines', linesClass: 'split-line', aria: 'none' });
+  return SplitText.create(el, { type: 'words,lines', mask: 'lines', linesClass: 'split-line', aria: 'none' });
 }
 
 export function initReveals() {
@@ -30,7 +30,7 @@ export function initReveals() {
   lines.forEach((el) => {
     gsap.set(el, { opacity: 1 });
     const split = splitLines(el);
-    gsap.set(split.lines, { yPercent: 108 });
+    gsap.set(split.lines, { yPercent: 125 });
     ScrollTrigger.create({
       trigger: el,
       start: 'top 88%',
@@ -95,7 +95,7 @@ export function heroIn(delay = 0) {
   lines.forEach((el, i) => {
     gsap.set(el, { opacity: 1 });
     const split = splitLines(el);
-    tl.fromTo(split.lines, { yPercent: 110 }, { yPercent: 0, duration: 1.4, ease: EASE.out, stagger: 0.08 }, i * 0.12);
+    tl.fromTo(split.lines, { yPercent: 125 }, { yPercent: 0, duration: 1.4, ease: EASE.out, stagger: 0.08 }, i * 0.12);
   });
   tl.fromTo(fades, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1.2, ease: EASE.soft, stagger: 0.08 }, 0.35);
   return tl;

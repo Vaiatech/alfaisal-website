@@ -7,7 +7,7 @@ import { method } from '../../data/site';
   <div class="wrap railed">
     <Eyebrow index="03" label={method.label} />
     <div class="method__head">
-      <h2 id="method-title" class="display h2" data-reveal="lines">{method.title}</h2>
+      <h2 id="method-title" class="display h2" data-reveal="lines">{method.title.map((l) => <span class="method__tline">{l}</span>)}</h2>
       <p class="method__body lede" data-reveal="fade">{method.body}</p>
     </div>
 
@@ -25,7 +25,7 @@ import { method } from '../../data/site';
     <div class="method__close">
       <span class="thread-via close__via close__via--end" data-thread-node aria-hidden="true"></span>
       <span class="thread-via close__via close__via--rail" data-thread-node aria-hidden="true"></span>
-      <p class="display method__statement">
+      <p class="display accent method__statement">
         <span data-reveal="lines">{method.statement[0]}</span>
         <span class="method__key" data-reveal="lines">{method.statement[1]}</span>
       </p>
@@ -88,8 +88,9 @@ import { method } from '../../data/site';
   .close__via { top: -1px; }
   .close__via--end { left: 0; }
   .close__via--rail { inset-inline-start: calc(-1 * var(--rail-gap)); }
-  .method__statement { font-size: var(--step-3); line-height: 1.5; max-width: 24ch; }
-  .method__statement > span { display: block; }
+  .method__statement { font-size: var(--step-3); line-height: 1.4; max-width: 30ch; }
+  .method__tline { display: block; }
+  .method__statement > span { display: block; text-wrap: balance; }
   .method__key { color: var(--gold); }
   .method__cta :global(.link__arrow) { width: 16px; height: 16px; transition: transform 0.5s var(--ease-out); }
   .method__cta:hover :global(.link__arrow) { transform: translateX(-5px); }

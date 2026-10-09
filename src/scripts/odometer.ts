@@ -23,6 +23,7 @@ function build(el: HTMLElement) {
     const d = Number(ch);
     const col = document.createElement('span');
     col.className = 'odo__col';
+    col.dataset.d = ch;
     const strip = document.createElement('span');
     strip.className = 'odo__strip';
     const total = CYCLES * 10 + d + 1;

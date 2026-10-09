@@ -30,4 +30,4 @@ npm run preview   # serve the built site
 - **Consultation button**: links to `consultUrl` in `src/data/site.ts` (https://uhearu.com). It is in the header on every page.
 - **Intro**: plays once per browser session, never when the visitor prefers reduced motion. Any key, scroll or the تخطٍّ button fast-forwards it.
 - **Logo animation data**: `src/assets/calligraphy-strokes.json` holds the pen strokes the intro writes, traced from the calligraphy's skeleton.
-- **Fonts**: Noto Naskh Arabic (headings) and IBM Plex Sans Arabic (text), self-hosted under the SIL Open Font License (`public/fonts/`).
+- **Fonts**: Almarai (shared with the consultation platform) for headings and text, with Noto Naskh Arabic as a calligraphic accent, self-hosted under the SIL Open Font License (`public/fonts/`).

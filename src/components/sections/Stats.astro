@@ -12,13 +12,13 @@ import { stats, formatNumber } from '../../data/site';
       <h2 id="stats-title" class="display stats__title">
         <span class="stats__prefix" data-reveal="fade">{stats.lead.prefix}</span>
         <span class="stats__row">
-          <span class="stats__big num" aria-label={`${formatNumber(stats.lead.value)}+`}>
-            <span class="odo" data-odo={stats.lead.value} aria-hidden="true">{formatNumber(stats.lead.value)}</span><span class="stats__plus" aria-hidden="true">+</span>
+          <span class="stats__big num" aria-label={`${formatNumber(stats.lead.value)}`}>
+            <span class="odo" data-odo={stats.lead.value} aria-hidden="true">{formatNumber(stats.lead.value)}</span>
           </span>
           <span class="stats__unit" data-reveal="fade">{stats.lead.unit}</span>
         </span>
       </h2>
-      <p class="stats__sub" data-reveal="lines">{stats.subtitle}</p>
+      <p class="stats__sub" data-reveal="lines">{stats.subtitle.map((l) => <span class="stats__subline">{l}</span>)}</p>
     </div>
 
     <ol class="ledger" data-ledger>
@@ -38,31 +38,32 @@ import { stats, formatNumber } from '../../data/site';
 <style>
   .stats__lead {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
     align-items: end;
     gap: 24px clamp(32px, 6vw, 96px);
   }
-  .stats__title { font-weight: 500; }
+  .stats__title { font-weight: var(--w-bold); }
   .stats__prefix { display: block; font-size: var(--step-2); color: var(--ink-2); line-height: 1.2; }
   .stats__row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 clamp(14px, 2vw, 28px); }
   .stats__big {
     display: inline-flex;
     align-items: baseline;
-    font-size: clamp(5rem, 2.4rem + 11vw, 13.5rem);
+    font-size: clamp(5rem, 2.4rem + 11vw, 12rem);
     line-height: 1.02;
-    font-weight: 500;
+    font-weight: var(--w-heavy);
     color: var(--gold);
     letter-spacing: -0.02em;
   }
   .stats__plus { font-size: 0.48em; margin-inline-start: 0.04em; transform: translateY(-0.62em); display: inline-block; font-weight: 400; }
   .stats__unit { font-size: var(--step-4); line-height: 1; }
+  .stats__subline { display: block; }
   .stats__sub {
     font-family: var(--font-display);
     font-size: var(--step-2);
     line-height: 1.55;
     color: var(--ink);
     padding-bottom: 0.6em;
-    max-width: 18ch;
+    max-width: 22ch;
     justify-self: end;
     text-wrap: balance;
   }
@@ -98,7 +99,7 @@ import { stats, formatNumber } from '../../data/site';
   .ledger__num {
     font-size: clamp(2.6rem, 1.6rem + 3.2vw, 4.4rem);
     line-height: 1.15;
-    font-weight: 500;
+    font-weight: var(--w-bold);
     color: var(--ink);
     display: flex;
     align-items: baseline;
