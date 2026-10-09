@@ -1,90 +1,66 @@
-import { gsap, ScrollTrigger, reduceMotion, $, $$ } from './env';
+import { gsap, ScrollTrigger, reduceMotion, $, $$, clamp } from './env';
 
-/* Values: one at a time on wide screens, advancing on a quiet gold timer. */
-
-const DWELL = 5.2;
-
+/*
+  Values: the section pins and the six words travel across it, right to left in
+  reading order. The word nearest the centre comes forward in ink; the others
+  wait in a lighter tone.
+*/
 export function initValues() {
-  const root = $('[data-values]');
-  if (!root) return;
-  const items = $$('[data-value]', root);
-  const buttons = items.map((li) => li.querySelector<HTMLButtonElement>('.value__btn')!);
-  const timers = items.map((li) => li.querySelector<HTMLElement>('.value__timer')!);
-  const desc = $('[data-values-desc]', root)!;
-  const name = $('[data-values-name]', root)!;
-  const index = $('[data-values-index]', root)!;
-  const wide = window.matchMedia('(min-width: 901px)');
+  const stage = $('[data-values-stage]');
+  const track = $('[data-values-track]');
+  if (!stage || !track) return;
+  const words = $$('[data-vword]', track);
+  const index = $('[data-values-index]', stage);
+  const bar = $('[data-values-progress]', stage);
 
-  let current = 0;
-  let timer: gsap.core.Tween | null = null;
-  let inView = false;
-  let hovering = false;
-
-  const show = (i: number, animate = true) => {
-    current = i;
-    buttons.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
-    const text = items[i].querySelector('.value__desc')!.textContent ?? '';
-    const title = items[i].querySelector('.value__name')!.textContent ?? '';
-    const swap = () => {
-      desc.textContent = text;
-      name.textContent = title;
-      index.textContent = String(i + 1).padStart(2, '0');
-    };
-    if (!animate || reduceMotion) return swap();
-    gsap
-      .timeline()
-      .to([desc, name], { opacity: 0, y: -10, duration: 0.3, ease: 'power2.in' })
-      .add(swap)
-      .fromTo([desc, name], { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.7, ease: 'expo.out', stagger: 0.06 });
+  const emphasise = () => {
+    const mid = innerWidth / 2;
+    let best = 0;
+    let bestD = Infinity;
+    words.forEach((w, i) => {
+      const r = w.querySelector('.vword__name')!.getBoundingClientRect();
+      const d = Math.abs(r.left + r.width / 2 - mid);
+      const a = clamp(1 - d / (innerWidth * 0.42), 0.12, 1);
+      w.style.setProperty('--a', a.toFixed(3));
+      if (d < bestD) {
+        bestD = d;
+        best = i;
+      }
+    });
+    if (index) index.textContent = String(best + 1).padStart(2, '0');
   };
 
-  const run = () => {
-    timer?.kill();
-    timers.forEach((t) => gsap.set(t, { scaleX: 0 }));
-    if (reduceMotion || !wide.matches || !inView || hovering) return;
-    timer = gsap.fromTo(
-      timers[current],
-      { scaleX: 0 },
-      {
-        scaleX: 1,
-        duration: DWELL,
-        ease: 'none',
-        onComplete: () => {
-          show((current + 1) % items.length);
-          run();
+  const mm = gsap.matchMedia();
+  mm.add('(min-width: 901px)', () => {
+    if (reduceMotion) {
+      words.forEach((w) => w.style.setProperty('--a', '1'));
+      return;
+    }
+    const distance = () => Math.max(0, track.offsetWidth - innerWidth);
+    const tween = gsap.to(track, {
+      x: () => distance(), // RTL: the track starts on the right and moves rightward
+      ease: 'none',
+      scrollTrigger: {
+        trigger: stage,
+        start: 'top top',
+        end: () => `+=${distance()}`,
+        pin: true,
+        scrub: 0.7,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          if (bar) bar.style.transform = `scaleX(${self.progress})`;
+          emphasise();
         },
+        onRefresh: emphasise,
       },
-    );
-  };
-
-  buttons.forEach((b, i) =>
-    b.addEventListener('click', () => {
-      if (i !== current) show(i);
-      run();
-    }),
-  );
-  root.addEventListener('pointerenter', () => {
-    hovering = true;
-    timer?.pause();
+    });
+    emphasise();
+    return () => {
+      tween.scrollTrigger?.kill();
+      tween.kill();
+      gsap.set(track, { clearProps: 'transform' });
+      words.forEach((w) => w.style.removeProperty('--a'));
+    };
   });
-  root.addEventListener('pointerleave', () => {
-    hovering = false;
-    if (timer) timer.resume();
-    else run();
-  });
-  root.addEventListener('focusin', () => timer?.pause());
-  root.addEventListener('focusout', () => !hovering && timer?.resume());
-
-  ScrollTrigger.create({
-    trigger: root,
-    start: 'top 70%',
-    end: 'bottom 20%',
-    onToggle: (self) => {
-      inView = self.isActive;
-      if (inView) run();
-      else timer?.pause();
-    },
-  });
-  wide.addEventListener('change', run);
-  show(0, false);
+  ScrollTrigger.refresh();
 }

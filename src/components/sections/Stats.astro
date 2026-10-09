@@ -1,10 +1,12 @@
 ---
 import Eyebrow from '../Eyebrow.astro';
+import Lattice from '../Lattice.astro';
 import { stats, formatNumber } from '../../data/site';
 ---
 <section class="section stats" id="numbers" aria-labelledby="stats-title">
+  <Lattice from=".stats__big" reach={0.5} cell={64} />
   <div class="wrap railed">
-    <Eyebrow index="01" label={stats.label} />
+    <Eyebrow index="04" label={stats.label} />
 
     <div class="stats__lead">
       <h2 id="stats-title" class="display stats__title">

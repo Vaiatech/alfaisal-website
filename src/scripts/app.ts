@@ -6,6 +6,8 @@ import { initOdometers } from './odometer';
 import { initThread } from './thread';
 import { initBoard } from './board';
 import { initValues } from './values';
+import { initPanels } from './panels';
+import { initLattices } from './lattice';
 import { initFooter } from './footer';
 import { runIntro } from './intro';
 
@@ -24,7 +26,9 @@ async function boot() {
 
   initOdometers();
   initReveals();
+  initLattices();
   initBoard();
+  initPanels();
   initValues();
   const thread = initThread();
   initFooter(thread);

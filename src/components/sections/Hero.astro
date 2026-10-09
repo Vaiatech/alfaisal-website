@@ -1,9 +1,11 @@
 ---
 import Logo from '../Logo.astro';
+import Lattice from '../Lattice.astro';
 import Arrow from '../Arrow.astro';
 import { hero, site } from '../../data/site';
 ---
 <section class="hero" id="top" aria-labelledby="hero-title">
+  <Lattice from=".hero__mark" reach={0.42} cell={68} trigger="manual" class="hero__lattice" />
   <div class="wrap railed hero__grid">
     <div class="hero__copy">
       <p class="hero__eyebrow" data-reveal="fade" data-hero>

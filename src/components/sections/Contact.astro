@@ -1,9 +1,11 @@
 ---
 import Eyebrow from '../Eyebrow.astro';
+import Lattice from '../Lattice.astro';
 import Arrow from '../Arrow.astro';
 import { closing, contact, site } from '../../data/site';
 ---
 <section class="section contact" id="contact" aria-labelledby="contact-title">
+  <Lattice from=".contact__title" origin="0.8,0.3" reach={0.5} cell={64} />
   <div class="wrap railed">
     <Eyebrow index="06" label={closing.label} />
     <p class="contact__lead" data-reveal="fade">{closing.lead}</p>

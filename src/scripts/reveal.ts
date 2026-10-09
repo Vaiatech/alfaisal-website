@@ -1,4 +1,5 @@
-import { gsap, ScrollTrigger, SplitText, reduceMotion, $$, EASE } from './env';
+import { gsap, ScrollTrigger, SplitText, reduceMotion, $, $$, EASE } from './env';
+import { getLattice } from './lattice';
 
 // Arabic letters join, so text is only ever split into lines — never letters.
 function splitLines(el: HTMLElement) {
@@ -79,9 +80,18 @@ export function heroIn(delay = 0) {
   const art = $$('[data-hero-art]');
   if (reduceMotion) {
     gsap.set([...lines, ...fades, ...art], { opacity: 1 });
+    getLattice($('.hero__lattice'))?.play();
     return gsap.timeline();
   }
   const tl = gsap.timeline({ delay });
+  // the lattice grows out from behind the mark as the page appears
+  tl.add(() => {
+    const l = getLattice($('.hero__lattice'));
+    if (l) {
+      l.measure();
+      l.play(2800);
+    }
+  }, 0.1);
   lines.forEach((el, i) => {
     gsap.set(el, { opacity: 1 });
     const split = splitLines(el);

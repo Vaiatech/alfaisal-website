@@ -1,0 +1,35 @@
+---
+interface Props {
+  /** CSS selector of the element the lattice grows from */
+  from?: string;
+  /** fallback origin as "x,y" fractions of the canvas */
+  origin?: string;
+  cell?: number;
+  reach?: number;
+  strength?: number;
+  trigger?: 'view' | 'manual';
+  class?: string;
+}
+const { from, origin = '0.5,0.5', cell = 64, reach = 0.55, strength = 1, trigger = 'view', class: className } = Astro.props;
+---
+<canvas
+  class:list={['lattice', className]}
+  data-lattice
+  data-origin-el={from}
+  data-origin={origin}
+  data-cell={cell}
+  data-reach={reach}
+  data-strength={strength}
+  data-trigger={trigger}
+  aria-hidden="true"
+></canvas>
+<style>
+  .lattice {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>

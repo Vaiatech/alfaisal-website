@@ -4,114 +4,136 @@ import { values } from '../../data/site';
 const total = String(values.items.length).padStart(2, '0');
 ---
 <section class="section values" id="values" aria-labelledby="values-title">
-  <div class="wrap railed">
+  <div class="wrap railed values__intro">
     <Eyebrow index="05" label={values.label} />
-    <h2 id="values-title" class="display h2 values__title" data-reveal="lines">{values.title}</h2>
+  </div>
 
-    <div class="values__grid" data-values>
-      <ol class="values__list">
+  <!-- On wide screens this stage pins while the words travel across it. -->
+  <div class="values__stage" data-values-stage>
+    <div class="wrap railed values__top">
+      <h2 id="values-title" class="display h2 values__title" data-reveal="lines">{values.title}</h2>
+      <p class="values__count num" aria-hidden="true">
+        <span data-values-index>01</span><span class="values__sep"></span><span>{total}</span>
+      </p>
+    </div>
+
+    <div class="values__viewport">
+      <ol class="vtrack" data-values-track>
         {values.items.map((v, i) => (
-          <li class="value" data-value={i} data-reveal="fade">
-            <button
-              class="value__btn"
-              type="button"
-              aria-pressed={i === 0 ? 'true' : 'false'}
-              aria-controls="values-panel"
-            >
-              <span class="value__idx">{String(i + 1).padStart(2, '0')}</span>
-              <span class="display value__name">{v.title}</span>
-              <span class="value__timer" aria-hidden="true"></span>
-            </button>
-            <p class="value__desc">{v.body}</p>
+          <li class="vword" data-vword>
+            <span class="vword__idx num">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="display vword__name">{v.title}</h3>
+            <p class="vword__desc">{v.body}</p>
+            {i < values.items.length - 1 && <span class="vword__dot" aria-hidden="true"></span>}
           </li>
         ))}
       </ol>
+    </div>
 
-      <div class="values__panel" id="values-panel" aria-live="polite" data-reveal="fade">
-        <p class="values__count" aria-hidden="true">
-          <span data-values-index>01</span><span class="values__sep"></span><span>{total}</span>
-        </p>
-        <p class="display values__desc" data-values-desc>{values.items[0].body}</p>
-        <p class="values__name" data-values-name>{values.items[0].title}</p>
-      </div>
+    <div class="wrap railed values__bar" aria-hidden="true">
+      <span class="values__progress"><span data-values-progress></span></span>
     </div>
   </div>
 </section>
 
 <style>
-  .values__title { max-width: 16ch; }
-  .values__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
-    gap: clamp(40px, 7vw, 120px);
-    margin-top: clamp(56px, 7vw, 104px);
-    align-items: center;
-  }
+  .values { overflow-x: clip; padding-bottom: clamp(48px, 6vw, 96px); }
+  .values__intro :global(.eyebrow) { margin-bottom: 0; }
 
-  .values__list { border-top: 1px solid var(--line); }
-  .value { border-bottom: 1px solid var(--line); }
-  .value__btn {
+  .values__stage {
     position: relative;
-    width: 100%;
+    overflow-x: clip;
     display: flex;
-    align-items: baseline;
-    gap: 22px;
-    padding-block: clamp(14px, 1.6vw, 22px);
-    text-align: right;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(36px, 5vh, 72px);
+    min-height: 100svh;
+    padding-block: calc(var(--header-h) + 24px) 40px;
   }
-  .value__idx { font-size: 0.75rem; color: var(--gold-ink); direction: ltr; min-width: 2ch; font-variant-numeric: tabular-nums; }
-  .value__name {
-    font-size: clamp(1.9rem, 1.2rem + 2.3vw, 3.3rem);
-    line-height: 1.3;
-    color: var(--ink-3);
-    transition: color 0.5s var(--ease-out), transform 0.7s var(--ease-out);
+  .values__top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
   }
-  .value__btn:hover .value__name { color: var(--ink-2); }
-  .value__btn[aria-pressed='true'] .value__name { color: var(--ink); transform: translateX(-10px); }
-  .value__timer {
-    position: absolute;
-    inset-inline: 0;
-    bottom: -1px;
-    height: 1px;
-    background: var(--gold);
-    transform: scaleX(0);
-    transform-origin: right;
-  }
-  .value__desc { display: none; }
-
-  .values__panel { position: relative; padding-block: 24px; }
+  .values__title { max-width: 16ch; }
   .values__count {
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--ink-2);
-    direction: ltr;
-    justify-content: flex-end;
-    font-variant-numeric: tabular-nums;
+    padding-bottom: 0.8em;
   }
   .values__count span:first-child { color: var(--gold-ink); }
-  .values__sep { width: 32px; height: 1px; background: var(--line-2); }
-  .values__desc {
-    margin-top: clamp(20px, 3vw, 40px);
-    font-size: var(--step-3);
-    line-height: 1.5;
-    min-height: 3em;
-    text-wrap: balance;
+  .values__sep { width: 40px; height: 1px; background: var(--line-2); }
+
+  .values__viewport { position: relative; }
+  .vtrack {
+    display: flex;
+    align-items: flex-start;
+    width: max-content;
+    padding-inline: calc(var(--gutter) + var(--rail-gap)) 18vw;
+    will-change: transform;
   }
-  .values__name { margin-top: 20px; color: var(--gold-ink); font-weight: 500; }
+  .vword {
+    --a: 0.25;
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto auto;
+    padding-inline-end: clamp(56px, 7vw, 140px);
+    margin-inline-end: clamp(56px, 7vw, 140px);
+  }
+  .vword__idx { font-size: 0.8rem; color: var(--gold-ink); opacity: calc(0.4 + var(--a) * 0.6); }
+  .vword__name {
+    font-size: clamp(4.2rem, 1rem + 10vw, 11.5rem);
+    line-height: 1.25;
+    font-weight: 500;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--ink) calc(12% + var(--a) * 88%), transparent);
+  }
+  .vword__desc {
+    max-width: 22ch;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.55;
+    color: var(--ink-2);
+    opacity: calc(var(--a) * 1.15 - 0.15);
+    transform: translateY(calc((1 - var(--a)) * 14px));
+  }
+  .vword__dot {
+    position: absolute;
+    inset-inline-end: -8px;
+    top: 40%;
+    width: 16px;
+    height: 16px;
+    background: var(--gold);
+    transform: rotate(45deg) scale(calc(0.6 + var(--a) * 0.4));
+  }
 
-  /* without JS, or on small screens, show every description inline */
-  :global(html:not(.js)) .value__desc { display: block; }
-  :global(html:not(.js)) .values__panel { display: none; }
-  :global(html:not(.js)) .value__name { color: var(--ink); }
+  .values__progress {
+    display: block;
+    position: relative;
+    height: 1px;
+    background: var(--line);
+  }
+  .values__progress > span {
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: right;
+  }
 
+  /* phones & tablets: the words stack, every description visible */
   @media (max-width: 900px) {
-    .values__grid { grid-template-columns: 1fr; }
-    .values__panel { display: none; }
-    .value__btn { pointer-events: none; padding-bottom: 4px; }
-    .value__name { color: var(--ink) !important; transform: none !important; font-size: 2rem; }
-    .value__desc { display: block; padding: 0 calc(2ch + 22px) 18px 0; color: var(--ink-2); }
-    .value__timer { display: none; }
+    .values__stage { min-height: 0; padding-block: 32px 0; justify-content: flex-start; }
+    .values__count, .values__bar { display: none; }
+    .vtrack { flex-direction: column; width: auto; padding-inline: calc(var(--gutter) + var(--rail-gap)) var(--gutter); }
+    .vword { --a: 1; padding: 18px 0; margin: 0; border-bottom: 1px solid var(--line); }
+    .vword__name { font-size: clamp(2.4rem, 10vw, 3.4rem); white-space: normal; }
+    .vword__desc { font-family: var(--font-text); font-size: var(--step-0); max-width: none; }
+    .vword__dot { display: none; }
   }
+  :global(html:not(.js)) .vword { --a: 1; }
 </style>
