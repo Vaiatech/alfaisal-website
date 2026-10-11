@@ -42,7 +42,7 @@ const sceneLight: Record<string, SceneLight> = {
   expertise: { i: 0.85, r: 0.34 },
   method: { i: 0.85, r: 0.24 },
   statement: { i: 0.8, r: 0.3 },
-  values: { i: 0.75, r: 0.2 },
+  values: { i: 0.7, r: 0.18 },
   team: { i: 0.8, r: 0.26 },
   contact: { i: 0.85, r: 0.3 },
   outro: { i: 0.9, r: 0.36 },
@@ -129,7 +129,7 @@ const sectionFor: Record<string, string> = { numbers: '#about', statement: '#met
 const setActiveNav = () => {
   const s = activeScene();
   if (!s) return;
-  const id = s.id ? `#${s.id}` : sectionFor[s.dataset.scene || ''] || '';
+  const id = sectionFor[s.dataset.scene || ''] || (s.id ? `#${s.id}` : '');
   if (!navTargets.includes(id)) return;
   navLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === id));
 };
@@ -287,61 +287,84 @@ function runIntro() {
   const eyebrow = $('.hero__eyebrow');
   gsap.set(eyebrow, { '--rule': 0, opacity: 0 });
 
-  const tl = gsap.timeline({ defaults: { ease: 'none' } });
-  const weights = paths.map((p) => Math.pow(Number(p.dataset.l || 40), 0.62));
-  const sum = weights.reduce((a, b) => a + b, 0);
-  const TOTAL = 2.3;
-  let cursor = 0.35;
-  const lens = paths.map((p) => p.getTotalLength());
-  tl.set(spark, { opacity: 1 }, cursor);
-  paths.forEach((p, i) => {
-    const d = (weights[i] / sum) * TOTAL;
-    const prog = { v: 0 };
-    tl.set(p, { visibility: 'visible' }, cursor);
-    tl.to(prog, {
-      v: 1,
-      duration: d,
-      ease: 'power1.inOut',
-      onUpdate: () => {
-        p.style.strokeDashoffset = String(1 - prog.v);
-        const pt = p.getPointAtLength(prog.v * lens[i]);
-        spark.setAttribute('cx', String(pt.x));
-        spark.setAttribute('cy', String(pt.y));
-        introLight = Math.min(1, 0.15 + (cursor / (TOTAL + 0.35)) * 0.85);
-      },
-    }, cursor);
-    cursor += d * 0.86;
-  });
-  const writeEnd = cursor + 0.1;
-  tl.to(glow, { opacity: 0.55, duration: 1.2, ease: EASE.soft }, writeEnd - 0.8)
-    .to(spark, { attr: { cx: 712, cy: 418 }, duration: 0.5, ease: EASE.io }, writeEnd)
-    .set(pen, { opacity: 1 }, writeEnd + 0.2)
-    .to(penclip, { attr: { height: 820 }, duration: 0.9, ease: 'power2.inOut' }, writeEnd + 0.2)
-    .to(spark, { attr: { cy: 770 }, duration: 0.9, ease: 'power2.inOut' }, writeEnd + 0.2)
-    .to(spark, { opacity: 0, duration: 0.5 }, writeEnd + 0.9)
-    .to(scale, { opacity: 1, duration: 0.6, ease: EASE.soft }, writeEnd + 0.4)
-    .to(scale, { rotation: 0, duration: 2.4, ease: 'elastic.out(1, 0.32)' }, writeEnd + 0.4)
-    .add(() => { introLight = 1; }, writeEnd + 0.4);
+  // the full writing plays once per tab; a reload or return visit gets a short fade
+  let seen = false;
+  try {
+    seen = sessionStorage.getItem('alf-intro') === '1';
+    sessionStorage.setItem('alf-intro', '1');
+  } catch {}
 
-  const move = writeEnd + 1.0;
-  tl.to(wrap, { x: 0, y: 0, scale: 1, duration: 1.5, ease: 'expo.inOut' }, move)
-    .add(() => root.classList.remove('is-intro'), move + 0.4)
-    .fromTo(hdr, { yPercent: -110 }, { yPercent: 0, duration: 1.2, ease: EASE.out, clearProps: 'transform' }, move + 0.7)
-    .to(eyebrow, { opacity: 1, '--rule': 1, duration: 1.4, ease: EASE.out }, move + 0.8)
-    .to(l1, { yPercent: 0, duration: 1.3, ease: EASE.out, stagger: 0.08 }, move + 0.85)
-    .to(l2, { yPercent: 0, duration: 1.3, ease: EASE.out, stagger: 0.06 }, move + 1.05)
-    .add(() => body.forEach((b, i) => wipeIn(b, { delay: i * 0.15 })), move + 1.25)
-    .fromTo('.link--hero', { opacity: 0 }, { opacity: 1, duration: 1 }, move + 1.8)
-    .add(() => {
-      lenis?.start();
-      paths.forEach((p) => p.removeAttribute('style'));
-      // the writing is complete: drop the mask for a crisp, cheap logo
-      $$('[mask]', svg).forEach((g) => g.removeAttribute('mask'));
-      gsap.set(penclip, { attr: { height: 840 } });
-      startHeroSpecular(svg);
-      // deep link (e.g. /#method): travel there with the house transition
-      if (location.hash && location.hash.length > 1 && document.querySelector(location.hash)) navigate(location.hash);
-    }, move + 1.6);
+  const finish = () => {
+    lenis?.start();
+    paths.forEach((p) => p.removeAttribute('style'));
+    // the writing is complete: drop the mask for a crisp, cheap logo
+    $$('[mask]', svg).forEach((g) => g.removeAttribute('mask'));
+    gsap.set(penclip, { attr: { height: 840 } });
+    startHeroSpecular(svg);
+    // deep link (e.g. /#method): travel there with the house transition
+    if (location.hash && location.hash.length > 1 && document.querySelector(location.hash)) navigate(location.hash);
+  };
+  const revealCopy = (tl: gsap.core.Timeline, at: number) => {
+    tl.add(() => root.classList.remove('is-intro'), at)
+      .fromTo(hdr, { yPercent: -110 }, { yPercent: 0, duration: 0.9, ease: EASE.out, clearProps: 'transform' }, at + 0.05)
+      .to(eyebrow, { opacity: 1, '--rule': 1, duration: 1, ease: EASE.out }, at + 0.1)
+      .to(l1, { yPercent: 0, duration: 0.95, ease: EASE.out, stagger: 0.06 }, at + 0.12)
+      .to(l2, { yPercent: 0, duration: 0.95, ease: EASE.out, stagger: 0.045 }, at + 0.25)
+      .add(() => body.forEach((b, i) => wipeIn(b, { delay: i * 0.1, duration: 1.2 })), at + 0.35)
+      .fromTo('.link--hero', { opacity: 0 }, { opacity: 1, duration: 0.8 }, at + 0.6);
+  };
+
+  const tl = gsap.timeline({ defaults: { ease: 'none' } });
+  if (seen) {
+    gsap.set(wrap, { x: 0, y: 0, scale: 1 });
+    gsap.set(paths, { strokeDashoffset: 0, visibility: 'visible' });
+    gsap.set(penclip, { attr: { height: 840 } });
+    gsap.set([pen, scale], { opacity: 1 });
+    gsap.set(scale, { rotation: 0 });
+    tl.fromTo(svg, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: EASE.soft }, 0)
+      .to(glow, { opacity: 0.55, duration: 0.8, ease: EASE.soft }, 0.1)
+      .add(() => { introLight = 1; }, 0);
+    revealCopy(tl, 0.05);
+    tl.add(finish, 0.9);
+  } else {
+    const weights = paths.map((p) => Math.pow(Number(p.dataset.l || 40), 0.6));
+    const sum = weights.reduce((a, b) => a + b, 0);
+    const TOTAL = 1.45;
+    let cursor = 0.12;
+    const lens = paths.map((p) => p.getTotalLength());
+    tl.set(spark, { opacity: 1 }, cursor);
+    paths.forEach((p, i) => {
+      const d = (weights[i] / sum) * TOTAL;
+      const prog = { v: 0 };
+      tl.set(p, { visibility: 'visible' }, cursor);
+      tl.to(prog, {
+        v: 1,
+        duration: d,
+        ease: 'power1.inOut',
+        onUpdate: () => {
+          p.style.strokeDashoffset = String(1 - prog.v);
+          const pt = p.getPointAtLength(prog.v * lens[i]);
+          spark.setAttribute('cx', String(pt.x));
+          spark.setAttribute('cy', String(pt.y));
+          introLight = Math.min(1, 0.2 + (cursor / (TOTAL * 0.8)) * 0.8);
+        },
+      }, cursor);
+      cursor += d * 0.8;
+    });
+    const writeEnd = cursor;
+    tl.to(glow, { opacity: 0.55, duration: 0.9, ease: EASE.soft }, writeEnd - 0.6)
+      .set(pen, { opacity: 1 }, writeEnd - 0.35)
+      .to(penclip, { attr: { height: 820 }, duration: 0.55, ease: 'power2.inOut' }, writeEnd - 0.35)
+      .to(spark, { attr: { cx: 712, cy: 770 }, duration: 0.55, ease: 'power2.inOut' }, writeEnd - 0.35)
+      .to(spark, { opacity: 0, duration: 0.3 }, writeEnd + 0.15)
+      .to(scale, { opacity: 1, duration: 0.4, ease: EASE.soft }, writeEnd - 0.25)
+      .to(scale, { rotation: 0, duration: 1.6, ease: 'elastic.out(1, 0.34)' }, writeEnd - 0.25)
+      .add(() => { introLight = 1; }, writeEnd - 0.2);
+    const move = writeEnd - 0.05;
+    tl.to(wrap, { x: 0, y: 0, scale: 1, duration: 1, ease: 'expo.inOut' }, move);
+    revealCopy(tl, move + 0.35);
+    tl.add(finish, move + 0.95);
+  }
 
   const skip = () => { if (tl.progress() < 0.9) tl.timeScale(5); };
   ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((ev) => window.addEventListener(ev, skip, { once: true, passive: true }));
@@ -408,160 +431,231 @@ function setupReveals() {
 }
 
 /* ------------------------------------------------------------------ *
- * STORY — scattered details are pulled into one system by a gold thread
+ * STORY — «الملف يُفتح»: a file opens, its sheets fan out,
+ * and a gold seal ties them into one system
  * ------------------------------------------------------------------ */
+type SheetPose = { x: number; y: number; r: number; s: number };
+type StoryLayout = {
+  mob: boolean;
+  W: number; H: number;
+  cx: number; u: number;
+  fw: number; fh: number; fx: number; ftop: number;
+  seal0: { x: number; y: number }; seal1: { x: number; y: number };
+  sw: number; sh: number;
+  inside: SheetPose[]; fan: SheetPose[]; sys: SheetPose[];
+  busY: number; rowTop: number;
+  y0: number; s0: number;
+};
+
 function setupStory() {
-  const stage = $('.story__stage');
-  const chips = $$('.chip', stage);
-  const canvas = $<HTMLCanvasElement>('.story__threads', stage);
-  const ctx = canvas.getContext('2d')!;
-  const lines = $$('.story__line', stage);
-  const head = $('.story__head', stage);
-  const core = $('.story__core', stage);
-  const N = chips.length;
-  // hand-placed scatter (fractions of the stage), like papers on a desk
-  const scatterD = [[0.14, 0.24], [0.82, 0.18], [0.9, 0.62], [0.1, 0.7], [0.32, 0.88], [0.7, 0.86], [0.56, 0.12]];
-  const scatterM = [[0.2, 0.16], [0.78, 0.22], [0.82, 0.78], [0.16, 0.84], [0.28, 0.66], [0.74, 0.62], [0.5, 0.92]];
-  const rot = [-8, 6, -4, 9, -6, 4, -10];
-  const state = { p: 0 };
-  let W = 0, H = 0, dpr = 1;
-  const sizes: { w: number; h: number }[] = [];
+  const sec = $('.story');
+  const stage = $('.story__stage', sec);
+  const vis = $('.story__vis', sec);
+  const text = $('.story__text', sec);
+  const dossier = $('.dossier', sec);
+  const cover = $('.dossier__front', sec);
+  const seal = $('.story__seal', sec);
+  const sheets = $$('.sheet', sec);
+  const wires = $<SVGSVGElement>('.story__wires', sec);
+  const link = $('.link--story');
+  const strike = $<SVGPathElement>('.strike__m', sec);
+  const N = sheets.length;
+  const MID = (N - 1) / 2;
+  const wire = (cls: string) => {
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('class', cls);
+    wires.appendChild(p);
+    return p;
+  };
+  const fanWires = sheets.map(() => wire('w-fan'));
+  const tree = wire('w-tree');
+  const tail = wire('w-tail');
+  const io = gsap.parseEase('power3.inOut');
+  const out = gsap.parseEase('power3.out');
+  const l1 = splitWords($('.story__l1', sec));
+  const l2 = splitWords($('.story__l2', sec));
+  const value = splitWords($('.story__value', sec));
+  const closing = $$('.story__closing > span', sec).flatMap((s) => splitWords(s));
+  gsap.set(strike, { attr: { 'stroke-dasharray': '1 1' }, strokeDashoffset: 1 });
+
+  let L: StoryLayout | undefined;
   const measure = () => {
-    const r = stage.getBoundingClientRect();
-    W = r.width; H = r.height;
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = W * dpr; canvas.height = H * dpr;
-    chips.forEach((c, i) => { sizes[i] = { w: c.offsetWidth, h: c.offsetHeight }; });
-  };
-  measure();
-  window.addEventListener('resize', measure);
-
-  const hdrH = () => (isMobile() ? 66 : 84);
-  const cy = () => H / 2 + hdrH() * 0.35 + (isMobile() ? 64 : 0);
-  const pos = (i: number, p: number, t: number) => {
-    const sc = (isMobile() ? scatterM : scatterD)[i];
-    const sx = sc[0] * W, sy = sc[1] * H;
-    // ring (ellipse) around the centre, starting at the top, running clockwise in reading order (RTL)
+    const sr = stage.getBoundingClientRect();
+    const W = sr.width, H = sr.height;
     const mob = isMobile();
-    const rx = mob ? W * 0.3 : Math.min(W * 0.34, H * 0.62);
-    const ry = mob ? H * 0.32 : H * 0.33;
-    // mobile: keep the horizontal band through the text clear of chips
-    const MOB = [-90, -38, 38, 72, 108, 142, 218];
-    const a = mob ? (MOB[i] * Math.PI) / 180 : -Math.PI / 2 + (i / N) * Math.PI * 2;
-    const ox = W / 2 + Math.cos(a) * rx, oy = cy() + Math.sin(a) * ry;
-    const k = gsap.parseEase('power3.inOut')(clamp((p - 0.55) / 0.3));
-    const drift = (1 - k) * 8;
-    return {
-      x: lerp(sx, ox, k) + Math.sin(t * 0.5 + i * 1.7) * drift,
-      y: lerp(sy, oy, k) + Math.cos(t * 0.4 + i * 1.3) * drift,
-      r: lerp(rot[i], 0, k),
-    };
+    const hdrH = mob ? 66 : 84;
+    const pad = parseFloat(getComputedStyle(stage).getPropertyValue('padding-right')) || Math.max(20, W * 0.046);
+    const gutter = Math.min(76, Math.max(20, W * 0.046)) || pad;
+    if (mob) {
+      // phones: the text on top, the file below; the sheets settle into a column
+      const tr = text.getBoundingClientRect();
+      const l1Bottom = $('.story__l1', sec).getBoundingClientRect().bottom - sr.top;
+      const top = tr.bottom - sr.top + 18;
+      const bottom = H - 18;
+      const u = clamp((bottom - top) / 470, 0.66, 1.1);
+      const cx = W / 2;
+      const fw = 152 * u, fh = 112 * u;
+      const ftop = bottom - fh;
+      const seal1 = { x: cx, y: top + 8 };
+      const step = (ftop - 16 * u - (seal1.y + 26 * u)) / N;
+      L = {
+        mob, W, H, cx, u, fw, fh, fx: cx - fw / 2, ftop,
+        seal0: { x: cx, y: ftop + fh * 0.07 }, seal1,
+        sw: 172 * u, sh: 34 * u,
+        inside: sheets.map((_, i) => ({ x: cx + (MID - i) * 2, y: ftop + fh * 0.52, r: 0, s: 0.72 })),
+        fan: sheets.map((_, i) => ({ x: cx + (i % 2 ? -1 : 1) * 26 * u, y: ftop - 58 * u - (N - 1 - i) * 39 * u, r: (i % 2 ? -1 : 1) * 3.5, s: 1 })),
+        sys: sheets.map((_, i) => ({ x: cx, y: seal1.y + 26 * u + step * i + step / 2, r: 0, s: 1 })),
+        busY: 0, rowTop: 0,
+        // the file starts large, centred under the first line, then sinks into place
+        y0: (l1Bottom + bottom) / 2 - (fh * 1.7) / 2, s0: 1.7,
+      };
+    } else {
+      // desktop: the file in the left column; the sheets fan in an arc, then hang in a row from one bus
+      const left = gutter, right = W * 0.53;
+      const top = hdrH + 26, bottom = H - 34;
+      const u = clamp(Math.min((right - left) / 700, (bottom - top) / 780), 0.72, 1.4);
+      const cx = (left + right) / 2;
+      const fw = 340 * u, fh = 236 * u;
+      const ftop = top + (bottom - top) * 0.6 - fh / 2;
+      const sw = 98 * u, sh = 130 * u;
+      const seal0 = { x: cx, y: ftop + fh * 0.07 };
+      const seal1 = { x: cx, y: top + 30 * u };
+      const R = 252 * u;
+      const k = 0.86;
+      const gap = 11 * u;
+      const rowTop = seal1.y + 70 * u;
+      L = {
+        mob, W, H, cx, u, fw, fh, fx: cx - fw / 2, ftop, seal0, seal1, sw, sh,
+        inside: sheets.map((_, i) => ({ x: cx + (MID - i) * 4 * u, y: ftop + fh * 0.5, r: (MID - i) * 1.2, s: 0.86 })),
+        fan: sheets.map((_, i) => {
+          const a = ((MID - i) * 20 * Math.PI) / 180;
+          return { x: seal0.x + Math.sin(a) * R, y: seal0.y - Math.cos(a) * R, r: (MID - i) * 20, s: 1 };
+        }),
+        sys: sheets.map((_, i) => ({ x: cx + (MID - i) * (sw * k + gap), y: rowTop + (sh * k) / 2, r: 0, s: k })),
+        busY: rowTop - 24 * u, rowTop,
+        y0: ftop, s0: 1,
+      };
+    }
+    vis.style.setProperty('--sw', `${L.sw}px`);
+    vis.style.setProperty('--sh', `${L.sh}px`);
+    vis.style.setProperty('--fz', `${(L.mob ? 15 : 15.5) * L.u}px`);
+    dossier.style.width = `${L.fw}px`;
+    dossier.style.height = `${L.fh}px`;
+    dossier.style.transform = `translate(${L.fx}px, ${L.ftop}px)`;
+    wires.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    link.style.setProperty('--lx', `${(L.cx / W) * 100}%`);
   };
 
-  const draw = (t: number) => {
-    const p = state.p;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
-    const pts = chips.map((_, i) => pos(i, p, t));
-    // chips
-    chips.forEach((c, i) => {
-      const lit = clamp((p - 0.18 - i * 0.04) / 0.08);
-      c.style.transform = `translate(${pts[i].x - sizes[i].w / 2}px, ${pts[i].y - sizes[i].h / 2}px) rotate(${pts[i].r}deg)`;
-      c.style.opacity = String(0.38 + lit * 0.62);
-      c.style.filter = lit < 1 ? `blur(${(1 - lit) * 1.6}px)` : '';
+  const state = { p: 0 };
+  const seg = (a: number, b: number) => clamp((state.p - a) / (b - a));
+  const mix = (a: SheetPose, b: SheetPose, t: number): SheetPose => ({ x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), r: lerp(a.r, b.r, t), s: lerp(a.s, b.s, t) });
+  const render = () => {
+    if (!L) return;
+    const l = L;
+    // the cover swings open, then closes once the sheets are out
+    const open = io(seg(0.13, 0.3)) * (1 - io(seg(0.66, 0.82)));
+    cover.style.setProperty('--open', `${-180 * open}deg`);
+    const fx = l.fx - (l.fw / 2) * open;
+    const settleIn = io(seg(0.04, 0.2));
+    const s = lerp(l.s0, 1, settleIn);
+    const fy = lerp(l.y0, l.ftop, settleIn);
+    dossier.style.transformOrigin = '50% 0';
+    dossier.style.transform = `translate(${fx}px, ${fy}px) scale(${s})`;
+    const fileCx = fx + l.fw / 2;
+    const sealAt = { x: l.seal0.x, y: fy + (l.seal0.y - l.ftop) * s };
+    vis.classList.toggle('is-out', state.p > 0.27);
+    // the seal rises from the file to the head of the system and lights
+    const rise = io(seg(0.6, 0.78));
+    const sx = lerp(sealAt.x, l.seal1.x, rise);
+    const sy = lerp(sealAt.y, l.seal1.y, rise);
+    seal.style.transform = `translate(${sx}px, ${sy}px) rotate(45deg) scale(${1 + 0.25 * io(seg(0.78, 0.86))})`;
+    const lit = io(seg(0.76, 0.88));
+    seal.style.setProperty('--lit', String(lit));
+    sceneLight.story.i = 0.35 + 0.65 * lit;
+    sceneLight.story.r = 0.18 + 0.06 * lit;
+    // sheets: inside the file → fanned out → settled into the system
+    const settle = sheets.map((_, i) => io(seg(0.6 + Math.abs(MID - i) * 0.012, 0.76 + Math.abs(MID - i) * 0.012)));
+    const fanOut = sheets.map((_, i) => out(seg(0.27 + i * 0.022, 0.46 + i * 0.022)));
+    const poses = sheets.map((el, i) => {
+      const inside = { ...l.inside[i], x: l.inside[i].x - l.cx + fileCx, y: fy + (l.inside[i].y - l.ftop) * s, s: l.inside[i].s * s };
+      const p = mix(mix(inside, l.fan[i], fanOut[i]), l.sys[i], settle[i]);
+      el.style.transform = `translate(${p.x - l.sw / 2}px, ${p.y - l.sh / 2}px) rotate(${p.r}deg) scale(${p.s})`;
+      return p;
     });
-    // the thread: drawn chip to chip in reading order as each detail lights
-    const reach = clamp((p - 0.2) / 0.32) * (N - 1);
-    ctx.lineCap = 'round';
-    ctx.shadowColor = 'rgba(226,190,118,0.8)';
-    ctx.shadowBlur = 10;
-    ctx.strokeStyle = 'rgba(233,200,130,0.75)';
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    for (let i = 0; i < N - 1; i++) {
-      const f = clamp(reach - i);
-      if (f <= 0) break;
-      const a = pts[i], b = pts[i + 1];
-      const mx = (a.x + b.x) / 2 + (b.y - a.y) * 0.12, my = (a.y + b.y) / 2 - (b.x - a.x) * 0.12;
-      ctx.moveTo(a.x, a.y);
-      // partial quadratic via subdivision
-      const steps = 24;
-      for (let s = 1; s <= Math.round(steps * f); s++) {
-        const u = s / steps;
-        const x = (1 - u) * (1 - u) * a.x + 2 * (1 - u) * u * mx + u * u * b.x;
-        const y = (1 - u) * (1 - u) * a.y + 2 * (1 - u) * u * my + u * u * b.y;
-        ctx.lineTo(x, y);
+    // fan wires: from the seal to each sheet while they hang in the arc
+    fanWires.forEach((w, i) => {
+      const k = clamp((fanOut[i] - 0.55) / 0.45) * (1 - clamp(settle[i] * 2.2));
+      if (k <= 0.001) { w.setAttribute('d', ''); return; }
+      const p = poses[i];
+      const a = (p.r * Math.PI) / 180;
+      const edge = l.mob ? 0 : (l.sh / 2) * p.s; // desktop: the arc sits above the seal, so wires meet the sheet's lower edge
+      const ex = p.x + Math.sin(a) * edge;
+      const ey = p.y + Math.cos(a) * edge;
+      w.setAttribute('d', `M${sx},${sy} L${lerp(sx, ex, k)},${lerp(sy, ey, k)}`);
+    });
+    // the system's tree: a trunk from the seal, then a bus with a drop to every sheet
+    const grow = io(seg(0.74, 0.9));
+    if (grow > 0.001) {
+      if (l.mob) {
+        tree.setAttribute('d', `M${l.cx},${sy} L${l.cx},${lerp(sy, l.ftop, grow)}`);
+      } else {
+        const half = (l.sys[0].x - l.sys[N - 1].x) / 2;
+        const xl = l.cx - half * grow, xr = l.cx + half * grow;
+        let d = `M${l.cx},${sy} L${l.cx},${lerp(sy, l.busY, clamp(grow * 2))}`;
+        if (grow > 0.5) {
+          const b = (grow - 0.5) * 2;
+          d += ` M${lerp(l.cx, xl, b)},${l.busY} L${lerp(l.cx, xr, b)},${l.busY}`;
+          l.sys.forEach((n) => {
+            if (Math.abs(n.x - l.cx) <= half * b + 0.5) d += ` M${n.x},${l.busY} L${n.x},${l.rowTop}`;
+          });
+        }
+        tree.setAttribute('d', d);
       }
-    }
-    // closing the system
-    const close = clamp((p - 0.78) / 0.1);
-    if (close > 0) {
-      const a = pts[N - 1], b = pts[0];
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(lerp(a.x, b.x, close), lerp(a.y, b.y, close));
-    }
-    ctx.stroke();
-    // spokes to the core once the ring has formed
-    const spokes = clamp((p - 0.82) / 0.12);
-    if (spokes > 0) {
-      ctx.shadowBlur = 0;
-      ctx.lineWidth = 1;
-      pts.forEach((pt) => {
-        const g = ctx.createLinearGradient(pt.x, pt.y, W / 2, cy());
-        g.addColorStop(0, `rgba(246,223,166,${0.34 * spokes})`);
-        g.addColorStop(0.75, 'rgba(226,190,118,0)');
-        ctx.strokeStyle = g;
-        ctx.beginPath();
-        ctx.moveTo(pt.x, pt.y);
-        ctx.lineTo(lerp(pt.x, W / 2, spokes), lerp(pt.y, cy(), spokes));
-        ctx.stroke();
-      });
-    }
-    // a bead of light travelling on the thread
-    if (reach > 0 && reach < N - 1) {
-      const i = Math.floor(reach), f = reach - i;
-      const a = pts[i], b = pts[i + 1];
-      const x = lerp(a.x, b.x, f), y = lerp(a.y, b.y, f);
-      const g = ctx.createRadialGradient(x, y, 0, x, y, 26);
-      g.addColorStop(0, 'rgba(255,248,230,0.95)');
-      g.addColorStop(0.3, 'rgba(226,190,118,0.45)');
-      g.addColorStop(1, 'rgba(226,190,118,0)');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(x, y, 26, 0, Math.PI * 2);
-      ctx.fill();
-    }
+    } else tree.setAttribute('d', '');
+    // the tail: the thread continues down into the next scene
+    const drop = io(seg(0.88, 1));
+    if (drop > 0.001) {
+      const y0 = l.mob ? l.ftop : l.rowTop + l.sh * 0.86;
+      tail.setAttribute('d', `M${l.cx},${y0} L${l.cx},${lerp(y0, l.H, drop)}`);
+    } else tail.setAttribute('d', '');
   };
 
-  // text frames
-  gsap.set(lines[0], { opacity: 1 });
-  const tl = gsap.timeline({ defaults: { ease: EASE.io } });
-  tl.to(state, { p: 1, duration: 1, ease: 'none' }, 0)
-    .to(lines[0], { opacity: 0, y: -16, duration: 0.06 }, 0.17)
-    .fromTo(lines[1], { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.08 }, 0.22)
-    .to(lines[1], { opacity: 0, y: -16, duration: 0.06 }, 0.52)
-    .fromTo(lines[2], { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.08 }, 0.56)
-    .to(lines[2], { opacity: 0, y: -16, duration: 0.05 }, 0.8)
-    .to(head, { opacity: 0, y: -30, duration: 0.08 }, 0.8)
-    .fromTo(lines[3], { opacity: 0, y: 24 }, { opacity: 1, y: () => (isMobile() ? 106 : -40), duration: 0.1 }, 0.86)
-    .fromTo(core, { scale: 0, rotation: 45 }, { scale: 1, rotation: 45, duration: 0.08, ease: 'back.out(2)' }, 0.86);
-
-  ScrollTrigger.create({
-    trigger: stage,
-    start: 'top top',
-    end: () => `+=${window.innerHeight * 0.85}`,
-    pin: true,
-    scrub: 0.8,
-    animation: tl,
-    onUpdate: (self) => {
-      sceneLight.story.i = 0.4 + self.progress * 0.6;
-    },
+  measure();
+  ScrollTrigger.addEventListener('refresh', () => { measure(); render(); });
+  gsap.matchMedia().add({ desk: '(min-width: 861px)', mob: '(max-width: 860px)' }, (ctx) => {
+    const mob = !!ctx.conditions?.mob;
+    const tl = gsap.timeline({ defaults: { ease: 'none' } });
+    tl.to(state, { p: 1, duration: 1 }, 0);
+    tl.to(strike, { strokeDashoffset: 0, duration: 0.15, ease: 'power2.inOut' }, 0.02);
+    const rise = (words: HTMLElement[], at: number, d: number) =>
+      tl.fromTo(words, { yPercent: 118 }, { yPercent: 0, duration: d, stagger: d / Math.max(1, words.length) / 2, ease: 'power3.out' }, at);
+    const sink = (words: HTMLElement[], at: number, d: number) =>
+      tl.fromTo(words, { yPercent: 0 }, { yPercent: -118, duration: d, stagger: d / Math.max(1, words.length) / 3, ease: 'power3.in', immediateRender: false }, at);
+    if (mob) {
+      // phones show one paragraph at a time in the same place
+      sink(l1, 0.3, 0.05);
+      rise(l2, 0.36, 0.1);
+      sink(l2, 0.7, 0.05);
+      rise(value, 0.76, 0.06);
+      rise(closing, 0.83, 0.1);
+    } else {
+      rise(l2, 0.36, 0.12);
+      rise(value, 0.79, 0.06);
+      rise(closing, 0.85, 0.1);
+    }
+    ScrollTrigger.create({
+      trigger: stage,
+      start: 'top top',
+      end: () => `+=${window.innerHeight * (mob ? 0.95 : 1.2)}`,
+      pin: true,
+      scrub: 0.6,
+      animation: tl,
+      invalidateOnRefresh: true,
+    });
   });
-  // lines[3] sits above centre to leave room for the core
   let visible = false;
-  ScrollTrigger.create({ trigger: '.story', start: 'top bottom', end: 'bottom top', onToggle: (s) => { visible = s.isActive; } });
-  gsap.ticker.add((t) => { if (visible) draw(t); });
-  draw(0);
+  ScrollTrigger.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: (s) => { visible = s.isActive; } });
+  gsap.ticker.add(() => { if (visible) render(); });
 }
 
 /* ------------------------------------------------------------------ *
@@ -669,7 +763,8 @@ function setupExpertise() {
     end: () => `+=${window.innerHeight * 0.9}`,
     pin: true,
     scrub: 0.5,
-    snap: { snapTo: 1 / (N - 1), duration: { min: 0.2, max: 0.5 }, delay: 0.1, ease: EASE.io },
+    // snapping fights touch scrolling; only a mouse/trackpad gets it
+    snap: finePointer ? { snapTo: 1 / (N - 1), duration: { min: 0.2, max: 0.5 }, delay: 0.1, ease: EASE.io } : undefined,
     onUpdate: (self) => {
       const f = self.progress * (N - 1);
       dial.style.setProperty('--rot', `${-f * 30}deg`);
@@ -854,58 +949,44 @@ function setupStatement() {
 }
 
 /* ------------------------------------------------------------------ *
- * VALUES — engraved words, found only by light
+ * VALUES — a short pin: scroll fills each value with light, in reading order
  * ------------------------------------------------------------------ */
 function setupValues() {
   const sec = $('.val');
-  const lamp = $('.val__lamp', sec);
+  const stage = $('.val__stage', sec);
   const items = $$('.val__item', sec);
-  const words = items.map((it) => $('.val__word', it));
-  const lits = items.map((it) => $('.val__lit', it));
-  const L = { x: -1, y: -1, tx: 0, ty: 0 };
-  let pointerIn = false;
-  let visible = false;
-  if (finePointer) {
-    sec.addEventListener('pointerenter', () => { pointerIn = true; });
-    sec.addEventListener('pointerleave', () => { pointerIn = false; });
-    sec.addEventListener('pointermove', (e) => {
-      const r = sec.getBoundingClientRect();
-      L.tx = e.clientX - r.left;
-      L.ty = e.clientY - r.top;
+  const marks = items.map((it) => $('.val__rh', it));
+  const N = items.length;
+  items.forEach((it) => {
+    it.style.setProperty('--f', '0');
+    it.style.setProperty('--d', '0');
+    it.style.setProperty('--r', '0');
+  });
+  const fill = gsap.parseEase('power2.inOut');
+  const out = gsap.parseEase('power3.out');
+  const apply = (p: number) => {
+    const span = 0.92 / N;
+    let current = 0;
+    items.forEach((it, i) => {
+      const at = 0.04 + i * span;
+      const f = fill(clamp((p - at) / (span * 0.72)));
+      const d = out(clamp((p - at - span * 0.45) / (span * 0.55)));
+      it.style.setProperty('--f', f.toFixed(4));
+      it.style.setProperty('--d', d.toFixed(4));
+      it.style.setProperty('--r', f.toFixed(4));
+      if (p >= at) current = i;
     });
-  }
-  ScrollTrigger.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: (s) => { visible = s.isActive; } });
-  const R = () => (isMobile() ? 130 : 210);
-  let lastT = 0;
-  gsap.ticker.add((t) => {
-    if (!visible) return;
-    const sr = sec.getBoundingClientRect();
-    const rects = words.map((w) => w.getBoundingClientRect());
-    if (!pointerIn) {
-      // idle: the lamp visits each value in turn and rests on it — deliberate, never drifting
-      const dwell = 2.4;
-      const i = Math.floor(t / dwell) % words.length;
-      const r = rects[i];
-      L.tx = r.left - sr.left + r.width * 0.5;
-      L.ty = r.top - sr.top + r.height * 0.55;
-    }
-    const dt = Math.min(0.1, Math.max(0.001, t - lastT));
-    lastT = t;
-    const k = 1 - Math.exp(-dt * (pointerIn ? 9 : 3.2));
-    if (L.x < 0) { L.x = L.tx; L.y = L.ty; }
-    L.x = lerp(L.x, L.tx, k);
-    L.y = lerp(L.y, L.ty, k);
-    lamp.style.transform = `translate(${L.x}px, ${L.y}px)`;
-    const rad = R();
-    words.forEach((w, i) => {
-      const r = rects[i];
-      lits[i].style.setProperty('--lx', `${L.x - (r.left - sr.left)}px`);
-      lits[i].style.setProperty('--ly', `${L.y - (r.top - sr.top)}px`);
-      lits[i].style.setProperty('--lr', `${rad}px`);
-      const cx = r.left - sr.left + r.width / 2, cy = r.top - sr.top + r.height / 2;
-      const d = Math.hypot((L.x - cx) / Math.max(1, r.width / 2 + rad * 0.25), (L.y - cy) / (r.height / 2 + rad * 0.3));
-      items[i].style.setProperty('--b', String(clamp(1.5 - d)));
-    });
+    // the scene's light rests on the value being filled
+    sceneLight.values.anchor = marks[current];
+  };
+  apply(0);
+  ScrollTrigger.create({
+    trigger: stage,
+    start: 'top top',
+    end: () => `+=${window.innerHeight * 0.95}`,
+    pin: true,
+    scrub: 0.5,
+    onUpdate: (self) => apply(self.progress),
   });
 }
 

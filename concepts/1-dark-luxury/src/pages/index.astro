@@ -23,6 +23,13 @@ const ar = (n: number) => String(n).padStart(2, '0').replace(/\d/g, (d) => '٠١
 const maxLog = Math.log10(Math.max(...stats.items.map((i) => i.value)));
 const measure = (v: number) => (Math.log10(v) / maxLog).toFixed(3);
 const year = 2026;
+
+// «ليست كل الملفات قضية»: the last word is struck through by a hand-drawn gold stroke.
+const storyTitleWords = story.title.split(' ');
+const storyTitleStruck = storyTitleWords.pop();
+const storyTitleHead = storyTitleWords.join(' ');
+const STRIKE_INK =
+  'M101.05 13.70 L99.93 12.61 L98.71 12.07 L97.47 11.63 L96.21 11.24 L94.93 10.90 L93.65 10.59 L92.35 10.31 L91.04 10.06 L89.72 9.82 L88.39 9.61 L87.05 9.41 L85.71 9.23 L84.35 9.07 L82.99 8.92 L81.62 8.79 L80.25 8.67 L78.87 8.56 L77.48 8.46 L76.08 8.37 L74.68 8.30 L73.27 8.24 L71.86 8.18 L70.44 8.14 L69.02 8.10 L67.59 8.07 L66.15 8.05 L64.71 8.04 L63.27 8.03 L61.82 8.03 L60.36 8.04 L58.91 8.05 L57.44 8.07 L55.97 8.09 L54.50 8.12 L53.02 8.15 L51.54 8.19 L50.06 8.23 L48.57 8.27 L47.08 8.31 L45.58 8.35 L44.08 8.40 L42.57 8.45 L41.06 8.50 L39.55 8.55 L38.03 8.60 L36.51 8.65 L34.99 8.70 L33.46 8.75 L31.93 8.80 L30.40 8.85 L28.86 8.90 L27.32 8.95 L25.77 8.99 L24.22 9.04 L22.67 9.08 L21.11 9.12 L19.56 9.17 L17.99 9.22 L16.42 9.27 L14.85 9.33 L13.28 9.42 L11.69 9.57 L10.09 9.81 L8.51 9.68 L6.94 9.54 L5.36 9.39 L3.78 9.23 L2.20 9.07 L0.62 8.89 L-0.96 8.70 L-1.04 9.30 L0.55 9.49 L2.14 9.66 L3.72 9.83 L5.30 9.99 L6.88 10.14 L8.46 10.28 L10.04 10.41 L11.59 10.90 L13.14 11.28 L14.70 11.58 L16.27 11.85 L17.83 12.09 L19.39 12.30 L20.95 12.51 L22.51 12.70 L24.06 12.88 L25.62 13.04 L27.17 13.20 L28.72 13.35 L30.26 13.49 L31.81 13.62 L33.34 13.75 L34.88 13.87 L36.41 13.98 L37.94 14.09 L39.47 14.18 L40.99 14.28 L42.50 14.37 L44.01 14.45 L45.52 14.53 L47.02 14.60 L48.52 14.67 L50.01 14.73 L51.49 14.79 L52.98 14.85 L54.45 14.90 L55.92 14.95 L57.38 15.00 L58.84 15.04 L60.29 15.08 L61.74 15.12 L63.18 15.15 L64.61 15.18 L66.04 15.21 L67.46 15.24 L68.87 15.27 L70.28 15.29 L71.68 15.31 L73.07 15.34 L74.46 15.36 L75.84 15.37 L77.21 15.39 L78.57 15.41 L79.93 15.42 L81.28 15.44 L82.62 15.45 L83.96 15.46 L85.29 15.47 L86.61 15.47 L87.93 15.48 L89.24 15.48 L90.55 15.47 L91.84 15.46 L93.14 15.44 L94.43 15.42 L95.71 15.37 L97.00 15.31 L98.28 15.20 L99.58 15.01 L100.95 14.30 Z';
 ---
 <!doctype html>
 <html lang="ar" dir="rtl">
@@ -42,8 +49,18 @@ const year = 2026;
       (function () {
         var d = document.documentElement;
         d.classList.add('js');
-        var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (!rm) d.classList.add('fx', 'is-intro');
+        var mm = window.matchMedia;
+        var rm = mm && mm('(prefers-reduced-motion: reduce)').matches;
+        // landscape phones are too short for pinned scenes: they get the complete static page
+        var shortQ = '(max-height: 560px) and (orientation: landscape)';
+        var short = mm && mm(shortQ).matches;
+        if (short) d.classList.add('short');
+        if (!rm && !short) d.classList.add('fx', 'is-intro');
+        if (mm) {
+          var q = mm(shortQ);
+          var onq = function () { if (q.matches !== short) location.reload(); };
+          q.addEventListener ? q.addEventListener('change', onq) : q.addListener(onq);
+        }
         // Safety net: if the main script never boots, fall back to the static, complete page.
         setTimeout(function () {
           if (!window.__alfReady) d.classList.remove('fx', 'is-intro');
@@ -151,34 +168,52 @@ const year = 2026;
       </section>
       <div class="link link--hero" aria-hidden="true"><i></i></div>
 
-      <!-- ============ 2 · STORY — scattered details, one thread ============ -->
+      <!-- ============ 2 · STORY — «الملف يُفتح»: a file opens and becomes a system ============ -->
       <section class="story scene" id="about" data-scene="story" data-title={story.label}>
         <div class="story__stage">
-          <canvas class="story__threads" aria-hidden="true"></canvas>
-          <div class="story__center">
-            <div class="story__head">
-              <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{story.label}</span></p>
-              <h2 class="story__title t-h1" data-split>{story.title}</h2>
-            </div>
-            <div class="story__lines">
-              <p class="story__line story__line--1">{story.body[0]}</p>
-              <p class="story__line story__line--2">{story.body[1]}</p>
-              <p class="story__line story__line--3">{story.body[2]}</p>
-              <p class="story__line story__line--4 story__closing">
-                <span>{story.closing[0]}</span>
-                <span class="gold-text">{story.closing[1]}</span>
-              </p>
+          <div class="story__text">
+            <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{story.label}</span></p>
+            <h2 class="story__title" data-split>
+              {storyTitleHead}{' '}<span class="qadiya">{storyTitleStruck}<svg class="strike" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="strikeGold" x1="1" y1="0" x2="0" y2="0">
+                    <stop offset="0" stop-color="#f8e4b0" />
+                    <stop offset="0.5" stop-color="#e2be76" />
+                    <stop offset="1" stop-color="#b8893a" />
+                  </linearGradient>
+                  <mask id="strikeMask" maskUnits="userSpaceOnUse" x="-4" y="-4" width="108" height="32">
+                    <path class="strike__m" d="M101 14.0 C72 9.5 36 13.5 -1 9.0" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="butt" pathLength="1" />
+                  </mask>
+                </defs>
+                <path class="strike__ink" d={STRIKE_INK} fill="url(#strikeGold)" mask="url(#strikeMask)" />
+              </svg></span>
+            </h2>
+            <div class="story__body">
+              <p class="story__l story__l1">{story.body[0]}</p>
+              <p class="story__l story__l2">{story.body[1]}</p>
+              <div class="story__l story__l3">
+                <p class="story__value">{story.body[2]}</p>
+                <p class="story__closing naskh"><span>{story.closing[0]}</span> <span>{story.closing[1]}</span></p>
+              </div>
             </div>
           </div>
-          <ul class="story__chips" aria-label="تفاصيل الملف">
-            {story.words.map((w, i) => (
-              <li class="chip" style={`--i:${i}`}><i class="rh rh--sm"></i><span>{w}</span></li>
-            ))}
-          </ul>
-          <i class="story__core" data-anchor aria-hidden="true"></i>
+          <div class="story__vis">
+            <svg class="story__wires" aria-hidden="true"></svg>
+            <div class="dossier" aria-hidden="true">
+              <i class="dossier__back"></i><i class="dossier__front"><i class="dossier__label"></i></i>
+            </div>
+            <ul class="story__sheets" aria-label="تفاصيل الملف">
+              {story.words.map((w, i) => (
+                <li class="sheet" style={`--i:${i}`}>
+                  <span class="sheet__w">{w}</span><i class="sheet__rule" aria-hidden="true"></i><i class="sheet__lines" aria-hidden="true"></i>
+                </li>
+              ))}
+            </ul>
+            <i class="story__seal" data-anchor aria-hidden="true"></i>
+          </div>
         </div>
       </section>
-      <div class="link" aria-hidden="true"><i></i></div>
+      <div class="link link--story" aria-hidden="true"><i></i></div>
 
       <!-- ============ 3 · NUMBERS — the record settles like a mechanism ============ -->
       <section class="nums scene" id="numbers" data-scene="numbers" data-title={stats.label}>
@@ -289,24 +324,21 @@ const year = 2026;
       </section>
       <div class="link" aria-hidden="true"><i></i></div>
 
-      <!-- ============ 6 · VALUES — found by light ============ -->
+      <!-- ============ 6 · VALUES — scroll fills each value with light ============ -->
       <section class="val scene" id="values" data-scene="values" data-title={values.label}>
-        <div class="val__head">
-          <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{values.label}</span></p>
-          <h2 class="t-h1" data-split>{values.title}</h2>
+        <div class="val__stage">
+          <div class="val__head">
+            <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{values.label}</span></p>
+            <h2 class="t-h1" data-split>{values.title}</h2>
+          </div>
+          <ul class="val__wall">
+            {values.items.map((v, i) => (
+              <li class="val__item" style={`--i:${i}`}>
+                <span class="val__word"><i class="val__rh" aria-hidden="true"></i><span class="val__ink"><span class="val__base">{v.title}</span><span class="val__lit" aria-hidden="true">{v.title}</span></span></span><span class="val__body"><span class="val__bi">{v.body}</span></span>
+              </li>
+            ))}
+          </ul>
         </div>
-        <ul class="val__wall">
-          {values.items.map((v, i) => (
-            <li class="val__item" style={`--i:${i}`}>
-              <span class="val__word">
-                <span class="val__base">{v.title}</span>
-                <span class="val__lit" aria-hidden="true">{v.title}</span>
-              </span>
-              <span class="val__body">{v.body}</span>
-            </li>
-          ))}
-        </ul>
-        <i class="val__lamp" data-anchor aria-hidden="true"></i>
       </section>
       <div class="link" aria-hidden="true"><i></i></div>
 
