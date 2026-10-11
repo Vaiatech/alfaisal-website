@@ -155,19 +155,19 @@ export function createTeamPage(ctx: Ctx) {
    * ---------------------------------------------------------------- */
   function setupLeadership() {
     const items = $$('.ldr__item');
+    const featured = $<HTMLElement>('.ldr__item.is-featured .arch') || $<HTMLElement>('.ldr__item .arch');
     items.forEach((it, i) => {
       const fig = $('.arch', it);
       const frame = $<SVGPathElement>('.arch__frame path', it);
       const win = $('.arch__win', it);
       const img = $('.arch__img', it);
-      const idx = $('.arch__idx', it);
-      const role = $('.ldr__role', it);
+      const meta = $$('.ldr__label, .ldr__role, .ldr__creds, .ldr__rule', it);
       const name = splitWords($('.ldr__name', it));
       const bio = $('.ldr__bio', it);
       gsap.set(frame, { attr: { 'stroke-dasharray': '1 1' }, strokeDashoffset: 1 });
       gsap.set(win, { clipPath: 'inset(100% 0% 0% 0% round 999px 999px 6px 6px)' });
       gsap.set(img, { yPercent: 14, scale: 1.06 });
-      gsap.set([idx, role], { opacity: 0, y: 12 });
+      gsap.set(meta, { opacity: 0, y: 12 });
       gsap.set(name, { yPercent: 118 });
       bio.classList.add('wiping');
       bio.style.setProperty('--wp', '0');
@@ -181,8 +181,7 @@ export function createTeamPage(ctx: Ctx) {
           tl.to(frame, { strokeDashoffset: 0, duration: 1.5, ease: 'power2.inOut' }, 0)
             .to(win, { clipPath: 'inset(0% 0% 0% 0% round 999px 999px 6px 6px)', duration: 1.25, ease: EASE.io }, 0.25)
             .to(img, { yPercent: 0, scale: 1, duration: 1.6, ease: EASE.out }, 0.35)
-            .to(idx, { opacity: 1, y: 0, duration: 1, ease: EASE.out }, 0.9)
-            .to(role, { opacity: 1, y: 0, duration: 1, ease: EASE.out }, 0.7)
+            .to(meta, { opacity: 1, y: 0, duration: 1, ease: EASE.out, stagger: 0.08 }, 0.7)
             .to(name, { yPercent: 0, duration: 1.1, ease: EASE.out, stagger: 0.05 }, 0.8)
             .add(() => wipeIn(bio, { duration: 1.5 }), 1.0)
             .add(() => fig.classList.add('is-lit'), 1.1);
@@ -209,12 +208,13 @@ export function createTeamPage(ctx: Ctx) {
         });
         fig.addEventListener('pointerleave', () => {
           it.classList.remove('is-hover');
+          if (sceneLight.leadership) sceneLight.leadership.anchor = featured;
           rx(0); ry(0);
         });
       }
     });
     // without a pointer, the light follows the arch nearest the middle of the screen
-    if (sceneLight.leadership) sceneLight.leadership.anchor = $<HTMLElement>('.ldr__item .arch');
+    if (sceneLight.leadership) sceneLight.leadership.anchor = featured;
     if (!finePointer) {
       const figs = $$('.ldr__item .arch');
       ScrollTrigger.create({

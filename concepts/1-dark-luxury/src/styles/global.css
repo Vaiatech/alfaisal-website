@@ -1772,13 +1772,23 @@ html.short .th { min-height: 0; padding-top: calc(var(--hdr) + 6vh); }
 .ldr__item.is-hover .arch__frame path { opacity: 1; filter: drop-shadow(0 0 6px rgba(226, 190, 118, 0.75)); }
 .ldr__item.is-hover .arch__sheen { opacity: 1; }
 .ldr__item.is-hover .arch__img { filter: saturate(1) contrast(1.05) brightness(1.05); }
-.ldr__text { max-width: 24rem; margin-top: 52px; }
-.ldr__role { font-size: var(--fs-small); font-weight: 700; line-height: 1.7; color: var(--gold-hi); }
-.ldr__name { margin-top: 4px; font-size: var(--fs-h3); line-height: 1.55; }
-.ldr__bio { margin-top: 12px; font-size: var(--fs-body); line-height: 1.95; color: var(--ink-2); }
+/* the card follows uhearu.com: المحامي → name → title → credentials → rule → bio */
+.ldr__text { display: flex; flex-direction: column; align-items: center; max-width: 25rem; margin-top: 30px; }
+.ldr__label { font-size: var(--fs-label); font-weight: 700; line-height: 1.7; color: var(--ink-3); }
+.ldr__name { margin-top: 2px; font-size: var(--fs-h3); line-height: 1.55; }
+.ldr__role { margin-top: 4px; font-size: var(--fs-small); font-weight: 700; line-height: 1.75; color: var(--gold-hi); }
+.ldr__creds { margin-top: 2px; font-size: var(--fs-label); font-weight: 700; line-height: 1.7; color: var(--ink-3); }
+.ldr__rule { display: block; width: 44px; height: 1px; margin-top: 16px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.ldr__bio { margin-top: 16px; font-size: var(--fs-body); line-height: 1.95; color: var(--ink-2); }
+/* the General Manager stands in the middle, raised, his frame the brightest */
+@media (min-width: 861px) {
+  .ldr__item.is-featured { margin-top: -56px; }
+}
+.ldr__item.is-featured .arch__frame path { opacity: 1; filter: drop-shadow(0 0 7px rgba(226, 190, 118, 0.6)); }
+.ldr__item.is-featured .arch__halo { opacity: 0.8; }
 @media (max-width: 860px) {
   .ldr { padding-block: 10vh; }
-  .ldr__list { grid-template-columns: 1fr; gap: 10vh; margin-top: 6vh; }
+  .ldr__list { grid-template-columns: 1fr; gap: 9vh; margin-top: 6vh; }
   .arch { width: min(76vw, 320px); }
 }
 
@@ -1848,7 +1858,10 @@ html.short .th { min-height: 0; padding-top: calc(var(--hdr) + 6vh); }
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: 50%;
-  background: #efe9dd;
+  /* the same light as the leadership arches: a warm glow behind the head on deep navy */
+  background:
+    radial-gradient(70% 56% at 50% 30%, rgba(226, 190, 118, 0.26), transparent 72%),
+    linear-gradient(180deg, #16263f 0%, #0c1729 60%, #070c17 100%);
   box-shadow: 0 0 0 3px rgba(7, 11, 20, 0.92), 0 0 0 4px rgba(226, 190, 118, 0.5), 0 26px 50px -18px rgba(0, 0, 0, 0.85);
   transition: box-shadow 0.8s var(--ease);
 }
@@ -1856,12 +1869,13 @@ html.short .th { min-height: 0; padding-top: calc(var(--hdr) + 6vh); }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(0.45) sepia(0.2) brightness(0.9);
+  object-position: 50% 0;
+  transform-origin: 50% 100%;
   transition: filter 0.9s var(--ease), transform 1.4s var(--ease);
 }
-.gc__disc .gc__logo { object-fit: contain; padding: 15%; background: #f3efe6; filter: none; }
+.gc__disc .gc__logo { object-fit: contain; object-position: 50% 50%; padding: 17%; transform-origin: 50% 50%; }
 .gc__trigger:hover .gc__disc img,
-.gc.is-open .gc__disc img { filter: none; transform: scale(1.05); }
+.gc.is-open .gc__disc img { filter: brightness(1.06); transform: scale(1.05); }
 .gc__trigger:hover .gc__disc .gc__logo,
 .gc.is-open .gc__disc .gc__logo { transform: scale(1.04); }
 .gc__trigger:hover .gc__disc,

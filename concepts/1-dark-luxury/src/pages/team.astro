@@ -99,8 +99,8 @@ const scopeParts = (s: string) => {
       </div>
       <ol class="ldr__list">
         {leadership.members.map((m, i) => (
-          <li class="ldr__item" style={`--i:${i}`}>
-            <figure class="arch" data-anchor={i === 0 ? '' : undefined}>
+          <li class:list={['ldr__item', { 'is-featured': m.featured }]} style={`--i:${i}`}>
+            <figure class="arch" data-anchor={m.featured ? '' : undefined}>
               <svg class="arch__frame" viewBox="0 0 100 130" preserveAspectRatio="none" aria-hidden="true">
                 <path d="M0.6 130 V50 A49.4 49.4 0 0 1 99.4 50 V130" pathLength="1" />
               </svg>
@@ -120,11 +120,13 @@ const scopeParts = (s: string) => {
                 />
                 <i class="arch__sheen" aria-hidden="true"></i>
               </div>
-              <span class="arch__idx naskh" aria-hidden="true">{ar(i + 1)}</span>
             </figure>
             <div class="ldr__text">
-              <p class="ldr__role">{m.role}</p>
+              <p class="ldr__label">{m.label}</p>
               <h3 class="ldr__name">{m.name}</h3>
+              <p class="ldr__role">{m.role}</p>
+              <p class="ldr__creds">{m.creds}</p>
+              <i class="ldr__rule" aria-hidden="true"></i>
               <p class="ldr__bio">{m.bio}</p>
             </div>
           </li>
@@ -153,7 +155,7 @@ const scopeParts = (s: string) => {
                 <span class="gc__disc">
                   {g.photo
                     ? <img src={`/team/${g.photo}.webp`} width="440" height="440" alt={g.leader} loading="lazy" decoding="async" />
-                    : <img class="gc__logo" src="/team/alfaisal-mark.svg" width="120" height="120" alt={g.leader} loading="lazy" decoding="async" />}
+                    : <img class="gc__logo" src="/team/alfaisal-mark-dark.svg" width="120" height="120" alt={g.leader} loading="lazy" decoding="async" />}
                 </span>
               </span>
               <span class="gc__idx naskh" aria-hidden="true">{ar(i + 1)}</span>
