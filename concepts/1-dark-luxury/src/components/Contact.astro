@@ -1,0 +1,58 @@
+---
+/** The closing every page ends with (the PDF's last page): the record, the voice, the details. */
+import { site, contact, closing, formatNumber } from '../../../shared/content.ts';
+---
+<!-- ============ CLOSING — the voice ============ -->
+<section class="cta scene" id="contact" data-scene="contact" data-title={closing.label}>
+  <p class="cta__lead" data-reveal="wipe">
+    <span>كل ملف يضيف إلى خبرتنا…</span>
+    <span>وكل عميل يضيف إلى مسؤوليتنا.</span>
+  </p>
+  <p class="cta__record" data-reveal="wipe">
+    <span class="cta__count gold-text"><bdi dir="ltr">+{formatNumber(closing.record.value)}</bdi> {closing.record.unit}</span>
+    <span class="cta__record-text">{closing.record.text}</span>
+  </p>
+  <h2 class="cta__title" data-split>{closing.title}</h2>
+  <p class="cta__body" data-reveal="wipe">
+    <span>{closing.body[0]}</span>
+    <span>{closing.body[1]}</span>
+  </p>
+
+  <a class="voice" href={site.consultUrl} target="_blank" rel="noopener">
+    <canvas class="voice__wave voice__wave--r" aria-hidden="true"></canvas>
+    <span class="voice__ring" data-anchor>
+      <i class="voice__pulse"></i><i class="voice__pulse"></i>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" /></svg>
+    </span>
+    <canvas class="voice__wave voice__wave--l" aria-hidden="true"></canvas>
+    <span class="voice__label">احجز استشارة</span>
+  </a>
+
+  <div class="contact glass">
+    <div class="contact__col">
+      <p class="contact__k">الهاتف</p>
+      <ul class="contact__v">
+        {contact.phones.map((p) => (
+          <li><a href={`tel:${p.tel}`}><bdi dir="ltr">{p.display}</bdi></a><small>{p.label}</small></li>
+        ))}
+      </ul>
+    </div>
+    <div class="contact__col">
+      <p class="contact__k">واتساب</p>
+      <p class="contact__v"><a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener"><bdi dir="ltr">{contact.phones[0].display}</bdi></a></p>
+      <p class="contact__k">البريد الإلكتروني</p>
+      <p class="contact__v"><a href={`mailto:${contact.email}`}><bdi dir="ltr">{contact.email}</bdi></a></p>
+    </div>
+    <div class="contact__col">
+      <p class="contact__k">العنوان</p>
+      <address class="contact__v">
+        {contact.address.line}<br />{contact.address.city}، {contact.address.country}
+      </address>
+      <a class="contact__map" href={contact.mapsUrl} target="_blank" rel="noopener">
+        <span>افتح الخريطة</span>
+        <svg class="btn__arrow" viewBox="0 0 24 12" aria-hidden="true"><path d="M23 6H2M7 1 2 6l5 5" /></svg>
+      </a>
+    </div>
+  </div>
+</section>
+<div class="link" aria-hidden="true"><i></i></div>

@@ -1,0 +1,67 @@
+---
+import Mark from './Mark.astro';
+import logoRaw from '../../../shared/logo/alfaisal-logo-on-dark.svg?raw';
+import { site, contact, nav, navHref, type Page } from '../../../shared/content.ts';
+import { ar } from '../lib/format';
+
+interface Props { page: Page }
+const { page } = Astro.props;
+const wordmark = (logoRaw.match(/<g id="wordmark"[^>]*>([\s\S]*?)<\/g>/) || [])[1] || '';
+const links = nav.map((item) => ({ ...item, to: navHref(item, page), current: item.page === page }));
+---
+<header class="hdr">
+  <a class="hdr__logo" href={page === 'home' ? '#top' : '/'} data-nav data-title="الرئيسية" aria-label={site.name}>
+    <Mark uid="hm" variant="header" />
+    <svg class="hdr__wordmark" viewBox="0 870 1031 205" aria-hidden="true"><g fill="#f1eadf" set:html={wordmark} /></svg>
+  </a>
+  <nav class="hdr__nav" aria-label="القائمة الرئيسية">
+    <ul>
+      {links.map((item) => (
+        <li>
+          <a
+            href={item.to}
+            data-nav
+            data-title={item.label}
+            class={item.current ? 'is-active' : undefined}
+            aria-current={item.current ? 'page' : undefined}
+            data-soon={item.soon ? '' : undefined}
+          >
+            {item.label}
+            {item.soon && <small class="soon-tag">قريبًا</small>}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <div class="hdr__actions">
+    <button class="hdr__menu" type="button" aria-expanded="false" aria-controls="mnav">
+      <span class="sr">القائمة</span>
+      <i></i><i></i>
+    </button>
+    <a class="consult" href={site.consultUrl} target="_blank" rel="noopener">
+      <span class="consult__mic" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" /></svg>
+      </span>
+      <span class="consult__label">احجز استشارة</span>
+      <span class="consult__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    </a>
+  </div>
+</header>
+
+<div class="mnav" id="mnav" hidden>
+  <ul>
+    {links.map((item, i) => (
+      <li style={`--i:${i}`}>
+        <a href={item.to} data-nav data-title={item.label} aria-current={item.current ? 'page' : undefined}>
+          <span class="mnav__n">{ar(i + 1)}</span>
+          <span class="mnav__t">{item.label}</span>
+          {item.soon && <small class="soon-tag">قريبًا</small>}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <div class="mnav__foot">
+    <a href={`tel:${contact.phones[0].tel}`} dir="ltr">{contact.phones[0].display}</a>
+    <a href={`mailto:${contact.email}`} dir="ltr">{contact.email}</a>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+---
+import Mark from './Mark.astro';
+import { site } from '../../../shared/content.ts';
+
+const year = 2026;
+---
+<!-- ============ OUTRO — the lamp goes out last on the name ============ -->
+<footer class="outro scene" data-scene="outro" data-title="الفيصل">
+  <div class="outro__logo" data-anchor>
+    <Mark uid="ft" variant="lockup" write glow label={site.name} />
+  </div>
+  <div class="outro__bar">
+    <div class="outro__id">
+      <p class="outro__name">{site.name}</p>
+      <p class="outro__tag" aria-label={site.tagline.join('، ')}>
+        {site.tagline.map((t, i) => (
+          <>
+            {i > 0 && <i class="rh rh--sm"></i>}
+            <span>{t}</span>
+          </>
+        ))}
+      </p>
+    </div>
+    <a class="outro__web" href={site.url}><bdi dir="ltr">{site.domain}</bdi></a>
+    <p>© <bdi dir="ltr">{year}</bdi> · السجل التجاري <bdi dir="ltr" class="tnum">{site.commercialRegistry}</bdi></p>
+    <a href="#top" data-nav class="outro__top">
+      <span>العودة إلى البداية</span>
+      <svg viewBox="0 0 12 24" aria-hidden="true"><path d="M6 23V2M1 7l5-5 5 5" /></svg>
+    </a>
+  </div>
+</footer>

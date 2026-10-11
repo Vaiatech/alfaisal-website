@@ -4,6 +4,7 @@ import Lenis from 'lenis';
 import { createGL } from './gl';
 import { buildOdo, type Odo } from './odo';
 import { $, $$, clamp, lerp, EASE, splitWords, riseWords, wipeIn } from './util';
+import { createTeamPage } from './team';
 
 declare global { interface Window { __alfReady?: boolean; __lenis?: Lenis } }
 window.__alfReady = true;
@@ -11,6 +12,7 @@ window.__alfReady = true;
 gsap.registerPlugin(ScrollTrigger);
 const root = document.documentElement;
 const FX = root.classList.contains('fx');
+const PAGE = (root.dataset.page || 'home') as 'home' | 'team';
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 const isMobile = () => window.innerWidth <= 860;
 
@@ -43,13 +45,17 @@ const sceneLight: Record<string, SceneLight> = {
   method: { i: 0.85, r: 0.24 },
   statement: { i: 0.8, r: 0.3 },
   values: { i: 0.7, r: 0.18 },
+  // page 3 · فريقنا
+  'team-hero': { i: 1.0, r: 0.4 },
+  leadership: { i: 0.75, r: 0.26 },
+  groups: { i: 0.7, r: 0.2 },
   contact: { i: 0.85, r: 0.3 },
   outro: { i: 0.9, r: 0.36 },
 };
 const scenes = $$<HTMLElement>('.scene');
 scenes.forEach((s) => {
   const k = s.dataset.scene!;
-  if (sceneLight[k]) sceneLight[k].anchor = $('[data-anchor]', s);
+  if (sceneLight[k]) sceneLight[k].anchor = $<HTMLElement>('[data-anchor]', s);
 });
 const light = { boost: 0, override: null as null | { x: number; y: number } };
 let introLight = FX ? 0 : 1; // the lamp is lit by the intro
@@ -123,17 +129,20 @@ const updateHeader = () => {
 window.addEventListener('scroll', updateHeader, { passive: true });
 updateHeader();
 
-const navTargets = ['#top', '#about', '#expertise', '#method', '#contact'];
-const sectionFor: Record<string, string> = { numbers: '#about', statement: '#method', values: '#method', outro: '#contact' };
-const setActiveNav = () => {
-  const s = activeScene();
-  if (!s) return;
-  const id = sectionFor[s.dataset.scene || ''] || (s.id ? `#${s.id}` : '');
-  if (!navTargets.includes(id)) return;
-  navLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === id));
-};
-window.addEventListener('scroll', setActiveNav, { passive: true });
-setActiveNav();
+// Home: the active item follows the section in view. Other pages mark their own item in the markup.
+if (PAGE === 'home') {
+  const navTargets = ['#top', '#about', '#expertise', '#method', '#contact'];
+  const sectionFor: Record<string, string> = { numbers: '#top', statement: '#method', values: '#method', outro: '#contact' };
+  const setActiveNav = () => {
+    const s = activeScene();
+    if (!s) return;
+    const id = sectionFor[s.dataset.scene || ''] || (s.id ? `#${s.id}` : '');
+    if (!navTargets.includes(id)) return;
+    navLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === id));
+  };
+  window.addEventListener('scroll', setActiveNav, { passive: true });
+  setActiveNav();
+}
 
 /* ------------------------------------------------------------------ *
  * Mobile menu
@@ -212,12 +221,61 @@ async function navigate(hash: string) {
   navigating = false;
   history.replaceState(null, '', hash === '#top' ? location.pathname : hash);
 }
+/* Between pages: the veil closes here, names the destination, and opens on the next page. */
+const veilState = { a: 100, b: 0 };
+const applyVeil = (edge: number) => {
+  veil.style.setProperty('--a', `${veilState.a}%`);
+  veil.style.setProperty('--b', `${veilState.b}%`);
+  veil.style.setProperty('--ex', `${edge}px`);
+};
+async function leaveTo(href: string, title: string) {
+  if (!FX) { location.href = href; return; }
+  if (navigating) return;
+  navigating = true;
+  if (!mnav.hidden) setMenu(false);
+  veilTitle.textContent = title;
+  const W = window.innerWidth;
+  veilState.a = 100; veilState.b = 0;
+  veil.classList.add('is-on');
+  applyVeil(W);
+  light.boost = 0.25;
+  await gsap.to(veilState, { a: 0, duration: 0.75, ease: EASE.io, onUpdate: () => applyVeil((veilState.a / 100) * W - 1) });
+  try { sessionStorage.setItem('alf-veil', title); } catch {}
+  location.href = href;
+}
+/** Opens the veil a page arrived under (see the head script in Base.astro). */
+async function openArrivalVeil() {
+  if (!root.classList.contains('is-arriving')) return;
+  const W = window.innerWidth;
+  veilState.a = 0; veilState.b = 0;
+  veil.classList.add('is-on');
+  applyVeil(-10);
+  root.classList.remove('is-arriving');
+  await gsap.to(veilState, { b: 100, duration: 0.9, ease: EASE.io, delay: 0.15, onUpdate: () => applyVeil(W - (veilState.b / 100) * W - 1) });
+  veil.classList.remove('is-on');
+  veilState.a = 100; veilState.b = 0; applyVeil(W);
+}
+// Coming back with the browser's back button restores this page as it was left: under a closed veil.
+window.addEventListener('pageshow', (e) => {
+  if (!e.persisted) return;
+  navigating = false;
+  light.boost = 0;
+  veil.classList.remove('is-on');
+  veilState.a = 100; veilState.b = 0; applyVeil(window.innerWidth);
+});
+
 $$<HTMLAnchorElement>('a[data-nav]').forEach((a) => {
   a.addEventListener('click', (e) => {
     const href = a.getAttribute('href') || '';
-    if (!href.startsWith('#')) return;
-    e.preventDefault();
-    navigate(href);
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return; // new tab / window: let the browser handle it
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      navigate(href);
+    } else if (href.startsWith('/')) {
+      if (a.getAttribute('aria-current') === 'page') { e.preventDefault(); navigate('#top'); return; }
+      e.preventDefault();
+      leaveTo(href, a.dataset.title || a.textContent?.trim() || '');
+    }
   });
 });
 
@@ -227,25 +285,65 @@ $$<HTMLAnchorElement>('a[data-nav]').forEach((a) => {
 const odos = new Map<HTMLElement, Odo>();
 $$('[data-odo]').forEach((el) => odos.set(el, buildOdo(el)));
 
+const team = createTeamPage({
+  FX,
+  finePointer,
+  isMobile,
+  lenis,
+  sceneLight,
+  odos,
+  hdr,
+  lamp: { get v() { return introLight; }, set v(x: number) { introLight = x; } },
+});
+
 /* ================================================================== *
  * Everything below is motion — skipped entirely for reduced motion.
  * ================================================================== */
 if (FX) {
   document.fonts.ready.then(() => {
-    setupStory();
-    setupNumbers();
-    setupExpertise();
-    setupMethod();
-    setupStatement();
-    setupValues();
+    if (PAGE === 'home') {
+      setupStory();
+      setupNumbers();
+      setupExpertise();
+      setupMethod();
+      setupStatement();
+      setupValues();
+    } else if (PAGE === 'team') {
+      team.setup();
+    }
     setupVoice();
     setupOutro();
     setupReveals(); // after the pins, so their positions include pin spacing
     ScrollTrigger.refresh();
-    runIntro();
+    if (PAGE === 'home') {
+      if (root.classList.contains('is-arriving')) arriveHome();
+      else runIntro();
+    } else {
+      team.enter(openArrivalVeil);
+    }
   });
 } else {
   setupVoice();
+  if (PAGE === 'team') team.setupStatic();
+}
+
+/* Arriving on the home page from another page: no writing — the logo is already
+   complete; jump straight to the section asked for, then open the veil. */
+function arriveHome() {
+  const svg = $<SVGSVGElement>('.hero__mark svg');
+  $$('[mask]', svg).forEach((g) => g.removeAttribute('mask'));
+  introLight = 1;
+  startHeroSpecular(svg);
+  const hash = location.hash;
+  if (hash && hash.length > 1 && document.querySelector(hash)) {
+    const y = targetY(hash);
+    if (y !== null) {
+      lenis?.scrollTo(y, { immediate: true, force: true });
+      window.scrollTo(0, y);
+      ScrollTrigger.update();
+    }
+  }
+  openArrivalVeil();
 }
 
 /* ------------------------------------------------------------------ *
@@ -400,14 +498,14 @@ function startHeroSpecular(svg: SVGSVGElement) {
  * ------------------------------------------------------------------ */
 function setupReveals() {
   $$('[data-split]').forEach((el) => {
-    if (el.closest('.hero')) return;
+    if (el.closest('[data-intro]')) return; // the page's opening plays its own entrance
     if (el.closest('.xp__list')) return;
     const words = splitWords(el);
     gsap.set(words, { yPercent: 118 });
     ScrollTrigger.create({ trigger: el, start: 'top 86%', once: true, onEnter: () => riseWords(words) });
   });
   $$('[data-reveal="rule"]').forEach((el) => {
-    if (el.closest('.hero')) return;
+    if (el.closest('[data-intro]')) return; // the page's opening plays its own entrance
     gsap.set(el, { '--rule': 0 });
     const rh = $('.rh', el);
     if (rh) gsap.set(rh, { scale: 0 });
@@ -420,7 +518,7 @@ function setupReveals() {
     });
   });
   $$('[data-reveal="wipe"]').forEach((el) => {
-    if (el.closest('.hero')) return;
+    if (el.closest('[data-intro]')) return; // the page's opening plays its own entrance
     el.classList.add('wiping');
     el.style.setProperty('--wp', '0');
     ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () => wipeIn(el) });
