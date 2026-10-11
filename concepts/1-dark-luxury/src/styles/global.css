@@ -1347,93 +1347,7 @@ html.fx .val__stage {
 }
 
 /* =========================================================================
-   7 · TEAM — a compact band: light under a closed door
-   ========================================================================= */
-.team {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: 5vw;
-  padding: 9vh var(--gutter);
-  max-height: 60vh;
-  min-height: 44vh;
-}
-.team__copy { grid-column: 1; grid-row: 1; justify-self: end; text-align: right; }
-.team__note { grid-column: 3; grid-row: 1; justify-self: start; max-width: 18rem; }
-.team__door {
-  grid-column: 2;
-  grid-row: 1;
-  position: relative;
-  width: min(13vw, 170px);
-  height: min(40vh, 360px);
-  perspective: 1200px;
-}
-.team__leaf {
-  position: absolute;
-  inset: 0;
-  border-radius: 3px;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent 30%),
-    linear-gradient(180deg, #13223a, #0a1222 70%, #070b14);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), inset 0 1px 0 rgba(255, 244, 220, 0.12), 0 40px 90px -30px rgba(0, 0, 0, 0.9);
-  transform-origin: right center;
-  transform: rotateY(var(--open, 4deg));
-}
-.team__leaf::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 12px;
-  width: 3px;
-  height: 44px;
-  margin-top: -22px;
-  border-radius: 3px;
-  background: var(--metal);
-  box-shadow: 0 0 10px rgba(226, 190, 118, 0.4);
-}
-.team__gap {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -1px;
-  width: 2px;
-  background: linear-gradient(180deg, rgba(246, 223, 166, 0.2), var(--gold-pale) 40%, #fff 100%);
-  box-shadow: 0 0 16px 2px rgba(226, 190, 118, 0.7), 0 0 60px 8px rgba(226, 190, 118, 0.2);
-  opacity: var(--gl, 0.85);
-}
-.team__spill {
-  position: absolute;
-  top: 100%;
-  left: -50%;
-  width: 200%;
-  height: 12vh;
-  background: radial-gradient(60% 100% at 30% 0%, rgba(226, 190, 118, 0.3), transparent 70%);
-  clip-path: polygon(22% 0, 100% 0, 120% 100%, -40% 100%);
-  opacity: var(--gl, 0.85);
-  filter: blur(4px);
-}
-.team__soon {
-  margin-top: 6px;
-  font-size: clamp(3rem, 1.6rem + 3.4vw, 5.2rem);
-  font-weight: 700;
-  line-height: 1.55;
-}
-.team__note { font-size: var(--fs-lead); color: var(--ink-2); line-height: 1.9; }
-
-@media (max-width: 860px) {
-  .team { grid-template-columns: auto minmax(0, 1fr); max-height: none; min-height: 0; padding-block: 8vh 10vh; gap: 7vw; }
-  .team__door { grid-column: 1; width: 22vw; height: 30svh; }
-  .team__copy { grid-column: 2; }
-  .team__soon { font-size: 3rem; }
-  .team__note { font-size: 1rem; }
-  .team__copy { justify-self: start; }
-  .team__note { grid-column: 2; grid-row: 2; margin-top: -2vh; }
-  .team__door { grid-row: 1 / span 2; }
-}
-
-/* =========================================================================
-   8 · CLOSING — the voice
+   7 · CLOSING — the voice
    ========================================================================= */
 .cta {
   position: relative;
@@ -1445,6 +1359,11 @@ html.fx .val__stage {
 }
 .cta__lead { font-size: var(--fs-h3); font-weight: 700; line-height: 1.8; color: var(--ink-2); }
 .cta__lead > span, .cta__body > span { display: block; }
+/* the record, restated before the invitation */
+.cta__record { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 3.4vh; }
+.cta__count { font-size: var(--fs-h2); font-weight: 800; line-height: 1.5; }
+.cta__count bdi { font-variant-numeric: tabular-nums; }
+.cta__record-text { max-width: 34em; font-size: var(--fs-lead); line-height: 1.9; color: var(--ink-2); }
 .cta__title {
   margin-top: 3vh;
   font-size: clamp(2.9rem, 1.2rem + 4.8vw, 6rem);
@@ -1553,10 +1472,16 @@ html.fx .val__stage {
   line-height: 1.8;
   color: var(--ink-3);
 }
+.outro__id { display: grid; gap: 2px; }
+.outro__name { font-weight: 700; color: var(--ink-2); }
+.outro__tag { display: inline-flex; align-items: center; gap: 10px; color: var(--gold-hi); font-weight: 700; }
+.outro__web { color: var(--ink-2); font-weight: 700; letter-spacing: 0.02em; transition: color 0.4s var(--ease); }
+.outro__web:hover { color: var(--gold-hi); }
 .outro__top { display: inline-flex; align-items: center; gap: 10px; color: var(--gold-hi); font-weight: 700; }
 .outro__top svg { width: 10px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 760px) {
   .outro__bar { flex-direction: column; text-align: center; }
+  .outro__id { justify-items: center; }
 }
 
 /* =========================================================================

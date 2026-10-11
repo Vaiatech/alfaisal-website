@@ -40,7 +40,7 @@ export const nav: NavItem[] = [
   { label: 'من نحن', href: '#about' },
   { label: 'خبراتنا', href: '#expertise' },
   { label: 'منهجيتنا', href: '#method' },
-  { label: 'فريقنا', href: '#team', soon: true },
+  // «فريقنا» returns here when the team page (page 3 of the PDF) is built.
   { label: 'تواصل معنا', href: '#contact' },
 ];
 
@@ -121,6 +121,11 @@ export const values = {
 export const closing = {
   label: 'تواصل معنا',
   lead: 'كل ملف يضيف إلى خبرتنا… وكل عميل يضيف إلى مسؤوليتنا.',
+  record: {
+    value: 6750,
+    unit: 'عميل',
+    text: 'خبرة تراكمية في التعامل مع جميع الملفات القانونية والقضائية والتجارية والعقارية.',
+  },
   title: 'لنتحدث عن ملفك',
   body: ['لديك ملف يحتاج إلى خبرة قانونية متخصصة؟', 'ابدأ بالتواصل مع فريق الفيصل.'],
 };

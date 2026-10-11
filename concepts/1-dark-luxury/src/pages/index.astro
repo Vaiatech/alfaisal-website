@@ -168,7 +168,34 @@ const STRIKE_INK =
       </section>
       <div class="link link--hero" aria-hidden="true"><i></i></div>
 
-      <!-- ============ 2 · STORY — «الملف يُفتح»: a file opens and becomes a system ============ -->
+      <!-- ============ 2 · NUMBERS — the record settles like a mechanism ============ -->
+      <section class="nums scene" id="numbers" data-scene="numbers" data-title={stats.label}>
+        <div class="nums__top">
+          <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{stats.label}</span></p>
+          <div class="lead-num" data-anchor>
+            <span class="lead-num__pre">{stats.lead.prefix}</span>
+            <span class="odo odo--xl" data-odo={stats.lead.value} dir="ltr">{formatNumber(stats.lead.value)}</span>
+            <span class="lead-num__unit">{stats.lead.unit}</span>
+          </div>
+          <p class="nums__sub t-h2">
+            <span data-split>{stats.subtitle[0]}</span>
+            <span class="gold-text" data-split>{stats.subtitle[1]}</span>
+          </p>
+        </div>
+        <ol class="ledger glass">
+          {stats.items.map((it, i) => (
+            <li class="ledger__item" style={`--m:${measure(it.value)};--i:${i}`}>
+              <span class="ledger__n">{ar(i + 1)}</span>
+              <span class="odo odo--md" data-odo={it.value} dir="ltr">{formatNumber(it.value)}</span>
+              <span class="ledger__label">{it.label}</span>
+              <i class="ledger__measure" aria-hidden="true"></i>
+            </li>
+          ))}
+        </ol>
+      </section>
+      <div class="link" aria-hidden="true"><i></i></div>
+
+      <!-- ============ 3 · STORY — «الملف يُفتح»: a file opens and becomes a system ============ -->
       <section class="story scene" id="about" data-scene="story" data-title={story.label}>
         <div class="story__stage">
           <div class="story__text">
@@ -214,33 +241,6 @@ const STRIKE_INK =
         </div>
       </section>
       <div class="link link--story" aria-hidden="true"><i></i></div>
-
-      <!-- ============ 3 · NUMBERS — the record settles like a mechanism ============ -->
-      <section class="nums scene" id="numbers" data-scene="numbers" data-title={stats.label}>
-        <div class="nums__top">
-          <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{stats.label}</span></p>
-          <div class="lead-num" data-anchor>
-            <span class="lead-num__pre">{stats.lead.prefix}</span>
-            <span class="odo odo--xl" data-odo={stats.lead.value} dir="ltr">{formatNumber(stats.lead.value)}</span>
-            <span class="lead-num__unit">{stats.lead.unit}</span>
-          </div>
-          <p class="nums__sub t-h2">
-            <span data-split>{stats.subtitle[0]}</span>
-            <span class="gold-text" data-split>{stats.subtitle[1]}</span>
-          </p>
-        </div>
-        <ol class="ledger glass">
-          {stats.items.map((it, i) => (
-            <li class="ledger__item" style={`--m:${measure(it.value)};--i:${i}`}>
-              <span class="ledger__n">{ar(i + 1)}</span>
-              <span class="odo odo--md" data-odo={it.value} dir="ltr">{formatNumber(it.value)}</span>
-              <span class="ledger__label">{it.label}</span>
-              <i class="ledger__measure" aria-hidden="true"></i>
-            </li>
-          ))}
-        </ol>
-      </section>
-      <div class="link" aria-hidden="true"><i></i></div>
 
       <!-- ============ 4 · EXPERTISE — one instrument, six engravings ============ -->
       <section class="xp scene" id="expertise" data-scene="expertise" data-title={expertise.label}>
@@ -342,26 +342,15 @@ const STRIKE_INK =
       </section>
       <div class="link" aria-hidden="true"><i></i></div>
 
-      <!-- ============ 7 · TEAM — light under a closed door ============ -->
-      <section class="team scene" id="team" data-scene="team" data-title="فريقنا">
-        <div class="team__door" aria-hidden="true">
-          <i class="team__leaf"></i>
-          <i class="team__gap" data-anchor></i>
-          <i class="team__spill"></i>
-        </div>
-        <div class="team__copy">
-          <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>فريقنا</span></p>
-          <h2 class="team__soon naskh gold-text">قريبًا</h2>
-        </div>
-        <p class="team__note" data-reveal="wipe">نعرّفكم بفريق الفيصل قريبًا.</p>
-      </section>
-      <div class="link" aria-hidden="true"><i></i></div>
-
-      <!-- ============ 8 · CLOSING — the voice ============ -->
+      <!-- ============ 7 · CLOSING — the voice ============ -->
       <section class="cta scene" id="contact" data-scene="contact" data-title={closing.label}>
         <p class="cta__lead" data-reveal="wipe">
           <span>كل ملف يضيف إلى خبرتنا…</span>
           <span>وكل عميل يضيف إلى مسؤوليتنا.</span>
+        </p>
+        <p class="cta__record" data-reveal="wipe">
+          <span class="cta__count gold-text"><bdi dir="ltr">+{formatNumber(closing.record.value)}</bdi> {closing.record.unit}</span>
+          <span class="cta__record-text">{closing.record.text}</span>
         </p>
         <h2 class="cta__title" data-split>{closing.title}</h2>
         <p class="cta__body" data-reveal="wipe">
@@ -415,8 +404,19 @@ const STRIKE_INK =
         <Mark uid="ft" variant="lockup" write glow label={site.name} />
       </div>
       <div class="outro__bar">
-        <p>© <bdi dir="ltr">{year}</bdi> {site.name}</p>
-        <p>السجل التجاري <bdi dir="ltr" class="tnum">{site.commercialRegistry}</bdi></p>
+        <div class="outro__id">
+          <p class="outro__name">{site.name}</p>
+          <p class="outro__tag" aria-label={site.tagline.join('، ')}>
+            {site.tagline.map((t, i) => (
+              <>
+                {i > 0 && <i class="rh rh--sm"></i>}
+                <span>{t}</span>
+              </>
+            ))}
+          </p>
+        </div>
+        <a class="outro__web" href={site.url}><bdi dir="ltr">{site.domain}</bdi></a>
+        <p>© <bdi dir="ltr">{year}</bdi> · السجل التجاري <bdi dir="ltr" class="tnum">{site.commercialRegistry}</bdi></p>
         <a href="#top" data-nav class="outro__top">
           <span>العودة إلى البداية</span>
           <svg viewBox="0 0 12 24" aria-hidden="true"><path d="M6 23V2M1 7l5-5 5 5" /></svg>

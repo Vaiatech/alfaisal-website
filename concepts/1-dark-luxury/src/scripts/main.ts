@@ -43,7 +43,6 @@ const sceneLight: Record<string, SceneLight> = {
   method: { i: 0.85, r: 0.24 },
   statement: { i: 0.8, r: 0.3 },
   values: { i: 0.7, r: 0.18 },
-  team: { i: 0.8, r: 0.26 },
   contact: { i: 0.85, r: 0.3 },
   outro: { i: 0.9, r: 0.36 },
 };
@@ -124,7 +123,7 @@ const updateHeader = () => {
 window.addEventListener('scroll', updateHeader, { passive: true });
 updateHeader();
 
-const navTargets = ['#top', '#about', '#expertise', '#method', '#team', '#contact'];
+const navTargets = ['#top', '#about', '#expertise', '#method', '#contact'];
 const sectionFor: Record<string, string> = { numbers: '#about', statement: '#method', values: '#method', outro: '#contact' };
 const setActiveNav = () => {
   const s = activeScene();
@@ -187,7 +186,6 @@ async function navigate(hash: string) {
   navigating = true;
   const scene = hash === '#top' ? $('#top') : $(hash);
   veilTitle.textContent = scene?.dataset.title || '';
-  if (hash === '#team') veilTitle.textContent = 'فريقنا · قريبًا';
   const W = window.innerWidth;
   const v = { a: 100, b: 0 };
   const apply = (edge: number) => {
@@ -240,7 +238,6 @@ if (FX) {
     setupMethod();
     setupStatement();
     setupValues();
-    setupTeam();
     setupVoice();
     setupOutro();
     setupReveals(); // after the pins, so their positions include pin spacing
@@ -987,22 +984,6 @@ function setupValues() {
     pin: true,
     scrub: 0.5,
     onUpdate: (self) => apply(self.progress),
-  });
-}
-
-/* ------------------------------------------------------------------ *
- * TEAM — the door opens a little as you approach
- * ------------------------------------------------------------------ */
-function setupTeam() {
-  const door = $('.team__door');
-  gsap.fromTo(door, { '--open': '2deg', '--gl': 0.5 }, {
-    '--open': '24deg', '--gl': 1, ease: 'none',
-    scrollTrigger: { trigger: '.team', start: 'top 80%', end: 'center 40%', scrub: 0.6 },
-  });
-  const soon = $('.team__soon');
-  gsap.fromTo(soon, { opacity: 0, filter: 'blur(14px)' }, {
-    opacity: 1, filter: 'blur(0px)', duration: 2, ease: EASE.out,
-    scrollTrigger: { trigger: soon, start: 'top 85%', once: true } as ScrollTrigger.Vars,
   });
 }
 
