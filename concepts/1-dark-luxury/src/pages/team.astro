@@ -1,17 +1,17 @@
 ---
 /**
  * PAGE 3 · فريقنا — «خبرات متعددة… تحت قيادة واحدة»
- * The opening, the leadership in lit arches, and the legal groups whose scope of work
+ * The opening («سطور كثيرة… سطر واحد»), the leadership in lit arches, and the legal groups whose scope of work
  * drops from the leader's portrait or the group's name (the client's brief for «مجموعات المحامين»).
  */
 import Base from '../layouts/Base.astro';
 import Contact from '../components/Contact.astro';
-import HeroConstellation from '../components/team/HeroConstellation.astro';
+import HeroLines from '../components/team/HeroLines.astro';
 import TeamBody from '../components/team/TeamBody.astro';
 import { team } from '../../../shared/content.ts';
 ---
 <Base page="team" title={team.pageTitle} description={team.description}>
-  <HeroConstellation />
+  <HeroLines />
   <TeamBody />
   <Contact />
 </Base>

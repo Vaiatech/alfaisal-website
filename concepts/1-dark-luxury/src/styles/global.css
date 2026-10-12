@@ -1585,8 +1585,7 @@ html.short .hero__cta { flex-direction: row; justify-content: flex-start; }
    BETWEEN PAGES — a page reached through the veil paints with it closed
    ========================================================================= */
 html.is-arriving .veil { visibility: visible; --a: 0%; --b: 0%; }
-html.is-intro .th__copy,
-html.is-intro .th__vis { opacity: 0; }
+html.is-intro .th__copy { opacity: 0; }
 
 /* =========================================================================
    PAGE 3 · فريقنا — «خبرات متعددة… تحت قيادة واحدة»
@@ -1603,15 +1602,6 @@ html.is-intro .th__vis { opacity: 0; }
   padding: calc(var(--hdr) + 4vh) var(--gutter) 10vh;
 }
 .th__copy { grid-column: 1; grid-row: 1; position: relative; z-index: 2; }
-.th__vis {
-  grid-column: 2;
-  grid-row: 1;
-  justify-self: center;
-  position: relative;
-  z-index: 1;
-  width: min(40vw, 72vh);
-  aspect-ratio: 1;
-}
 .th__eyebrow { margin-bottom: clamp(18px, 3vh, 34px); }
 .th__title { font-weight: 800; }
 .th__l1 { display: block; font-size: var(--fs-display); line-height: var(--lh-display); color: var(--ink); }
@@ -1627,41 +1617,6 @@ html.is-intro .th__vis { opacity: 0; }
 }
 .th__body p:first-child { color: var(--ink); }
 
-.constel { width: 100%; height: 100%; overflow: visible; }
-.cn__ring { fill: none; stroke: rgba(226, 190, 118, 0.18); stroke-width: 1; stroke-dasharray: 2 7; vector-effect: non-scaling-stroke; }
-.cn__ray { stroke: rgba(226, 190, 118, 0.3); stroke-width: 1; }
-.cn__pt { filter: drop-shadow(0 0 5px rgba(226, 190, 118, 0.85)); }
-/* the centre: the name, on a dark medallion so the rays end beneath it */
-.th__core { position: absolute; left: 34%; top: 34%; width: 32%; height: 32%; display: grid; place-items: center; }
-.th__core::before {
-  content: '';
-  position: absolute;
-  inset: -16%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(9, 16, 30, 0.97) 0 58%, rgba(9, 16, 30, 0) 72%);
-}
-.th__core::after {
-  content: '';
-  position: absolute;
-  inset: -6%;
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(226, 190, 118, 0.42), 0 0 40px rgba(226, 190, 118, 0.18);
-}
-.th__core .mark { position: relative; z-index: 1; width: 78%; height: 78%; overflow: visible; }
-.th__count {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -11%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  font-weight: 700;
-}
-.th__num { display: inline-flex; align-items: center; font-size: var(--fs-h2); font-weight: 800; color: var(--gold-hi); }
-.th__unit { font-size: var(--fs-small); color: var(--ink-2); }
-
 @media (max-width: 860px) {
   .th {
     grid-template-columns: minmax(0, 1fr);
@@ -1669,7 +1624,6 @@ html.is-intro .th__vis { opacity: 0; }
     padding-top: calc(var(--hdr) + 2svh);
     padding-bottom: 12vh;
   }
-  .th__vis { grid-column: 1; grid-row: 1; width: min(80vw, 40svh); margin-bottom: 11svh; }
   .th__copy { grid-row: 2; }
   .th__body { font-size: 1.02rem; }
 }
@@ -1789,11 +1743,13 @@ html.short .th { min-height: 0; padding-top: calc(var(--hdr) + 6vh); }
 @media (max-width: 860px) {
   .ldr { padding-block: 10vh; }
   .ldr__list { grid-template-columns: 1fr; gap: 9vh; margin-top: 6vh; }
+  /* phones: the General Manager comes first */
+  .ldr__item.is-featured { order: -1; }
   .arch { width: min(76vw, 320px); }
 }
 
 /* ---------- Groups: each specialism, its own team ---------- */
-.grp { position: relative; z-index: 5; padding: 12vh var(--gutter) 14vh; }
+.grp { position: relative; z-index: 5; padding: 12vh var(--gutter) 24vh; } /* room for an open scope list */
 .grp__head { display: grid; justify-items: center; max-width: 48rem; margin-inline: auto; text-align: center; }
 .grp__head .eyebrow { justify-content: center; }
 .grp__head h2 { margin-top: 10px; }
@@ -1991,11 +1947,13 @@ html:not(.js) .gc__drop { position: static; visibility: visible; }
   .grp__list.has-open .gc:not(.is-open) { opacity: 1; filter: none; }
 }
 /* ---------- Opening words shared by every page-3 opening ---------- */
-.th__count--inline { position: static; justify-content: flex-start; margin-top: clamp(20px, 3.4vh, 36px); }
+.th__count { display: flex; align-items: center; gap: 12px; margin-top: clamp(20px, 3.4vh, 36px); font-weight: 700; }
+.th__num { display: inline-flex; align-items: center; font-size: var(--fs-h2); font-weight: 800; color: var(--gold-hi); }
+.th__unit { font-size: var(--fs-small); color: var(--ink-2); }
 .th__copy--center { text-align: center; }
 .th__copy--center .th__eyebrow { justify-content: center; }
 .th__copy--center .th__body { max-width: 40rem; margin-inline: auto; }
-.th__copy--center .th__count--inline { justify-content: center; }
+.th__copy--center .th__count { justify-content: center; }
 
 /* ---------- Opening B · many lines, one line ---------- */
 .th--b { grid-template-columns: minmax(0, 1fr); justify-items: center; overflow: hidden; }
@@ -2045,7 +2003,17 @@ html:not(.js) .gc__drop { position: static; visibility: visible; }
 }
 /* every few terms one is filled with a faint light, so the field glints rather than repeats */
 .tl__t:nth-of-type(6n + 2) { color: rgba(226, 190, 118, 0.1); -webkit-text-stroke-color: rgba(226, 190, 118, 0.3); }
-.tl__sep { flex: none; width: 9px; height: 9px; margin: 0 0.8em; transform: rotate(45deg); background: rgba(226, 190, 118, 0.32); }
+/* between the words: the firm's own separator — the fine upright stroke of «محامون | مستشارون | محكمون»,
+   drawn as a pen line that fades at both ends */
+.tl__sep {
+  --c: rgba(226, 190, 118, 0.6);
+  flex: none;
+  align-self: center;
+  width: 1px;
+  height: 0.82em;
+  margin: 0 0.85em;
+  background: linear-gradient(180deg, transparent, var(--c) 30%, var(--c) 70%, transparent);
+}
 .tl__line {
   position: absolute;
   left: 0;
@@ -2070,62 +2038,201 @@ html:not(.js) .gc__drop { position: static; visibility: visible; }
   .th--b .th__copy::before { inset: -6% -10%; }
 }
 
-/* ---------- Opening C · the arcade ---------- */
-.rq { width: min(40vw, 70vh); aspect-ratio: 1 / 1.08; perspective: 620px; perspective-origin: 50% 44%; }
-.rq__haze { position: absolute; inset: 0; background: radial-gradient(30% 26% at 50% 46%, rgba(226, 190, 118, 0.24), transparent 72%); }
-.rq__world { position: absolute; inset: 0; transform-style: preserve-3d; }
-.rq__arch {
-  position: absolute;
-  left: 21%;
-  bottom: 6%;
-  width: 58%;
-  aspect-ratio: 100 / 130;
-  transform: translateZ(calc(var(--z) * -210px));
-  opacity: calc(1 - var(--z) * 0.085);
+
+/* =========================================================================
+   DAY / NIGHT SWITCH
+   ========================================================================= */
+.thm {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: var(--gold-hi);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(226, 190, 118, 0.38);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: box-shadow 0.5s var(--ease), transform 0.5s var(--ease);
 }
-.rq__arch svg { width: 100%; height: 100%; overflow: visible; }
-.rq__arch path { fill: none; stroke: var(--gold-hi); stroke-width: 0.7; filter: drop-shadow(0 0 4px rgba(226, 190, 118, 0.55)); }
-.rq__arch:first-of-type path { stroke-width: 1; }
-/* a keystone of light at the crown of every arch */
-.rq__key {
-  position: absolute;
-  top: -1.5%;
-  left: 50%;
-  width: 8px;
-  height: 8px;
-  margin-left: -4px;
-  transform: rotate(45deg);
-  background: linear-gradient(135deg, #fff4d6, var(--gold-hi));
-  box-shadow: 0 0 12px rgba(226, 190, 118, 0.8);
+.thm:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px var(--gold-hi), 0 0 26px rgba(226, 190, 118, 0.38); }
+.thm svg {
+  grid-area: 1 / 1;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.8s var(--ease), opacity 0.5s var(--ease);
 }
-/* the one light, at the far end */
-.rq__light {
-  position: absolute;
-  left: 21%;
-  bottom: 6%;
-  width: 58%;
-  aspect-ratio: 100 / 130;
-  border-radius: 999px 999px 0 0;
-  transform: translateZ(-1420px);
-  background: radial-gradient(56% 46% at 50% 58%, rgba(255, 242, 210, 0.96), rgba(226, 190, 118, 0.5) 42%, transparent 74%);
+.thm__moon { opacity: 0; transform: rotate(-90deg) scale(0.4); }
+[data-theme='light'] .thm__sun { opacity: 0; transform: rotate(90deg) scale(0.4); }
+[data-theme='light'] .thm__moon { opacity: 1; transform: none; }
+/* the menu's version: a labelled pill */
+.thm--row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+  height: auto;
+  margin-top: 12px;
+  padding: 8px 18px 8px 16px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.6;
 }
-.rq__floor {
-  position: absolute;
-  left: -24%;
-  right: -24%;
-  bottom: 6%;
-  height: 1500px;
-  transform-origin: 50% 100%;
-  transform: rotateX(90deg);
+.thm--row svg { grid-area: auto; }
+.thm--row .thm__moon,
+.thm__to-night,
+[data-theme='light'] .thm--row .thm__sun,
+[data-theme='light'] .thm__to-day { display: none; }
+[data-theme='light'] .thm--row .thm__moon { display: block; }
+[data-theme='light'] .thm__to-night { display: inline; }
+@media (max-width: 400px) {
+  .hdr__actions { gap: 6px; }
+  .thm { width: 42px; height: 42px; }
+}
+/* the switch itself: the new theme spreads from the button as a widening circle */
+::view-transition-old(root),
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-new(root) { z-index: 2; }
+
+/* =========================================================================
+   THE DAY THEME — ivory paper, deep navy ink, gold used as warmth
+   ========================================================================= */
+:root[data-theme='light'] {
+  --bg0: #ece5d8;
+  --bg1: #f6f1e8;
+  --bg2: #fbf8f2;
+  --bg3: #e6dccb;
+  --gold: #a57b31;
+  --gold-hi: #94691f;
+  --gold-lo: #7a5719;
+  --gold-pale: #b8893a;
+  --ink: #0e1b2f;
+  --ink-2: rgba(14, 27, 47, 0.76);
+  --ink-3: rgba(14, 27, 47, 0.56);
+  --ink-4: rgba(14, 27, 47, 0.2);
+  --line: rgba(148, 106, 31, 0.26);
+  --line-2: rgba(14, 27, 47, 0.1);
+  --metal: linear-gradient(180deg, #c3934a 6%, #a77a2c 42%, #8e6420 68%, #6e4b14 96%);
+  color-scheme: light;
+}
+[data-theme='light'] ::selection { background: rgba(184, 137, 58, 0.3); color: var(--ink); }
+[data-theme='light'] .grain { opacity: 0.035; }
+
+/* the logo in its own colours: gold calligraphy, the burgundy pen, the burgundy name */
+[data-theme='light'] linearGradient[id$='-gold'] stop:nth-child(1) { stop-color: #7d5a1c; }
+[data-theme='light'] linearGradient[id$='-gold'] .g-s1 { stop-color: #a97c2e; }
+[data-theme='light'] linearGradient[id$='-gold'] .g-hi { stop-color: #d8ad5c; }
+[data-theme='light'] linearGradient[id$='-gold'] .g-s2 { stop-color: #ad832d; }
+[data-theme='light'] linearGradient[id$='-gold'] stop:nth-child(5) { stop-color: #7a5719; }
+[data-theme='light'] linearGradient[id$='-pen'] stop:nth-child(1) { stop-color: #b13030; }
+[data-theme='light'] linearGradient[id$='-pen'] stop:nth-child(2) { stop-color: #8a1c1c; }
+[data-theme='light'] linearGradient[id$='-pen'] stop:nth-child(3) { stop-color: #5c1212; }
+[data-theme='light'] .hdr__wordmark g,
+[data-theme='light'] .m-wordmark { fill: #7a1a1a; }
+[data-theme='light'] .m-tagline { fill: #4a1410; }
+[data-theme='light'] .m-glow { opacity: 0.22; }
+
+/* materials */
+[data-theme='light'] .glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0.62));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(120, 90, 40, 0.08), 0 40px 90px -40px rgba(70, 50, 20, 0.28);
+}
+[data-theme='light'] .glass::before {
   background:
-    repeating-linear-gradient(90deg, rgba(226, 190, 118, 0.1) 0 1px, transparent 1px 64px),
-    repeating-linear-gradient(0deg, transparent 0 209px, rgba(226, 190, 118, 0.12) 209px 210px); /* one line under each arch, none at the front edge */
-  /* fades into the distance and toward both sides, so it never reaches the text */
-  -webkit-mask-image: linear-gradient(0deg, #000 8%, transparent 92%), linear-gradient(90deg, transparent 18%, #000 40%, #000 60%, transparent 82%);
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(0deg, #000 8%, transparent 92%), linear-gradient(90deg, transparent 18%, #000 40%, #000 60%, transparent 82%);
-  mask-composite: intersect;
+    radial-gradient(60% 120% at var(--gx, 80%) 0%, rgba(184, 137, 58, 0.55), transparent 60%),
+    linear-gradient(180deg, rgba(148, 106, 31, 0.32), rgba(148, 106, 31, 0.1));
 }
-@media (max-width: 860px) {
-  .rq { width: min(80vw, 40svh); }
+[data-theme='light'] .btn--glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.4));
+  box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 20px 50px -24px rgba(148, 106, 31, 0.45);
 }
+[data-theme='light'] .btn--glass::after { background: linear-gradient(100deg, transparent 30%, rgba(184, 137, 58, 0.22) 50%, transparent 70%); }
+
+/* header, menu, veil */
+[data-theme='light'] .hdr::before { background: linear-gradient(180deg, rgba(251, 248, 242, 0.92), rgba(251, 248, 242, 0.72)); }
+[data-theme='light'] .hdr__menu { background: rgba(255, 255, 255, 0.55); box-shadow: inset 0 0 0 1px rgba(14, 27, 47, 0.16); }
+[data-theme='light'] .thm { background: rgba(255, 255, 255, 0.55); box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.45); }
+[data-theme='light'] .thm:hover { box-shadow: inset 0 0 0 1px var(--gold-hi), 0 0 26px rgba(184, 137, 58, 0.3); }
+[data-theme='light'] .mnav { background: rgba(246, 241, 232, 0.95); }
+[data-theme='light'] .veil__glass {
+  background:
+    radial-gradient(34% 30% at 50% 50%, rgba(184, 137, 58, 0.14), transparent 100%),
+    linear-gradient(180deg, rgba(251, 248, 242, 0.98), rgba(240, 233, 221, 0.99));
+}
+[data-theme='light'] .veil__edge {
+  background: linear-gradient(180deg, transparent, #c9a25a 30%, #8e6420 50%, #c9a25a 70%, transparent);
+  box-shadow: 0 0 24px 4px rgba(184, 137, 58, 0.45), 0 0 90px 20px rgba(184, 137, 58, 0.16);
+}
+[data-theme='light'] .link i { background: linear-gradient(180deg, rgba(184, 137, 58, 0), #a57b31); box-shadow: 0 0 10px rgba(184, 137, 58, 0.7); }
+
+/* home · the story: kraft folders and paper sheets */
+[data-theme='light'] .story__l1 { color: var(--ink-2); }
+[data-theme='light'] .sheet {
+  background: linear-gradient(180deg, #fffdf8 0%, #f2eadb 100%);
+  box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.24), inset 0 1px 0 #fff, 0 18px 34px -18px rgba(70, 50, 20, 0.35);
+}
+[data-theme='light'] .sheet__lines { background: repeating-linear-gradient(180deg, rgba(14, 27, 47, 0.13) 0 1px, transparent 1px 8px); }
+[data-theme='light'] .dossier__back { background: linear-gradient(180deg, rgba(232, 219, 196, 0.97), rgba(214, 197, 168, 0.98)); box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.45), 0 34px 70px -30px rgba(70, 50, 20, 0.4); }
+[data-theme='light'] .dossier__back::before { background: rgba(232, 219, 196, 0.97); border-color: rgba(148, 106, 31, 0.45); }
+[data-theme='light'] .dossier__front { background: linear-gradient(180deg, rgba(243, 233, 214, 0.98), rgba(226, 211, 184, 0.99)); box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.8); }
+[data-theme='light'] .dossier__front::after {
+  background:
+    linear-gradient(180deg, transparent 56%, rgba(148, 106, 31, 0.45) 56% calc(56% + 1px), rgba(255, 255, 255, 0.25) calc(56% + 1px)),
+    linear-gradient(180deg, rgba(238, 227, 206, 0.99), rgba(225, 210, 182, 0.99));
+}
+[data-theme='light'] .story__wires .w-fan { stroke: rgba(148, 106, 31, 0.5); }
+[data-theme='light'] .story__wires .w-tree,
+[data-theme='light'] .story__wires .w-tail { stroke: #a57b31; filter: drop-shadow(0 0 3px rgba(184, 137, 58, 0.5)); }
+
+/* home · values */
+[data-theme='light'] .val__base { color: rgba(14, 27, 47, 0.2); }
+[data-theme='light'] .val__bi { color: var(--ink-2); }
+
+/* team · the opening */
+[data-theme='light'] .th--b .th__copy::before { background: radial-gradient(closest-side, rgba(251, 248, 242, 0.96), rgba(251, 248, 242, 0.84) 58%, rgba(251, 248, 242, 0)); }
+[data-theme='light'] .tl__t { -webkit-text-stroke-color: rgba(148, 106, 31, 0.3); }
+[data-theme='light'] .tl__t:nth-of-type(6n + 2) { color: rgba(148, 106, 31, 0.1); -webkit-text-stroke-color: rgba(148, 106, 31, 0.38); }
+
+/* team · arches and medallions: the portraits on warm ivory, lit from behind */
+[data-theme='light'] .arch__win,
+[data-theme='light'] .gc__disc {
+  background:
+    radial-gradient(72% 46% at 50% 32%, rgba(214, 170, 92, 0.32), transparent 72%),
+    linear-gradient(180deg, #f6efe2 0%, #ebdfca 58%, #dccbae 100%);
+}
+[data-theme='light'] .arch__win { box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 44px 90px -44px rgba(70, 50, 20, 0.45); }
+[data-theme='light'] .arch__rays { background: repeating-linear-gradient(90deg, rgba(148, 106, 31, 0.07) 0 1px, transparent 1px 18px); }
+[data-theme='light'] .arch__halo { background: radial-gradient(circle at 50% 40%, rgba(255, 246, 222, 0.9), rgba(226, 190, 118, 0.18) 38%, transparent 62%); }
+[data-theme='light'] .gc__disc { box-shadow: 0 0 0 3px #f6f1e8, 0 0 0 4px rgba(148, 106, 31, 0.6), 0 26px 50px -18px rgba(70, 50, 20, 0.4); }
+[data-theme='light'] .gc__trigger:hover .gc__disc,
+[data-theme='light'] .gc.is-open .gc__disc { box-shadow: 0 0 0 3px #f6f1e8, 0 0 0 4px #a57b31, 0 0 36px 2px rgba(184, 137, 58, 0.35), 0 26px 50px -18px rgba(70, 50, 20, 0.4); }
+[data-theme='light'] .gc__trigger {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.4));
+  box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.2), inset 0 1px 0 #fff, 0 24px 60px -40px rgba(70, 50, 20, 0.3);
+}
+[data-theme='light'] .gc__trigger:hover,
+[data-theme='light'] .gc.is-open .gc__trigger {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.6));
+  box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.55), inset 0 1px 0 #fff, 0 34px 70px -40px rgba(148, 106, 31, 0.45);
+}
+[data-theme='light'] .gc__panel {
+  background: linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(246, 240, 229, 0.99));
+  box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.4), inset 0 1px 0 #fff, 0 50px 100px -30px rgba(70, 50, 20, 0.35);
+}
+[data-theme='light'] .gc__scope li { border-bottom-color: rgba(14, 27, 47, 0.08); }
+.gc__logo--day,
+[data-theme='light'] .gc__logo--night { display: none; }
+[data-theme='light'] .gc__logo--day { display: block; }
+/* the strike over «قضية» and the stars between the words, in daylight */
+[data-theme='light'] #strikeGold stop:nth-child(1) { stop-color: #c3934a; }
+[data-theme='light'] #strikeGold stop:nth-child(2) { stop-color: #a57b31; }
+[data-theme='light'] #strikeGold stop:nth-child(3) { stop-color: #7a5719; }
+[data-theme='light'] .strike { filter: drop-shadow(0 0 4px rgba(184, 137, 58, 0.35)); }
+[data-theme='light'] .tl__sep { --c: rgba(148, 106, 31, 0.6); }

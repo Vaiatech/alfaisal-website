@@ -17,6 +17,7 @@ uniform vec2 uLight;   // 0..1, y from top
 uniform float uLightI;
 uniform float uLightR; // radius as a fraction of viewport height
 uniform float uDim;
+uniform float uTheme; // 0 = the navy night, 1 = ivory daylight
 
 float hash(vec2 p){ p = fract(p * vec2(443.897, 441.423)); p += dot(p, p.yx + 19.19); return fract((p.x + p.y) * p.x); }
 
@@ -24,9 +25,9 @@ void main(){
   vec2 uv = gl_FragCoord.xy / uRes;
   float y = 1.0 - uv.y; // 0 at top
 
-  // clean navy: a touch lighter at the top, deepest at the bottom — pure blue family
-  vec3 top = vec3(0.043, 0.082, 0.149);  // #0b1526
-  vec3 bot = vec3(0.024, 0.039, 0.075);  // #060a13
+  // night: clean navy, a touch lighter at the top. day: warm ivory paper, a touch deeper at the bottom.
+  vec3 top = mix(vec3(0.043, 0.082, 0.149), vec3(0.984, 0.973, 0.949), uTheme);  // #0b1526 | #fbf8f2
+  vec3 bot = mix(vec3(0.024, 0.039, 0.075), vec3(0.945, 0.922, 0.878), uTheme);  // #060a13 | #f1ebe0
   vec3 col = mix(top, bot, smoothstep(0.0, 1.0, y));
 
   // the light: crisp, deliberate falloff (reaches zero at r), measured in screen-height units
@@ -38,15 +39,17 @@ void main(){
   float core = exp(-(d * d) / (r * r * 0.05));
   vec3 gold = vec3(0.886, 0.690, 0.380);
   vec3 pale = vec3(1.0, 0.89, 0.66);
-  col += gold * halo * 0.30 * uLightI;
-  col += pale * core * 0.22 * uLightI;
-  // keep the surroundings rich blue rather than grey where the gold fades out
+  // at night the light is added (a lamp in the dark); by day it is a warm pool of sun on paper
+  vec3 night = col + gold * halo * 0.30 * uLightI + pale * core * 0.22 * uLightI;
   float rim = (1.0 - smoothstep(r * 0.5, r * 1.9, d)) * (1.0 - halo);
-  col += vec3(0.008, 0.022, 0.055) * rim * uLightI;
+  night += vec3(0.008, 0.022, 0.055) * rim * uLightI; // rich blue rather than grey where the gold fades
+  vec3 day = mix(col, vec3(0.973, 0.886, 0.706), halo * 0.42 * uLightI);
+  day = mix(day, vec3(1.0, 0.985, 0.95), core * 0.5 * uLightI);
+  col = mix(night, day, uTheme);
 
-  // gentle vignette (multiplicative, stays blue)
+  // gentle vignette (multiplicative; softer by day)
   vec2 vc = uv - 0.5;
-  col *= 1.0 - dot(vc, vc) * 0.55;
+  col *= 1.0 - dot(vc, vc) * mix(0.55, 0.16, uTheme);
   col *= 1.0 - uDim;
 
   // dither against banding
@@ -55,7 +58,7 @@ void main(){
 }
 `;
 
-export type GLState = { lx: number; ly: number; li: number; lr: number; dim: number };
+export type GLState = { lx: number; ly: number; li: number; lr: number; dim: number; theme: number };
 
 export function createGL(canvas: HTMLCanvasElement) {
   const gl = canvas.getContext('webgl', { antialias: false, alpha: false, depth: false, stencil: false });
@@ -86,9 +89,9 @@ export function createGL(canvas: HTMLCanvasElement) {
   gl.enableVertexAttribArray(loc);
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   const u = (n: string) => gl.getUniformLocation(prog, n);
-  const U = { res: u('uRes'), time: u('uTime'), light: u('uLight'), li: u('uLightI'), lr: u('uLightR'), dim: u('uDim') };
+  const U = { res: u('uRes'), time: u('uTime'), light: u('uLight'), li: u('uLightI'), lr: u('uLightR'), dim: u('uDim'), theme: u('uTheme') };
 
-  const state: GLState = { lx: 0.5, ly: 0.45, li: 0, lr: 0.3, dim: 0 };
+  const state: GLState = { lx: 0.5, ly: 0.45, li: 0, lr: 0.3, dim: 0, theme: document.documentElement.dataset.theme === 'light' ? 1 : 0 };
 
   // The shader is cheap; render at CSS-pixel resolution (DPR capped at 1) so falloffs stay crisp.
   const resize = () => {
@@ -105,7 +108,7 @@ export function createGL(canvas: HTMLCanvasElement) {
   let last = '';
   const render = (time: number) => {
     // skip identical frames (the light is still most of the time)
-    const key = `${state.lx.toFixed(4)}|${state.ly.toFixed(4)}|${state.li.toFixed(3)}|${state.lr.toFixed(4)}|${state.dim.toFixed(3)}|${canvas.width}x${canvas.height}`;
+    const key = `${state.lx.toFixed(4)}|${state.ly.toFixed(4)}|${state.li.toFixed(3)}|${state.lr.toFixed(4)}|${state.dim.toFixed(3)}|${state.theme.toFixed(3)}|${canvas.width}x${canvas.height}`;
     if (key === last) return;
     last = key;
     gl.uniform2f(U.res, canvas.width, canvas.height);
@@ -114,6 +117,7 @@ export function createGL(canvas: HTMLCanvasElement) {
     gl.uniform1f(U.li, state.li);
     gl.uniform1f(U.lr, state.lr);
     gl.uniform1f(U.dim, state.dim);
+    gl.uniform1f(U.theme, state.theme);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
 

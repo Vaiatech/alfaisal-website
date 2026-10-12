@@ -27,7 +27,7 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#070b14" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="/fonts/almarai-arabic-800.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/almarai-arabic-400.woff2" as="font" type="font/woff2" crossorigin />
@@ -37,6 +37,11 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
       (function () {
         var d = document.documentElement;
         d.classList.add('js');
+        // day or night: the visitor's own choice, remembered; night (the house look) otherwise
+        var theme = null;
+        try { theme = localStorage.getItem('alf-theme'); } catch (e) {}
+        d.dataset.theme = theme === 'light' ? 'light' : 'dark';
+        if (theme === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f6f1e8');
         var mm = window.matchMedia;
         var rm = mm && mm('(prefers-reduced-motion: reduce)').matches;
         // landscape phones are too short for pinned scenes: they get the complete static page

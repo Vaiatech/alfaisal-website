@@ -166,6 +166,48 @@ const setMenu = (open: boolean) => {
   }
 };
 menuBtn.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+
+/* ------------------------------------------------------------------ *
+ * Day / night — the choice is remembered; switching, the new theme
+ * spreads from the button as a widening circle of light
+ * ------------------------------------------------------------------ */
+const themeBtns = $$<HTMLButtonElement>('.thm');
+const themeMeta = $<HTMLMetaElement>('meta[name="theme-color"]');
+const syncThemeButtons = () => {
+  const day = root.dataset.theme === 'light';
+  themeBtns.forEach((b) => {
+    b.setAttribute('aria-pressed', String(day));
+    if (!b.classList.contains('thm--row')) b.setAttribute('aria-label', day ? 'المظهر الداكن' : 'المظهر الفاتح');
+  });
+};
+syncThemeButtons();
+function setTheme(next: 'light' | 'dark', from?: HTMLElement) {
+  const apply = () => {
+    root.dataset.theme = next;
+    try { localStorage.setItem('alf-theme', next); } catch {}
+    themeMeta?.setAttribute('content', next === 'light' ? '#f6f1e8' : '#070b14');
+    syncThemeButtons();
+    if (GL) { GL.state.theme = next === 'light' ? 1 : 0; GL.render(performance.now() / 1000); }
+  };
+  const doc = document as Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void> } };
+  if (!FX || !doc.startViewTransition || !from) { apply(); return; }
+  const r = from.getBoundingClientRect();
+  const x = r.left + r.width / 2;
+  const y = r.top + r.height / 2;
+  const R = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+  root.classList.add('is-theming');
+  const vt = doc.startViewTransition(apply);
+  vt.ready.then(() => {
+    const anim = root.animate(
+      { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${R}px at ${x}px ${y}px)`] },
+      { duration: 1100, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', pseudoElement: '::view-transition-new(root)' },
+    );
+    anim.finished.finally(() => root.classList.remove('is-theming'));
+  }).catch(() => root.classList.remove('is-theming'));
+}
+themeBtns.forEach((b) => b.addEventListener('click', () => {
+  setTheme(root.dataset.theme === 'light' ? 'dark' : 'light', b);
+}));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !mnav.hidden) setMenu(false); });
 
 /* ------------------------------------------------------------------ *

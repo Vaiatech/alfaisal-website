@@ -16,7 +16,7 @@ const { hero } = team;
     {hero.body.map((p) => <p data-reveal="wipe">{p}</p>)}
   </div>
   {count && (
-    <p class="th__count th__count--inline">
+    <p class="th__count">
       <bdi dir="ltr" class="th__num">+<span class="odo odo--md" data-odo={hero.count.value}>{hero.count.value}</span></bdi>
       <span class="th__unit">{hero.count.unit}</span>
     </p>

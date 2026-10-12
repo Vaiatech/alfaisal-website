@@ -20,7 +20,7 @@ type Ctx = {
 
 /**
  * PAGE 3 · فريقنا
- * - Opening: twenty-plus points of light on three orbits; every ray leads to one centre — the name.
+ * - Opening: the firm's specialisms drift past in engraved gold, then gather onto one gold line.
  * - Leadership: three arches; the frame is drawn in gold, the portrait rises into the light.
  * - Groups: a portrait medallion and the group's name; hovering either (or tapping) drops the scope of work.
  */
@@ -114,8 +114,8 @@ export function createTeamPage(ctx: Ctx) {
     if (sceneLight.groups) sceneLight.groups.anchor = medals[0];
   }
 
-  // the opening's visual (one of three ideas: see heroes.ts)
-  const hero = createHero(page, finePointer);
+  // the opening's visual: «سطور كثيرة… سطر واحد» (heroes.ts)
+  const hero = createHero(page);
   const count = $('.th__count', page);
   const countOdo = count ? $('.odo', count) : null;
 

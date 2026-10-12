@@ -75,7 +75,10 @@ const scopeParts = (s: string) => {
             <span class="gc__disc">
               {g.photo
                 ? <img src={`/team/${g.photo}.webp`} width="440" height="440" alt={g.leader} loading="lazy" decoding="async" />
-                : <img class="gc__logo" src="/team/alfaisal-mark-dark.svg" width="120" height="120" alt={g.leader} loading="lazy" decoding="async" />}
+                : <>
+                    <img class="gc__logo gc__logo--night" src="/team/alfaisal-mark-dark.svg" width="120" height="120" alt={g.leader} loading="lazy" decoding="async" />
+                    <img class="gc__logo gc__logo--day" src="/team/alfaisal-mark.svg" width="120" height="120" alt="" loading="lazy" decoding="async" />
+                  </>}
             </span>
           </span>
           <span class="gc__idx naskh" aria-hidden="true">{ar(i + 1)}</span>
