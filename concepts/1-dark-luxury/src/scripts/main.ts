@@ -213,12 +213,79 @@ themeBtns.forEach((b) => b.addEventListener('click', () => {
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !mnav.hidden) setMenu(false); });
 
 /* ------------------------------------------------------------------ *
- * Transitions — one gesture: a gold edge of light sweeps right → left,
- * names the destination, and uncovers it.
+ * Transitions — one gesture for every jump, within a page or between pages:
+ * a gold edge of light sweeps right → left and closes the veil; behind it the
+ * firm's mark rises, a band of light passes across the gold, a rule draws and
+ * names the destination; then the edge sweeps on and uncovers the new place.
  * ------------------------------------------------------------------ */
 const veil = $('.veil');
 const veilTitle = $('.veil__title');
+const veilMark = $('.veil__mark');
+const veilRule = $('.veil__rule');
+const veilSvg = $<SVGSVGElement>('.veil__mark svg');
 let navigating = false;
+const veilState = { a: 100, b: 0 };
+const applyVeil = (edge: number) => {
+  veil.style.setProperty('--a', `${veilState.a}%`);
+  veil.style.setProperty('--b', `${veilState.b}%`);
+  veil.style.setProperty('--ex', `${edge}px`);
+};
+const raf = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
+/** a band of light passes across the gold of the mark */
+function veilSheen(duration = 1.3) {
+  if (!veilSvg) return;
+  const hi = $<SVGStopElement>('.g-hi', veilSvg);
+  const s1 = $<SVGStopElement>('.g-s1', veilSvg);
+  const s2 = $<SVGStopElement>('.g-s2', veilSvg);
+  const st = { v: -0.15 };
+  gsap.to(st, {
+    v: 1.15,
+    duration,
+    ease: 'power2.inOut',
+    onUpdate: () => {
+      hi.setAttribute('offset', clamp(st.v, 0.02, 0.98).toFixed(3));
+      s1.setAttribute('offset', clamp(st.v - 0.2, 0.01, 0.97).toFixed(3));
+      s2.setAttribute('offset', clamp(st.v + 0.2, 0.03, 0.99).toFixed(3));
+    },
+  });
+}
+/** the card comes forward as the veil closes */
+function veilCardIn() {
+  gsap.killTweensOf([veilMark, veilRule, veilTitle]);
+  gsap.fromTo(veilMark, { opacity: 0, scale: 0.86, y: 14, filter: 'blur(8px)' }, { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', duration: 1.05, ease: EASE.out, delay: 0.12 });
+  gsap.fromTo(veilRule, { scaleX: 0 }, { scaleX: 1, duration: 0.95, ease: EASE.io, delay: 0.3 });
+  gsap.fromTo(veilTitle, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.8, ease: EASE.out, delay: 0.42 });
+  veilSheen(1.35);
+}
+/** …and leaves with the edge, the mark lifting a little into the light */
+function veilCardOut() {
+  gsap.to(veilMark, { opacity: 0, scale: 1.07, y: -10, filter: 'blur(4px)', duration: 0.75, ease: 'power2.in' });
+  gsap.to([veilRule, veilTitle], { opacity: 0, y: -8, duration: 0.5, ease: 'power2.in', stagger: 0.04 });
+}
+function veilReset() {
+  veil.classList.remove('is-on');
+  veilState.a = 100; veilState.b = 0; applyVeil(window.innerWidth);
+  gsap.set([veilMark, veilRule, veilTitle], { clearProps: 'all' });
+  light.boost = 0;
+}
+async function closeVeil() {
+  const W = window.innerWidth;
+  veilState.a = 100; veilState.b = 0;
+  veil.classList.add('is-on');
+  applyVeil(W);
+  light.boost = 0.25;
+  veilCardIn();
+  await gsap.to(veilState, { a: 0, duration: 0.8, ease: EASE.io, onUpdate: () => applyVeil((veilState.a / 100) * W - 1) });
+}
+async function openVeil(delay = 0) {
+  const W = window.innerWidth;
+  if (delay) await pause(delay * 1000);
+  veilCardOut();
+  await gsap.to(veilState, { b: 100, duration: 0.95, ease: EASE.io, onUpdate: () => applyVeil(W - (veilState.b / 100) * W - 1) });
+  veilReset();
+}
+
 function targetY(hash: string) {
   if (hash === '#top') return 0;
   const el = document.querySelector<HTMLElement>(hash);
@@ -227,6 +294,7 @@ function targetY(hash: string) {
   const box = el.parentElement?.classList.contains('pin-spacer') ? el.parentElement : el;
   return box.getBoundingClientRect().top + window.scrollY;
 }
+/* Within a page */
 async function navigate(hash: string) {
   const y = targetY(hash);
   if (y === null) return;
@@ -239,75 +307,46 @@ async function navigate(hash: string) {
   navigating = true;
   const scene = hash === '#top' ? $('#top') : $(hash);
   veilTitle.textContent = scene?.dataset.title || '';
-  const W = window.innerWidth;
-  const v = { a: 100, b: 0 };
-  const apply = (edge: number) => {
-    veil.style.setProperty('--a', `${v.a}%`);
-    veil.style.setProperty('--b', `${v.b}%`);
-    veil.style.setProperty('--ex', `${edge}px`);
-  };
-  veil.classList.add('is-on');
-  apply(W);
-  light.boost = 0.25;
-  await gsap.to(v, { a: 0, duration: 0.75, ease: EASE.io, onUpdate: () => apply((v.a / 100) * W - 1) });
+  await closeVeil();
   lenis?.scrollTo(y, { immediate: true, force: true });
   window.scrollTo(0, y);
   ScrollTrigger.update();
-  // let the (possibly heavy) first frame at the destination pass before uncovering
-  const raf = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+  // let the (possibly heavy) first frame at the destination pass, and the mark settle, before uncovering
   await raf(); await raf(); await raf();
-  await new Promise((r) => setTimeout(r, 280));
+  await pause(260);
   await raf();
-  await gsap.to(v, { b: 100, duration: 0.9, ease: EASE.io, onUpdate: () => apply(W - (v.b / 100) * W - 1) });
-  veil.classList.remove('is-on');
-  v.a = 100; v.b = 0; apply(W);
-  light.boost = 0;
+  await openVeil();
   navigating = false;
   history.replaceState(null, '', hash === '#top' ? location.pathname : hash);
 }
-/* Between pages: the veil closes here, names the destination, and opens on the next page. */
-const veilState = { a: 100, b: 0 };
-const applyVeil = (edge: number) => {
-  veil.style.setProperty('--a', `${veilState.a}%`);
-  veil.style.setProperty('--b', `${veilState.b}%`);
-  veil.style.setProperty('--ex', `${edge}px`);
-};
+/* Between pages: the veil closes here and opens on the next page, the mark held in the middle */
 async function leaveTo(href: string, title: string) {
   if (!FX) { location.href = href; return; }
   if (navigating) return;
   navigating = true;
   if (!mnav.hidden) setMenu(false);
   veilTitle.textContent = title;
-  const W = window.innerWidth;
-  veilState.a = 100; veilState.b = 0;
-  veil.classList.add('is-on');
-  applyVeil(W);
-  light.boost = 0.25;
-  await gsap.to(veilState, { a: 0, duration: 0.75, ease: EASE.io, onUpdate: () => applyVeil((veilState.a / 100) * W - 1) });
+  await closeVeil();
+  await pause(240);
   try { sessionStorage.setItem('alf-veil', title); } catch {}
   location.href = href;
 }
 /** Opens the veil a page arrived under (see the head script in Base.astro). */
 async function openArrivalVeil() {
   if (!root.classList.contains('is-arriving')) return;
-  const W = window.innerWidth;
   veilState.a = 0; veilState.b = 0;
   veil.classList.add('is-on');
   applyVeil(-10);
   root.classList.remove('is-arriving');
-  await gsap.to(veilState, { b: 100, duration: 0.9, ease: EASE.io, delay: 0.15, onUpdate: () => applyVeil(W - (veilState.b / 100) * W - 1) });
-  veil.classList.remove('is-on');
-  veilState.a = 100; veilState.b = 0; applyVeil(W);
+  veilSheen(1.1);
+  await openVeil(0.42);
 }
 // Coming back with the browser's back button restores this page as it was left: under a closed veil.
 window.addEventListener('pageshow', (e) => {
   if (!e.persisted) return;
   navigating = false;
-  light.boost = 0;
-  veil.classList.remove('is-on');
-  veilState.a = 100; veilState.b = 0; applyVeil(window.innerWidth);
+  veilReset();
 });
-
 $$<HTMLAnchorElement>('a[data-nav]').forEach((a) => {
   a.addEventListener('click', (e) => {
     const href = a.getAttribute('href') || '';

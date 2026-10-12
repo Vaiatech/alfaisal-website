@@ -5,6 +5,7 @@
  */
 import '../styles/global.css';
 import Header from '../components/Header.astro';
+import Mark from '../components/Mark.astro';
 import Outro from '../components/Outro.astro';
 import { site, contact, type Page } from '../../../shared/content.ts';
 
@@ -79,7 +80,8 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
       <div class="veil__glass"></div>
       <div class="veil__edge"></div>
       <div class="veil__card">
-        <i class="rh"></i>
+        <div class="veil__mark"><Mark uid="vm" variant="mark" glow /></div>
+        <i class="veil__rule"><i class="rh rh--sm"></i></i>
         <span class="veil__title"></span>
       </div>
     </div>

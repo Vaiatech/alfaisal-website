@@ -538,7 +538,7 @@ main, .outro { position: relative; z-index: 1; }
   clip-path: inset(0 var(--b) 0 var(--a));
   background:
     radial-gradient(34% 30% at 50% 50%, rgba(201, 162, 90, 0.12), transparent 100%),
-    linear-gradient(180deg, rgba(11, 21, 38, 0.97), rgba(6, 10, 19, 0.985));
+    linear-gradient(180deg, #0b1526, #060a13);
 }
 .veil__edge {
   position: absolute;
@@ -554,12 +554,25 @@ main, .outro { position: relative; z-index: 1; }
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
   clip-path: inset(0 var(--b) 0 var(--a));
 }
-.veil__title { font-size: var(--fs-h1); font-weight: 800; line-height: 1.5; }
+/* the firm's mark, held in the middle of every transition */
+.veil__mark { width: min(36vw, 26vh, 210px); aspect-ratio: 840 / 880; will-change: transform, opacity; }
+.veil__mark .mark { width: 100%; height: 100%; overflow: visible; }
+.veil__mark .m-glow { opacity: 0.42; }
+.veil__rule {
+  position: relative;
+  display: block;
+  width: min(240px, 56vw);
+  height: 1px;
+  margin-top: clamp(18px, 3.2vh, 30px);
+  background: linear-gradient(90deg, transparent, var(--gold-hi) 25%, var(--gold-pale) 50%, var(--gold-hi) 75%, transparent);
+}
+.veil__rule .rh { position: absolute; left: 50%; top: 50%; margin: -3px 0 0 -3px; }
+.veil__title { margin-top: clamp(12px, 2vh, 20px); font-size: var(--fs-h2); font-weight: 800; line-height: 1.6; color: var(--ink); }
 
 /* =========================================================================
    1 · HERO
@@ -2174,7 +2187,7 @@ html:not(.js) .gc__drop { position: static; visibility: visible; }
 [data-theme='light'] .veil__glass {
   background:
     radial-gradient(34% 30% at 50% 50%, rgba(184, 137, 58, 0.14), transparent 100%),
-    linear-gradient(180deg, rgba(251, 248, 242, 0.98), rgba(240, 233, 221, 0.99));
+    linear-gradient(180deg, #fbf8f2, #f0e9dd);
 }
 [data-theme='light'] .veil__edge {
   background: linear-gradient(180deg, transparent, #c9a25a 30%, #8e6420 50%, #c9a25a 70%, transparent);
@@ -2558,3 +2571,11 @@ html.is-arriving .wa-fab { opacity: 0; transform: scale(0.6); pointer-events: no
 /* day: the map keeps its own colours, warmed a touch toward the paper */
 [data-theme='light'] .map__frame { filter: sepia(0.18) saturate(0.85) contrast(0.97); }
 [data-theme='light'] .map__frame-edge { box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.45); }
+/* phones: every link and button at least 44px tall, so a thumb always lands on it */
+@media (max-width: 860px) {
+  .cc__phones a,
+  .cf__mail,
+  .cf__open,
+  .outro__web { display: inline-flex; align-items: center; min-height: 44px; }
+  .cc__phones { gap: 0; }
+}
