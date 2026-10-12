@@ -765,9 +765,10 @@ function setupStory() {
     tl.to(state, { p: 1, duration: 1 }, 0);
     tl.to(strike, { strokeDashoffset: 0, duration: 0.15, ease: 'power2.inOut' }, 0.02);
     const rise = (words: HTMLElement[], at: number, d: number) =>
-      tl.fromTo(words, { yPercent: 118 }, { yPercent: 0, duration: d, stagger: d / Math.max(1, words.length) / 2, ease: 'power3.out' }, at);
+      // ±135%: far enough that no dot above or below a letter lingers in the mask's padding
+      tl.fromTo(words, { yPercent: 135 }, { yPercent: 0, duration: d, stagger: d / Math.max(1, words.length) / 2, ease: 'power3.out' }, at);
     const sink = (words: HTMLElement[], at: number, d: number) =>
-      tl.fromTo(words, { yPercent: 0 }, { yPercent: -118, duration: d, stagger: d / Math.max(1, words.length) / 3, ease: 'power3.in', immediateRender: false }, at);
+      tl.fromTo(words, { yPercent: 0 }, { yPercent: -135, duration: d, stagger: d / Math.max(1, words.length) / 3, ease: 'power3.in', immediateRender: false }, at);
     if (mob) {
       // phones show one paragraph at a time in the same place
       sink(l1, 0.3, 0.05);
