@@ -491,18 +491,32 @@ main, .outro { position: relative; z-index: 1; }
   .hdr__nav { display: none; }
   .hdr__menu { display: block; }
 }
+/* phones: the mark alone on one side; booking, day/night and the menu on the other, all one height */
 @media (max-width: 760px) {
   .hdr__logo .mark { height: 40px; }
-  .hdr__wordmark { height: 17px; }
-  .consult { height: 44px; padding-inline: 4px 14px; gap: 9px; font-size: 0.875rem; }
+  .hdr__wordmark { display: none; }
+  .hdr__actions { gap: 8px; }
+  .consult { height: 42px; padding-inline: 4px 14px; gap: 8px; font-size: 0.875rem; }
   .consult__mic { width: 34px; height: 34px; }
   .consult__bars { display: none; }
-  .hdr__menu { width: 44px; height: 44px; }
-  .hdr__menu i:nth-of-type(1) { top: 18px; }
-  .hdr__menu i:nth-of-type(2) { top: 25px; }
+  .hdr__menu,
+  .thm:not(.thm--row) { width: 42px; height: 42px; }
+  .hdr__menu i { left: 13px; right: 13px; }
+  .hdr__menu i:nth-of-type(1) { top: 17px; }
+  .hdr__menu i:nth-of-type(2) { top: 24px; left: 19px; }
+  .hdr__menu[aria-expanded='true'] i:nth-of-type(2) { left: 13px; }
 }
-@media (max-width: 400px) {
-  .hdr__wordmark { display: none; }
+/* the narrowest phones: the booking button keeps only its microphone (its name stays for screen readers) */
+@media (max-width: 370px) {
+  .consult { width: 42px; padding: 0; justify-content: center; }
+  .consult__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 
 /* =========================================================================
@@ -2092,10 +2106,6 @@ html:not(.js) .gc__drop { position: static; visibility: visible; }
 [data-theme='light'] .thm__to-day { display: none; }
 [data-theme='light'] .thm--row .thm__moon { display: block; }
 [data-theme='light'] .thm__to-night { display: inline; }
-@media (max-width: 400px) {
-  .hdr__actions { gap: 6px; }
-  .thm { width: 42px; height: 42px; }
-}
 /* the switch itself: the new theme spreads from the button as a widening circle */
 ::view-transition-old(root),
 ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }

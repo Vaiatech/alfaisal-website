@@ -50,7 +50,8 @@ void main(){
   // gentle vignette (multiplicative; softer by day)
   vec2 vc = uv - 0.5;
   col *= 1.0 - dot(vc, vc) * mix(0.55, 0.16, uTheme);
-  col *= 1.0 - uDim;
+  // at night the lamp dims to an ember at the very end; by day the paper stays clean (dimming would turn it grey)
+  col *= 1.0 - uDim * (1.0 - uTheme);
 
   // dither against banding
   col += (hash(gl_FragCoord.xy + fract(uTime * 7.0)) - 0.5) / 255.0;
