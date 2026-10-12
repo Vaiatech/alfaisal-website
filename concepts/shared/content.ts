@@ -31,18 +31,17 @@ export const contact = {
     encodeURIComponent('سنتر العوالي، العوالي، مكة المكرمة'),
 } as const;
 
-export type Page = 'home' | 'team';
+export type Page = 'home' | 'team' | 'contact';
 export type NavItem = { label: string; href: string; page?: Page; soon?: boolean };
 
 // `#…` items are sections of the home page; `page` items are pages of their own.
-// «تواصل معنا» stays on the current page: every page ends with the contact section.
 export const nav: NavItem[] = [
   { label: 'الرئيسية', href: '#top' },
   { label: 'من نحن', href: '#about' },
   { label: 'خبراتنا', href: '#expertise' },
   { label: 'منهجيتنا', href: '#method' },
   { label: 'فريقنا', href: '/team/', page: 'team' },
-  { label: 'تواصل معنا', href: '#contact' },
+  { label: 'تواصل معنا', href: '/contact/', page: 'contact' },
 ];
 
 /** Where a nav item points from a given page. */
@@ -263,6 +262,27 @@ export const team = {
         ],
       },
     ],
+  },
+};
+
+/* ------------------------------------------------------------------
+ * PAGE · تواصل معنا — the PDF's closing words; the consultation copy is uhearu.com's own
+ * ------------------------------------------------------------------ */
+export const contactPage = {
+  label: 'تواصل معنا',
+  pageTitle: 'تواصل معنا',
+  description:
+    'تواصل مع شركة الفيصل للمحاماة والاستشارات القانونية في مكة المكرمة: الهاتف والواتساب والبريد الإلكتروني والعنوان، أو احجز استشارتك مباشرة.',
+  title: 'لنتحدث عن ملفك',
+  lead: ['لديك ملف يحتاج إلى خبرة قانونية متخصصة؟', 'ابدأ بالتواصل مع فريق الفيصل.'],
+  channelsLabel: 'قنوات التواصل',
+  consult: {
+    label: 'الاستشارة',
+    title: 'أسمعنا ما حدث بطريقتك..',
+    body: 'سنفهم الوقائع، ونحلل موقفك قانونيًا، ونوضّح لك المسار الأنسب.',
+    modes: ['صوت', 'كتابة'],
+    note: 'الاستشارة مدفوعة',
+    cta: 'احجز استشارة',
   },
 };
 

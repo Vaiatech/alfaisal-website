@@ -2246,3 +2246,121 @@ html:not(.js) .gc__drop { position: static; visibility: visible; }
 [data-theme='light'] #strikeGold stop:nth-child(3) { stop-color: #7a5719; }
 [data-theme='light'] .strike { filter: drop-shadow(0 0 4px rgba(184, 137, 58, 0.35)); }
 [data-theme='light'] .tl__sep { --c: rgba(148, 106, 31, 0.6); }
+/* =========================================================================
+   PAGE · تواصل معنا — the invitation, four ways in, the consultation
+   ========================================================================= */
+html.is-intro .cp__head,
+html.is-intro .cp__cards { opacity: 0; }
+.cp { position: relative; padding: calc(var(--hdr) + 10vh) var(--gutter) 9vh; }
+.cp__head { display: grid; justify-items: center; max-width: 46rem; margin-inline: auto; text-align: center; }
+.cp__eyebrow { justify-content: center; }
+.cp__title { margin-top: 14px; font-size: var(--fs-display); line-height: var(--lh-display); }
+.cp__lead { margin-top: 2.4vh; font-size: var(--fs-lead); line-height: 1.9; color: var(--ink-2); }
+.cp__lead > span { display: block; }
+
+.cp__cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 1.6vw, 24px);
+  max-width: 1240px;
+  margin: 8vh auto 0;
+}
+.cc {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 268px;
+  padding: 28px 26px 24px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), inset 0 1px 0 rgba(255, 244, 220, 0.09);
+  transition: transform 0.7s var(--ease), box-shadow 0.7s var(--ease), background 0.7s var(--ease);
+}
+.cc:hover,
+.cc:focus-within {
+  transform: translateY(-4px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.02));
+  box-shadow: inset 0 0 0 1px rgba(226, 190, 118, 0.48), inset 0 1px 0 rgba(255, 244, 220, 0.2), 0 34px 70px -40px rgba(226, 190, 118, 0.45);
+}
+/* the whole card is the link (the phone card keeps one link per number instead) */
+.cc__link { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+.cc__link:focus-visible { outline-offset: 3px; border-radius: 24px; }
+.cc__icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  color: var(--gold-hi);
+  background: radial-gradient(circle at 50% 30%, rgba(226, 190, 118, 0.16), transparent 70%);
+  box-shadow: inset 0 0 0 1px rgba(226, 190, 118, 0.45);
+  transition: box-shadow 0.7s var(--ease);
+}
+.cc:hover .cc__icon { box-shadow: inset 0 0 0 1px var(--gold-hi), 0 0 26px rgba(226, 190, 118, 0.3); }
+.cc__icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.cc__k { margin-top: 22px; font-size: var(--fs-label); font-weight: 700; line-height: 1.7; color: var(--gold-hi); }
+.cc__v { margin-top: 6px; font-size: clamp(1.05rem, 0.98rem + 0.3vw, 1.22rem); font-weight: 700; line-height: 1.8; color: var(--ink); }
+.cc__v--mail { font-size: clamp(0.98rem, 0.92rem + 0.25vw, 1.1rem); overflow-wrap: anywhere; }
+.cc__v bdi, .cc__phones bdi { font-variant-numeric: tabular-nums; }
+.cc__phones { display: grid; gap: 4px; width: 100%; margin-top: 6px; }
+.cc__phones li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.cc__phones a { position: relative; z-index: 2; font-size: clamp(1.05rem, 0.98rem + 0.3vw, 1.22rem); font-weight: 700; line-height: 1.8; color: var(--ink); transition: color 0.4s var(--ease); }
+.cc__phones a:hover { color: var(--gold-hi); }
+.cc__phones small { font-size: var(--fs-label); color: var(--ink-3); }
+.cc__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 18px;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--gold-hi);
+}
+.cc:hover .btn__arrow { transform: translateX(-6px); }
+
+.cq { position: relative; padding: 8vh var(--gutter) 12vh; }
+.cq__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 4vw;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: clamp(30px, 4.4vw, 68px);
+  border-radius: 32px;
+}
+.cq__title { margin-top: 12px; font-size: clamp(1.8rem, 1rem + 2vw, 3rem); line-height: 1.5; }
+.cq__body { margin-top: 2vh; font-size: var(--fs-lead); line-height: 1.9; color: var(--ink-2); }
+.cq__modes { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 2.6vh; font-weight: 700; line-height: 1.7; color: var(--ink); }
+.cq__dot { width: 5px; height: 5px; transform: rotate(45deg); background: var(--gold); }
+.cq__note { color: var(--ink-3); }
+.cq__voice { width: 100%; margin-top: 0; }
+
+@media (max-width: 1080px) {
+  .cp__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 760px; }
+  .cq__panel { grid-template-columns: 1fr; gap: 5vh; }
+  .cq__text { text-align: center; }
+  .cq__text .eyebrow { justify-content: center; }
+  .cq__modes { justify-content: center; }
+}
+@media (max-width: 640px) {
+  .cp { padding-top: calc(var(--hdr) + 6vh); }
+  .cp__cards { grid-template-columns: 1fr; margin-top: 5vh; }
+  .cc { min-height: 0; padding: 22px 20px 20px; }
+  .cc__k { margin-top: 16px; }
+  .cq { padding-top: 6vh; }
+  .cq__panel { border-radius: 24px; }
+}
+
+[data-theme='light'] .cc {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.45));
+  box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.2), inset 0 1px 0 #fff, 0 24px 60px -40px rgba(70, 50, 20, 0.3);
+}
+[data-theme='light'] .cc:hover,
+[data-theme='light'] .cc:focus-within {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.62));
+  box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.55), inset 0 1px 0 #fff, 0 34px 70px -40px rgba(148, 106, 31, 0.45);
+}
+[data-theme='light'] .cc__icon { background: radial-gradient(circle at 50% 30%, rgba(184, 137, 58, 0.14), transparent 70%); box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.45); }

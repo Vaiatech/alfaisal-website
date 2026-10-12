@@ -1,0 +1,91 @@
+---
+/**
+ * PAGE · تواصل معنا — simple and direct: the invitation, four ways to reach the firm
+ * (each card opens the call, the chat, the email or the map), and the consultation itself.
+ * No form: every card leads straight to a real channel.
+ */
+import Base from '../layouts/Base.astro';
+import { site, contact, contactPage } from '../../../shared/content.ts';
+
+const p = contactPage;
+const wa = `https://wa.me/${contact.whatsapp}`;
+---
+<Base page="contact" title={p.pageTitle} description={p.description}>
+  <!-- ============ 1 · THE INVITATION ============ -->
+  <section class="cp scene" id="top" data-scene="contact-page" data-title={p.label} data-intro>
+    <div class="cp__head">
+      <p class="eyebrow cp__eyebrow"><i class="rh"></i><span>{p.label}</span></p>
+      <h1 class="cp__title" data-split data-anchor>{p.title}</h1>
+      <p class="cp__lead"><span>{p.lead[0]}</span> <span>{p.lead[1]}</span></p>
+    </div>
+
+    <!-- ============ 2 · FOUR WAYS IN ============ -->
+    <h2 class="sr">{p.channelsLabel}</h2>
+    <ul class="cp__cards">
+      <li class="cc">
+        <span class="cc__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6.6 3.2 9 3a1.2 1.2 0 0 1 1.2.8l1 2.9a1.2 1.2 0 0 1-.3 1.3L9.5 9.4a11 11 0 0 0 5.1 5.1l1.4-1.4a1.2 1.2 0 0 1 1.3-.3l2.9 1a1.2 1.2 0 0 1 .8 1.2l-.2 2.4a1.8 1.8 0 0 1-1.9 1.6A16.5 16.5 0 0 1 3.2 5.1a1.8 1.8 0 0 1 1.6-1.9Z" /></svg>
+        </span>
+        <p class="cc__k">الهاتف</p>
+        <ul class="cc__phones">
+          {contact.phones.map((ph) => (
+            <li><a href={`tel:${ph.tel}`}><bdi dir="ltr">{ph.display}</bdi></a><small>{ph.label}</small></li>
+          ))}
+        </ul>
+      </li>
+      <li class="cc">
+        <a class="cc__link" href={wa} target="_blank" rel="noopener" aria-label={`واتساب ${contact.phones[0].display}`}></a>
+        <span class="cc__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4.2 20 5.3 16a8.3 8.3 0 1 1 3 2.9L4.2 20Z" /><path d="M9.2 8.4c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.6.7c.4.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.5.3-1.1.4-1.7.3-2.6-.6-4.7-2.7-5.3-5.3-.1-.6 0-1.2.3-1.7Z" /></svg>
+        </span>
+        <p class="cc__k">واتساب</p>
+        <p class="cc__v"><bdi dir="ltr">{contact.phones[0].display}</bdi></p>
+        <span class="cc__go">ابدأ المحادثة <svg class="btn__arrow" viewBox="0 0 24 12" aria-hidden="true"><path d="M23 6H2M7 1 2 6l5 5" /></svg></span>
+      </li>
+      <li class="cc">
+        <a class="cc__link" href={`mailto:${contact.email}`} aria-label={`البريد الإلكتروني ${contact.email}`}></a>
+        <span class="cc__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2" /><path d="m3.6 6.6 8.4 6.2 8.4-6.2" /></svg>
+        </span>
+        <p class="cc__k">البريد الإلكتروني</p>
+        <p class="cc__v cc__v--mail"><bdi dir="ltr">{contact.email}</bdi></p>
+        <span class="cc__go">راسلنا <svg class="btn__arrow" viewBox="0 0 24 12" aria-hidden="true"><path d="M23 6H2M7 1 2 6l5 5" /></svg></span>
+      </li>
+      <li class="cc">
+        <a class="cc__link" href={contact.mapsUrl} target="_blank" rel="noopener" aria-label={`العنوان: ${contact.address.line}، ${contact.address.city} — افتح الخريطة`}></a>
+        <span class="cc__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" /><circle cx="12" cy="10" r="2.4" /></svg>
+        </span>
+        <p class="cc__k">العنوان</p>
+        <address class="cc__v">{contact.address.line}<br />{contact.address.city}، {contact.address.country}</address>
+        <span class="cc__go">افتح الخريطة <svg class="btn__arrow" viewBox="0 0 24 12" aria-hidden="true"><path d="M23 6H2M7 1 2 6l5 5" /></svg></span>
+      </li>
+    </ul>
+  </section>
+  <div class="link" aria-hidden="true"><i></i></div>
+
+  <!-- ============ 3 · THE CONSULTATION ============ -->
+  <section class="cq scene" id="consult" data-scene="contact" data-title={p.consult.label}>
+    <div class="cq__panel glass">
+      <div class="cq__text">
+        <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{p.consult.label}</span></p>
+        <h2 class="cq__title" data-split>{p.consult.title}</h2>
+        <p class="cq__body" data-reveal="wipe">{p.consult.body}</p>
+        <p class="cq__modes" data-reveal="wipe">
+          {p.consult.modes.map((m, i) => (<>{i > 0 && <i class="cq__dot"></i>}<span>{m}</span></>))}
+          <i class="cq__dot"></i><span class="cq__note">{p.consult.note}</span>
+        </p>
+      </div>
+      <a class="voice cq__voice" href={site.consultUrl} target="_blank" rel="noopener">
+        <canvas class="voice__wave voice__wave--r" aria-hidden="true"></canvas>
+        <span class="voice__ring" data-anchor>
+          <i class="voice__pulse"></i><i class="voice__pulse"></i>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" /></svg>
+        </span>
+        <canvas class="voice__wave voice__wave--l" aria-hidden="true"></canvas>
+        <span class="voice__label">{p.consult.cta}</span>
+      </a>
+    </div>
+  </section>
+  <div class="link" aria-hidden="true"><i></i></div>
+</Base>

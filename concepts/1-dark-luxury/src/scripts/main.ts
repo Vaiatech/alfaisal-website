@@ -12,7 +12,7 @@ window.__alfReady = true;
 gsap.registerPlugin(ScrollTrigger);
 const root = document.documentElement;
 const FX = root.classList.contains('fx');
-const PAGE = (root.dataset.page || 'home') as 'home' | 'team';
+const PAGE = (root.dataset.page || 'home') as 'home' | 'team' | 'contact';
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 const isMobile = () => window.innerWidth <= 860;
 
@@ -49,6 +49,8 @@ const sceneLight: Record<string, SceneLight> = {
   'team-hero': { i: 1.0, r: 0.4 },
   leadership: { i: 0.75, r: 0.26 },
   groups: { i: 0.7, r: 0.2 },
+  // page · تواصل معنا
+  'contact-page': { i: 0.85, r: 0.34 },
   contact: { i: 0.85, r: 0.3 },
   outro: { i: 0.9, r: 0.36 },
 };
@@ -360,13 +362,38 @@ if (FX) {
     if (PAGE === 'home') {
       if (root.classList.contains('is-arriving')) arriveHome();
       else runIntro();
-    } else {
+    } else if (PAGE === 'team') {
       team.enter(openArrivalVeil);
+    } else {
+      enterContact();
     }
   });
 } else {
   setupVoice();
   if (PAGE === 'team') team.setupStatic();
+}
+
+/* The contact page opens simply: the light comes on, the invitation rises, the four cards follow. */
+function enterContact() {
+  const title = splitWords($('.cp__title'));
+  const eyebrow = $('.cp__eyebrow');
+  const lead = $('.cp__lead');
+  const cards = $$('.cc');
+  gsap.set(title, { yPercent: 118 });
+  gsap.set(eyebrow, { '--rule': 0, opacity: 0 });
+  gsap.set(lead, { opacity: 0, y: 14 });
+  gsap.set(cards, { opacity: 0, y: 34 });
+  const arriving = root.classList.contains('is-arriving');
+  root.classList.remove('is-intro');
+  lenis?.start();
+  openArrivalVeil();
+  const tl = gsap.timeline({ delay: arriving ? 0.35 : 0.1 });
+  if (!arriving) tl.fromTo(hdr, { yPercent: -110 }, { yPercent: 0, duration: 1, ease: EASE.out, clearProps: 'transform' }, 0);
+  tl.to({ v: introLight }, { v: 1, duration: 1.8, ease: 'power2.out', onUpdate() { introLight = (this.targets()[0] as { v: number }).v; } }, 0)
+    .to(eyebrow, { opacity: 1, '--rule': 1, duration: 1.1, ease: EASE.out }, 0.15)
+    .to(title, { yPercent: 0, duration: 1.1, ease: EASE.out, stagger: 0.07 }, 0.25)
+    .to(lead, { opacity: 1, y: 0, duration: 1.2, ease: EASE.out }, 0.6)
+    .to(cards, { opacity: 1, y: 0, duration: 1.3, ease: EASE.out, stagger: 0.09, clearProps: 'transform' }, 0.75);
 }
 
 /* Arriving on the home page from another page: no writing — the logo is already
