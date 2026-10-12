@@ -329,6 +329,67 @@ $$<HTMLAnchorElement>('a[data-nav]').forEach((a) => {
 const odos = new Map<HTMLElement, Odo>();
 $$('[data-odo]').forEach((el) => odos.set(el, buildOdo(el)));
 
+/* ------------------------------------------------------------------ *
+ * CONTACT FORM — no server: the message is composed here and handed to
+ * WhatsApp (or the visitor's email app); nothing is stored by the site
+ * ------------------------------------------------------------------ */
+function setupContactForm() {
+  const form = document.querySelector<HTMLFormElement>('#cform');
+  if (!form) return;
+  const name = $<HTMLInputElement>('#f-name', form);
+  const phone = $<HTMLInputElement>('#f-phone', form);
+  const msg = $<HTMLTextAreaElement>('#f-msg', form);
+  const wa = form.getAttribute('action') || '';
+  const email = (document.querySelector<HTMLAnchorElement>('a[href^="mailto:"]')?.getAttribute('href') || '').replace('mailto:', '');
+  const rules: [HTMLInputElement | HTMLTextAreaElement, (v: string) => string][] = [
+    [name, (v) => (v.trim().length < 2 ? 'فضلًا اكتب اسمك.' : '')],
+    [phone, (v) => (v.replace(/[^\d]/g, '').length < 9 ? 'فضلًا اكتب رقم جوال صحيحًا.' : '')],
+    [msg, (v) => (v.trim().length < 10 ? 'فضلًا اكتب نبذة قصيرة عن ملفك (عشرة أحرف على الأقل).' : '')],
+  ];
+  const check = (el: HTMLInputElement | HTMLTextAreaElement, rule: (v: string) => string) => {
+    const err = rule(el.value);
+    const out = $(`#${el.id}-e`, form);
+    out.textContent = err;
+    el.setAttribute('aria-invalid', err ? 'true' : 'false');
+    el.closest('.fld')?.classList.toggle('is-bad', !!err);
+    return !err;
+  };
+  rules.forEach(([el, rule]) => {
+    el.addEventListener('blur', () => { if (el.value) check(el, rule); });
+    el.addEventListener('input', () => { if (el.getAttribute('aria-invalid') === 'true') check(el, rule); });
+  });
+  const compose = () => {
+    const topic = (form.querySelector<HTMLInputElement>('input[name="topic"]:checked')?.value) || '';
+    return [
+      'السلام عليكم،',
+      `الاسم: ${name.value.trim()}`,
+      `الجوال: ${phone.value.trim()}`,
+      `الموضوع: ${topic}`,
+      '',
+      msg.value.trim(),
+      '',
+      '— مرسلة من موقع شركة الفيصل للمحاماة',
+    ].join('\n');
+  };
+  const valid = () => {
+    const ok = rules.map(([el, rule]) => check(el, rule));
+    const first = rules.find((_, i) => !ok[i]);
+    if (first) first[0].focus();
+    return ok.every(Boolean);
+  };
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!valid()) return;
+    window.open(`${wa}?text=${encodeURIComponent(compose())}`, '_blank', 'noopener');
+  });
+  $('[data-mail]', form).addEventListener('click', () => {
+    if (!valid() || !email) return;
+    const topic = (form.querySelector<HTMLInputElement>('input[name="topic"]:checked')?.value) || '';
+    location.href = `mailto:${email}?subject=${encodeURIComponent(`طلب استشارة — ${topic}`)}&body=${encodeURIComponent(compose())}`;
+  });
+}
+if (PAGE === 'contact') setupContactForm();
+
 const team = createTeamPage({
   FX,
   finePointer,

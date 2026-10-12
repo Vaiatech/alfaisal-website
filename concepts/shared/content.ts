@@ -29,6 +29,11 @@ export const contact = {
   mapsUrl:
     'https://www.google.com/maps/search/?api=1&query=' +
     encodeURIComponent('سنتر العوالي، العوالي، مكة المكرمة'),
+  directionsUrl:
+    'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent('سنتر العوالي، العوالي، مكة المكرمة'),
+  // the embedded map (no API key needed); swap for the firm's exact pin when they share it
+  mapsEmbed:
+    'https://maps.google.com/maps?q=' + encodeURIComponent('سنتر العوالي، العوالي، مكة المكرمة') + '&hl=ar&z=15&output=embed',
 } as const;
 
 export type Page = 'home' | 'team' | 'contact';
@@ -276,6 +281,30 @@ export const contactPage = {
   title: 'لنتحدث عن ملفك',
   lead: ['لديك ملف يحتاج إلى خبرة قانونية متخصصة؟', 'ابدأ بالتواصل مع فريق الفيصل.'],
   channelsLabel: 'قنوات التواصل',
+  // the form has no server behind it: it composes the message and hands it to WhatsApp (or email)
+  form: {
+    label: 'راسلنا',
+    title: 'اكتب لنا عن ملفك',
+    body: 'املأ البيانات التالية، وتصل رسالتك مباشرة إلى فريق الفيصل عبر واتساب.',
+    topics: [
+      'التصفيات والإفلاس',
+      'التركات والأوقاف',
+      'الشركات والاستثمار',
+      'الأصول العقارية',
+      'النزاعات',
+      'التحكيم والوساطة',
+      'استشارة عامة',
+    ],
+    send: 'إرسال عبر واتساب',
+    mail: 'أو أرسلها بالبريد الإلكتروني',
+    privacy: 'لا تُحفظ بياناتك في الموقع؛ تُرسل رسالتك من جهازك مباشرة.',
+  },
+  visit: {
+    label: 'موقعنا',
+    title: 'زورونا في مكة المكرمة',
+    directions: 'الاتجاهات',
+    open: 'افتح في الخرائط',
+  },
   consult: {
     label: 'الاستشارة',
     title: 'أسمعنا ما حدث بطريقتك..',

@@ -64,7 +64,85 @@ const wa = `https://wa.me/${contact.whatsapp}`;
   </section>
   <div class="link" aria-hidden="true"><i></i></div>
 
-  <!-- ============ 3 · THE CONSULTATION ============ -->
+  <!-- ============ 3 · WRITE TO US · AND WHERE WE ARE ============ -->
+  <section class="cf scene" id="write" data-scene="contact-form" data-title={p.form.label}>
+    <div class="cf__grid">
+      <form class="cf__form glass" id="cform" action={`https://wa.me/${contact.whatsapp}`} method="get" novalidate>
+        <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{p.form.label}</span></p>
+        <h2 class="cf__title" data-split>{p.form.title}</h2>
+        <p class="cf__body">{p.form.body}</p>
+
+        <div class="cf__row">
+          <div class="fld">
+            <label class="fld__l" for="f-name">الاسم</label>
+            <input class="fld__i" id="f-name" name="name" type="text" autocomplete="name" required minlength="2" aria-describedby="f-name-e" />
+            <p class="fld__e" id="f-name-e" aria-live="polite"></p>
+          </div>
+          <div class="fld">
+            <label class="fld__l" for="f-phone">رقم الجوال</label>
+            <input class="fld__i" id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="05x xxx xxxx" required aria-describedby="f-phone-e" />
+            <p class="fld__e" id="f-phone-e" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <fieldset class="fld fld--topics">
+          <legend class="fld__l">موضوع الاستشارة</legend>
+          <div class="chips">
+            {p.form.topics.map((t, i) => (
+              <label class="chip-r">
+                <input type="radio" name="topic" value={t} checked={i === p.form.topics.length - 1} />
+                <span>{t}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div class="fld">
+          <label class="fld__l" for="f-msg">نبذة عن ملفك</label>
+          <textarea class="fld__i fld__i--area" id="f-msg" name="text" rows="5" required minlength="10" aria-describedby="f-msg-e"></textarea>
+          <p class="fld__e" id="f-msg-e" aria-live="polite"></p>
+        </div>
+
+        <div class="cf__actions">
+          <button class="cf__send" type="submit">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 20 5.3 16a8.3 8.3 0 1 1 3 2.9L4.2 20Z" /><path d="M9.2 8.4c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.6.7c.4.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.5.3-1.1.4-1.7.3-2.6-.6-4.7-2.7-5.3-5.3-.1-.6 0-1.2.3-1.7Z" /></svg>
+            <span>{p.form.send}</span>
+          </button>
+          <button class="cf__mail" type="button" data-mail>{p.form.mail}</button>
+        </div>
+        <p class="cf__privacy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2" /><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" /></svg>{p.form.privacy}</p>
+      </form>
+
+      <div class="cf__map glass">
+        <div class="cf__map-head">
+          <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{p.visit.label}</span></p>
+          <h2 class="cf__title cf__title--sm" data-split>{p.visit.title}</h2>
+          <address class="cf__addr">{contact.address.line}، {contact.address.city}، {contact.address.country}</address>
+        </div>
+        <div class="map">
+          <iframe
+            class="map__frame"
+            src={contact.mapsEmbed}
+            title={`خريطة: ${contact.address.line}، ${contact.address.city}`}
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+          <i class="map__frame-edge" aria-hidden="true"></i>
+        </div>
+        <div class="cf__map-actions">
+          <a class="btn btn--glass btn--sm" href={contact.directionsUrl} target="_blank" rel="noopener">
+            <span>{p.visit.directions}</span>
+            <svg class="btn__arrow" viewBox="0 0 24 12" aria-hidden="true"><path d="M23 6H2M7 1 2 6l5 5" /></svg>
+          </a>
+          <a class="cf__open" href={contact.mapsUrl} target="_blank" rel="noopener">{p.visit.open}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="link" aria-hidden="true"><i></i></div>
+
+  <!-- ============ 4 · THE CONSULTATION ============ -->
   <section class="cq scene" id="consult" data-scene="contact" data-title={p.consult.label}>
     <div class="cq__panel glass">
       <div class="cq__text">

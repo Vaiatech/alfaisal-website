@@ -6,7 +6,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Outro from '../components/Outro.astro';
-import { site, type Page } from '../../../shared/content.ts';
+import { site, contact, type Page } from '../../../shared/content.ts';
 
 interface Props {
   page: Page;
@@ -95,6 +95,15 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
     </main>
 
     <Outro />
+
+    <!-- WhatsApp, on every page: a gold ring that opens the chat -->
+    <a class="wa-fab" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener" aria-label="تواصل معنا عبر واتساب">
+      <span class="wa-fab__label" aria-hidden="true">تواصل عبر واتساب</span>
+      <span class="wa-fab__ring">
+        <i class="wa-fab__pulse"></i>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 20 5.3 16a8.3 8.3 0 1 1 3 2.9L4.2 20Z" /><path d="M9.2 8.4c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.6.7c.4.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.5.3-1.1.4-1.7.3-2.6-.6-4.7-2.7-5.3-5.3-.1-.6 0-1.2.3-1.7Z" /></svg>
+      </span>
+    </a>
 
     <script>
       import '../scripts/main.ts';
