@@ -1,0 +1,40 @@
+---
+/**
+ * Opening B · «سطور كثيرة… سطر واحد» — many lines, one line.
+ * The firm's specialisms (the practice areas and the groups' scopes) drift across the page
+ * in engraved gold, row against row; scrolling, they gather onto one gold line.
+ */
+import HeroCopy from './HeroCopy.astro';
+import { team } from '../../../../shared/content.ts';
+
+const terms = [
+  'التصفيات والإفلاس', 'التركات والأوقاف', 'الشركات والاستثمار', 'الأصول العقارية', 'التحكيم والوساطة',
+  'المحكمة التجارية', 'ديوان المظالم', 'المشتريات الحكومية', 'الأحوال الشخصية', 'الحوكمة',
+  'الالتزام التنظيمي', 'الملكية الفكرية', 'الزكاة والضريبة', 'الاندماج والاستحواذ', 'عقود الإنشاءات',
+  'النزاعات الإيجارية', 'النزاعات العمالية', 'القضايا الجزائية', 'الوصايا والمواريث', 'البيع على الخريطة',
+  'الأوراق التجارية', 'التأمين التجاري', 'منازعات التنفيذ', 'الثروات الخاصة', 'الأوراق المالية',
+];
+// seven rows, each starting at a different place in the list so no two rows read alike
+const rows = Array.from({ length: 7 }, (_, r) => {
+  const start = (r * 7) % terms.length;
+  return [...terms.slice(start), ...terms.slice(0, start)];
+});
+---
+<!-- ============ 1 · OPENING B — many lines, one line ============ -->
+<section class="th th--b scene" id="top" data-hero="b" data-scene="team-hero" data-title={team.label} data-intro>
+  <div class="tl__field" aria-hidden="true">
+    {rows.map((row, i) => (
+      <div class="tl__row" style={`--r:${i}`} data-dir={i % 2 ? 'ltr' : 'rtl'}>
+        {[0, 1].map(() => (
+          <span class="tl__track">
+            {row.map((t) => (<><span class="tl__t">{t}</span><i class="tl__sep"></i></>))}
+          </span>
+        ))}
+      </div>
+    ))}
+  </div>
+  <i class="tl__line" aria-hidden="true"></i>
+  <i class="tl__core" data-anchor aria-hidden="true"></i>
+  <HeroCopy count center />
+</section>
+<div class="link link--hero" aria-hidden="true"><i></i></div>

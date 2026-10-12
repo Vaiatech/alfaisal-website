@@ -1990,3 +1990,142 @@ html:not(.js) .gc__drop { position: static; visibility: visible; }
   .gc__panel { margin-top: 10px; padding: 16px 18px 8px; }
   .grp__list.has-open .gc:not(.is-open) { opacity: 1; filter: none; }
 }
+/* ---------- Opening words shared by every page-3 opening ---------- */
+.th__count--inline { position: static; justify-content: flex-start; margin-top: clamp(20px, 3.4vh, 36px); }
+.th__copy--center { text-align: center; }
+.th__copy--center .th__eyebrow { justify-content: center; }
+.th__copy--center .th__body { max-width: 40rem; margin-inline: auto; }
+.th__copy--center .th__count--inline { justify-content: center; }
+
+/* ---------- Opening B · many lines, one line ---------- */
+.th--b { grid-template-columns: minmax(0, 1fr); justify-items: center; overflow: hidden; }
+.th--b .th__copy { grid-column: 1; grid-row: 1; z-index: 3; max-width: 54rem; }
+/* a pool of deep navy behind the words, so the lines read as texture, never as noise */
+.th--b .th__copy::before {
+  content: '';
+  position: absolute;
+  inset: -14% -22%;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(7, 12, 23, 0.94), rgba(7, 12, 23, 0.82) 58%, rgba(7, 12, 23, 0));
+}
+.tl__field {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(2px, 0.8vh, 12px);
+  overflow: hidden;
+  direction: ltr; /* rows hang from the left edge, so both drift directions stay on screen */
+  pointer-events: none;
+  /* fade at the top and bottom, and open a clear oval in the middle where the words are */
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 16%, #000 84%, transparent), radial-gradient(ellipse 40% 44% at 50% 52%, transparent 45%, #000 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(180deg, transparent, #000 16%, #000 84%, transparent), radial-gradient(ellipse 40% 44% at 50% 52%, transparent 45%, #000 100%);
+  mask-composite: intersect;
+}
+.tl__row {
+  display: flex;
+  width: max-content;
+  direction: ltr;
+  white-space: nowrap;
+  font-size: clamp(2rem, 1rem + 3.1vw, 4.3rem);
+  font-weight: 800;
+  line-height: 1.38;
+  transform-origin: 50% 50%;
+}
+.tl__track { display: flex; align-items: center; flex: none; animation: tl-drift calc(300s + var(--r) * 34s) linear infinite; }
+.tl__row[data-dir='ltr'] .tl__track { animation-direction: reverse; }
+@keyframes tl-drift { to { transform: translateX(-100%); } }
+.tl__t {
+  direction: rtl;
+  unicode-bidi: isolate;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(226, 190, 118, 0.2);
+}
+/* every few terms one is filled with a faint light, so the field glints rather than repeats */
+.tl__t:nth-of-type(6n + 2) { color: rgba(226, 190, 118, 0.1); -webkit-text-stroke-color: rgba(226, 190, 118, 0.3); }
+.tl__sep { flex: none; width: 9px; height: 9px; margin: 0 0.8em; transform: rotate(45deg); background: rgba(226, 190, 118, 0.32); }
+.tl__line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  z-index: 2;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-hi) 18%, var(--gold-pale) 50%, var(--gold-hi) 82%, transparent);
+  box-shadow: 0 0 14px rgba(226, 190, 118, 0.6);
+}
+.tl__core { position: absolute; left: 50%; top: 50%; width: 2px; height: 2px; }
+@media (max-width: 860px) {
+  /* phones: the words fill the whole height in a quieter key, the reading area kept clear */
+  .tl__field {
+    justify-content: space-between;
+    padding-block: 9vh 6vh;
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent), radial-gradient(ellipse 80% 36% at 50% 42%, transparent 55%, #000 100%);
+    mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent), radial-gradient(ellipse 80% 36% at 50% 42%, transparent 55%, #000 100%);
+  }
+  .tl__row { font-size: 1.5rem; }
+  .tl__t { -webkit-text-stroke-color: rgba(226, 190, 118, 0.16); }
+  .th--b .th__copy::before { inset: -6% -10%; }
+}
+
+/* ---------- Opening C · the arcade ---------- */
+.rq { width: min(40vw, 70vh); aspect-ratio: 1 / 1.08; perspective: 620px; perspective-origin: 50% 44%; }
+.rq__haze { position: absolute; inset: 0; background: radial-gradient(30% 26% at 50% 46%, rgba(226, 190, 118, 0.24), transparent 72%); }
+.rq__world { position: absolute; inset: 0; transform-style: preserve-3d; }
+.rq__arch {
+  position: absolute;
+  left: 21%;
+  bottom: 6%;
+  width: 58%;
+  aspect-ratio: 100 / 130;
+  transform: translateZ(calc(var(--z) * -210px));
+  opacity: calc(1 - var(--z) * 0.085);
+}
+.rq__arch svg { width: 100%; height: 100%; overflow: visible; }
+.rq__arch path { fill: none; stroke: var(--gold-hi); stroke-width: 0.7; filter: drop-shadow(0 0 4px rgba(226, 190, 118, 0.55)); }
+.rq__arch:first-of-type path { stroke-width: 1; }
+/* a keystone of light at the crown of every arch */
+.rq__key {
+  position: absolute;
+  top: -1.5%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, #fff4d6, var(--gold-hi));
+  box-shadow: 0 0 12px rgba(226, 190, 118, 0.8);
+}
+/* the one light, at the far end */
+.rq__light {
+  position: absolute;
+  left: 21%;
+  bottom: 6%;
+  width: 58%;
+  aspect-ratio: 100 / 130;
+  border-radius: 999px 999px 0 0;
+  transform: translateZ(-1420px);
+  background: radial-gradient(56% 46% at 50% 58%, rgba(255, 242, 210, 0.96), rgba(226, 190, 118, 0.5) 42%, transparent 74%);
+}
+.rq__floor {
+  position: absolute;
+  left: -24%;
+  right: -24%;
+  bottom: 6%;
+  height: 1500px;
+  transform-origin: 50% 100%;
+  transform: rotateX(90deg);
+  background:
+    repeating-linear-gradient(90deg, rgba(226, 190, 118, 0.1) 0 1px, transparent 1px 64px),
+    repeating-linear-gradient(0deg, transparent 0 209px, rgba(226, 190, 118, 0.12) 209px 210px); /* one line under each arch, none at the front edge */
+  /* fades into the distance and toward both sides, so it never reaches the text */
+  -webkit-mask-image: linear-gradient(0deg, #000 8%, transparent 92%), linear-gradient(90deg, transparent 18%, #000 40%, #000 60%, transparent 82%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(0deg, #000 8%, transparent 92%), linear-gradient(90deg, transparent 18%, #000 40%, #000 60%, transparent 82%);
+  mask-composite: intersect;
+}
+@media (max-width: 860px) {
+  .rq { width: min(80vw, 40svh); }
+}

@@ -1,0 +1,24 @@
+---
+/** The opening words of page 3, shared by every opening idea. `count` adds «+20 محاميًا ومستشارًا» under them. */
+import { team } from '../../../../shared/content.ts';
+
+interface Props { count?: boolean; center?: boolean }
+const { count = false, center = false } = Astro.props;
+const { hero } = team;
+---
+<div class:list={['th__copy', { 'th__copy--center': center }]}>
+  <p class="eyebrow th__eyebrow" data-reveal="rule"><i class="rh"></i><span>{hero.eyebrow}</span></p>
+  <h1 class="th__title">
+    <span class="th__l1" data-split>{hero.title[0]}</span>
+    <span class="th__l2 gold-text" data-split>{hero.title[1]}</span>
+  </h1>
+  <div class="th__body">
+    {hero.body.map((p) => <p data-reveal="wipe">{p}</p>)}
+  </div>
+  {count && (
+    <p class="th__count th__count--inline">
+      <bdi dir="ltr" class="th__num">+<span class="odo odo--md" data-odo={hero.count.value}>{hero.count.value}</span></bdi>
+      <span class="th__unit">{hero.count.unit}</span>
+    </p>
+  )}
+</div>

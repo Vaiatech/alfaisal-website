@@ -1,0 +1,13 @@
+---
+/** Preview of opening B for page 3 (not linked, not indexed) — remove once an opening is chosen. */
+import Base from '../layouts/Base.astro';
+import Contact from '../components/Contact.astro';
+import HeroLines from '../components/team/HeroLines.astro';
+import TeamBody from '../components/team/TeamBody.astro';
+import { team } from '../../../shared/content.ts';
+---
+<Base page="team" title={team.pageTitle} description={team.description} noindex>
+  <HeroLines />
+  <TeamBody />
+  <Contact />
+</Base>

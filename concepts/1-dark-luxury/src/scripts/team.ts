@@ -2,7 +2,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type Lenis from 'lenis';
 import type { Odo } from './odo';
-import { $, $$, lerp, EASE, splitWords, wipeIn } from './util';
+import { $, $$, EASE, splitWords, wipeIn } from './util';
+import { createHero } from './heroes';
 
 type SceneLight = { i: number; r: number; anchor?: HTMLElement | null };
 type Ctx = {
@@ -113,42 +114,10 @@ export function createTeamPage(ctx: Ctx) {
     if (sceneLight.groups) sceneLight.groups.anchor = medals[0];
   }
 
-  /* ---------------------------------------------------------------- *
-   * OPENING — the constellation
-   * ---------------------------------------------------------------- */
-  const svg = $<SVGSVGElement>('.constel', page);
-  const orbits = $$<SVGGElement>('.cn__orbit', svg);
-  const rings = $$<SVGCircleElement>('.cn__ring', svg);
-  const pts = $$<SVGRectElement>('.cn__pt', svg);
-  const rays = $$<SVGLineElement>('.cn__ray', svg);
-  const core = $('.th__core', page);
+  // the opening's visual (one of three ideas: see heroes.ts)
+  const hero = createHero(page, finePointer);
   const count = $('.th__count', page);
-  const countOdo = $('.th__count .odo', page);
-
-  function driftConstellation() {
-    // three orbits turn at their own pace (outer slowest); the pointer tilts the field a little
-    const speeds = [5.2, -3.4, 2.1]; // degrees per second
-    const ptr = { x: 0, y: 0, tx: 0, ty: 0 };
-    if (finePointer) {
-      window.addEventListener('pointermove', (e) => {
-        ptr.tx = (e.clientX / window.innerWidth - 0.5) * 2;
-        ptr.ty = (e.clientY / window.innerHeight - 0.5) * 2;
-      }, { passive: true });
-    }
-    let visible = true;
-    ScrollTrigger.create({ trigger: page, start: 'top bottom', end: 'bottom top', onToggle: (s) => { visible = s.isActive; } });
-    gsap.ticker.add((t) => {
-      if (!visible) return;
-      ptr.x = lerp(ptr.x, ptr.tx, 0.05);
-      ptr.y = lerp(ptr.y, ptr.ty, 0.05);
-      orbits.forEach((g, i) => {
-        const depth = (i + 1) * 5;
-        g.setAttribute('transform', `translate(${(-ptr.x * depth).toFixed(2)} ${(-ptr.y * depth).toFixed(2)}) rotate(${(t * speeds[i]).toFixed(3)})`);
-      });
-    });
-    // leaving the opening, the field slowly gathers toward its centre
-    gsap.to(svg, { scale: 0.9, opacity: 0.55, ease: 'none', scrollTrigger: { trigger: page, start: 'center center', end: 'bottom top', scrub: true } });
-  }
+  const countOdo = count ? $('.odo', count) : null;
 
   /* ---------------------------------------------------------------- *
    * LEADERSHIP — arches
@@ -263,13 +232,13 @@ export function createTeamPage(ctx: Ctx) {
   return {
     /** motion: everything that depends on scroll; called once fonts are ready */
     setup() {
-      sceneLight['team-hero'].anchor = core;
-      driftConstellation();
+      sceneLight['team-hero'].anchor = hero.anchor;
+      hero.setup();
       setupLeadership();
       groupsEntrance();
       setupGroups(true);
     },
-    /** the page's opening: the field assembles, every ray finds the centre, the name lights */
+    /** the page's opening: the visual assembles while the words rise, and the house light comes on */
     enter(openVeil: () => void) {
       const l1 = splitWords($('.th__l1', page));
       const l2 = splitWords($('.th__l2', page));
@@ -278,36 +247,26 @@ export function createTeamPage(ctx: Ctx) {
       gsap.set([...l1, ...l2], { yPercent: 118 });
       body.forEach((b) => { b.classList.add('wiping'); b.style.setProperty('--wp', '0'); });
       gsap.set(eyebrow, { '--rule': 0, opacity: 0 });
-      gsap.set(rays, { attr: { 'stroke-dasharray': '1 1' }, strokeDashoffset: 1 });
-      gsap.set(pts, { opacity: 0, scale: 0, transformOrigin: '50% 50%' });
-      gsap.set(rings, { opacity: 0 });
-      gsap.set(core, { opacity: 0, scale: 0.86 });
-      gsap.set(count, { opacity: 0, y: 14 });
-      const odo = ctx.odos.get(countOdo);
-      $$('.strip', countOdo).forEach((s) => gsap.set(s, { yPercent: 0 }));
+      hero.prepare();
+      if (count) gsap.set(count, { opacity: 0, y: 14 });
+      const odo = countOdo ? ctx.odos.get(countOdo) : undefined;
+      if (countOdo) $$('.strip', countOdo).forEach((s) => gsap.set(s, { yPercent: 0 }));
 
       const arriving = document.documentElement.classList.contains('is-arriving');
       document.documentElement.classList.remove('is-intro');
       ctx.lenis?.start();
       openVeil();
-      const t0 = arriving ? 0.35 : 0.1;
-      // points appear from the centre outward, in a scattered order
-      const order = pts.map((_, i) => i).sort((a, b) => Math.sin(a * 91.7) - Math.sin(b * 91.7));
-      const tl = gsap.timeline({ delay: t0 });
+      const tl = gsap.timeline({ delay: arriving ? 0.35 : 0.1 });
       // arriving under the veil, the header is already in place; on a fresh load it drops in
       if (!arriving) tl.fromTo(ctx.hdr, { yPercent: -110 }, { yPercent: 0, duration: 1, ease: EASE.out, clearProps: 'transform' }, 0);
-      tl.to(ctx.lamp, { v: 1, duration: 2, ease: 'power2.out' }, 0)
-        .to(rings, { opacity: 1, duration: 1.6, ease: EASE.soft, stagger: 0.12 }, 0.05)
-        .to(order.map((i) => pts[i]), { opacity: 1, scale: 1, duration: 0.7, ease: 'back.out(2.2)', stagger: 0.035 }, 0.15)
-        .to(order.map((i) => rays[i]), { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut', stagger: 0.03 }, 0.6)
-        .to(core, { opacity: 1, scale: 1, duration: 1.4, ease: EASE.out }, 1.3)
-        .to(count, { opacity: 1, y: 0, duration: 1, ease: EASE.out }, 1.7)
-        .add(() => { odo?.play(0); }, 1.7)
-        .to(eyebrow, { opacity: 1, '--rule': 1, duration: 1.1, ease: EASE.out }, 0.15)
+      tl.to(ctx.lamp, { v: 1, duration: 2, ease: 'power2.out' }, 0);
+      hero.play(tl);
+      tl.to(eyebrow, { opacity: 1, '--rule': 1, duration: 1.1, ease: EASE.out }, 0.15)
         .to(l1, { yPercent: 0, duration: 1.05, ease: EASE.out, stagger: 0.06 }, 0.25)
         .to(l2, { yPercent: 0, duration: 1.05, ease: EASE.out, stagger: 0.05 }, 0.45)
         .add(() => body.forEach((b, i) => wipeIn(b, { delay: i * 0.12, duration: 1.3 })), 0.7)
         .fromTo('.th + .link--hero', { opacity: 0 }, { opacity: 1, duration: 0.8 }, 1.4);
+      if (count) tl.to(count, { opacity: 1, y: 0, duration: 1, ease: EASE.out }, 1.7).add(() => { odo?.play(0); }, 1.7);
     },
     /** reduced motion: the complete page, still — only the dropdown works */
     setupStatic() {

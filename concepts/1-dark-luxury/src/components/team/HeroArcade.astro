@@ -1,0 +1,31 @@
+---
+/**
+ * Opening C · «الرواق» — the arcade.
+ * Seven arches — the firm's seven leaders: three in its management, four at the head of its groups —
+ * recede toward one light. The same arch frames the leadership portraits further down the page.
+ */
+import HeroCopy from './HeroCopy.astro';
+import { team } from '../../../../shared/content.ts';
+
+const arches = Array.from({ length: 7 }, (_, i) => i);
+---
+<!-- ============ 1 · OPENING C — the arcade ============ -->
+<section class="th th--c scene" id="top" data-hero="c" data-scene="team-hero" data-title={team.label} data-intro>
+  <div class="th__vis rq" aria-hidden="true">
+    <i class="rq__haze"></i>
+    <div class="rq__world">
+      <i class="rq__floor"></i>
+      <i class="rq__light" data-anchor></i>
+      {arches.map((i) => (
+        <div class="rq__arch" style={`--z:${i}`}>
+          <svg viewBox="0 0 100 130" preserveAspectRatio="none">
+            <path d="M1 130 V50 A49 49 0 0 1 99 50 V130" pathLength="1" />
+          </svg>
+          <i class="rq__key"></i>
+        </div>
+      ))}
+    </div>
+  </div>
+  <HeroCopy count />
+</section>
+<div class="link link--hero" aria-hidden="true"><i></i></div>

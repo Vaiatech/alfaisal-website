@@ -12,8 +12,10 @@ interface Props {
   page: Page;
   title?: string;
   description?: string;
+  /** previews and drafts stay out of search results */
+  noindex?: boolean;
 }
-const { page, title, description = site.description } = Astro.props;
+const { page, title, description = site.description, noindex = false } = Astro.props;
 const fullTitle = title ? `${title} | ${site.name}` : site.name;
 ---
 <!doctype html>
@@ -23,6 +25,7 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#070b14" />
     <meta name="color-scheme" content="dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
