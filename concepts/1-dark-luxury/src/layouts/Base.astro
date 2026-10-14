@@ -7,7 +7,8 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Mark from '../components/Mark.astro';
 import Outro from '../components/Outro.astro';
-import { site, contact, type Page } from '../../../shared/content.ts';
+import type { Page } from '../../../shared/content.ts';
+import { getContent, type Lang } from '../../../shared/i18n.ts';
 
 interface Props {
   page: Page;
@@ -15,12 +16,17 @@ interface Props {
   description?: string;
   /** previews and drafts stay out of search results */
   noindex?: boolean;
+  lang?: Lang;
 }
-const { page, title, description = site.description, noindex = false } = Astro.props;
+const { page, title, noindex = false, lang = 'ar' } = Astro.props;
+const { site, ui, base, pagePath } = getContent(lang);
+const description = Astro.props.description ?? site.description;
+const arPath = pagePath(page, '');
+const enPath = pagePath(page, '/en');
 const fullTitle = title ? `${title} | ${site.name}` : site.name;
 ---
 <!doctype html>
-<html lang="ar" dir="rtl" data-page={page}>
+<html lang={lang} dir={lang === 'en' ? 'ltr' : 'rtl'} data-page={page} data-base={base}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -30,6 +36,8 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
     <meta name="theme-color" content="#f6f1e8" />
     <meta name="color-scheme" content="dark light" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" hreflang="ar" href={arPath} />
+    <link rel="alternate" hreflang="en" href={enPath} />
     <link rel="preload" href="/fonts/almarai-arabic-800.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/almarai-arabic-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/almarai-arabic-700.woff2" as="font" type="font/woff2" crossorigin />
@@ -70,7 +78,7 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
     </script>
   </head>
   <body>
-    <a class="skip" href="#main">تخطَّ إلى المحتوى</a>
+    <a class="skip" href="#main">{ui.skip}</a>
 
     <canvas id="gl" aria-hidden="true"></canvas>
     <div class="grain" aria-hidden="true"></div>
@@ -90,13 +98,13 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
       if (window.__alfArriving) document.querySelector('.veil__title').textContent = window.__alfArriving;
     </script>
 
-    <Header page={page} />
+    <Header page={page} lang={lang} />
 
     <main id="main">
       <slot />
     </main>
 
-    <Outro />
+    <Outro lang={lang} />
 
     <!-- The consultation platform, on every page: a gold ring with its microphone; its words show on arrival and on hover -->
     <a class="wa-fab" href={site.consultUrl} target="_blank" rel="noopener" aria-label={`${site.platform.line} — ${site.platform.sub}`}>

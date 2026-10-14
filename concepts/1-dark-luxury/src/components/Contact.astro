@@ -1,12 +1,16 @@
 ---
 /** The closing every page ends with (the PDF's last page): the record, the voice, the details. */
-import { site, contact, closing, formatNumber } from '../../../shared/content.ts';
+import { getContent, type Lang } from '../../../shared/i18n.ts';
+
+interface Props { lang?: Lang }
+const { lang = 'ar' } = Astro.props;
+const { site, contact, closing, formatNumber, ui } = getContent(lang);
 ---
 <!-- ============ CLOSING — the voice ============ -->
 <section class="cta scene" id="contact" data-scene="contact" data-title={closing.label}>
   <p class="cta__lead" data-reveal="wipe">
-    <span>كل ملف يضيف إلى خبرتنا…</span>
-    <span>وكل عميل يضيف إلى مسؤوليتنا.</span>
+    <span>{ui.recordLead[0]}</span>
+    <span>{ui.recordLead[1]}</span>
   </p>
   <p class="cta__record" data-reveal="wipe">
     <span class="cta__count gold-text"><bdi dir="ltr">+{formatNumber(closing.record.value)}</bdi> {closing.record.unit}</span>
@@ -30,7 +34,7 @@ import { site, contact, closing, formatNumber } from '../../../shared/content.ts
 
   <div class="contact glass">
     <div class="contact__col">
-      <p class="contact__k">الهاتف</p>
+      <p class="contact__k">{ui.phone}</p>
       <ul class="contact__v">
         {contact.phones.map((p) => (
           <li><a href={`tel:${p.tel}`}><bdi dir="ltr">{p.display}</bdi></a><small>{p.label}</small></li>
@@ -38,18 +42,18 @@ import { site, contact, closing, formatNumber } from '../../../shared/content.ts
       </ul>
     </div>
     <div class="contact__col">
-      <p class="contact__k">واتساب</p>
+      <p class="contact__k">{ui.whatsapp}</p>
       <p class="contact__v"><a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener"><bdi dir="ltr">{contact.phones[0].display}</bdi></a></p>
-      <p class="contact__k">البريد الإلكتروني</p>
+      <p class="contact__k">{ui.email}</p>
       <p class="contact__v"><a href={`mailto:${contact.email}`}><bdi dir="ltr">{contact.email}</bdi></a></p>
     </div>
     <div class="contact__col">
-      <p class="contact__k">العنوان</p>
+      <p class="contact__k">{ui.address}</p>
       <address class="contact__v">
-        {contact.address.line}<br />{contact.address.city}، {contact.address.country}
+        {contact.address.line}<br />{contact.address.city}{lang === 'en' ? ', ' : '، '}{contact.address.country}
       </address>
       <a class="contact__map" href={contact.mapsUrl} target="_blank" rel="noopener">
-        <span>افتح الخريطة</span>
+        <span>{ui.openMap}</span>
         <svg class="btn__arrow" viewBox="0 0 24 12" aria-hidden="true"><path d="M23 6H2M7 1 2 6l5 5" /></svg>
       </a>
     </div>

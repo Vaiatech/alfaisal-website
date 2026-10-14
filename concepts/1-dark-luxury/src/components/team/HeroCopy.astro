@@ -1,10 +1,10 @@
 ---
 /** The opening words of page 3, shared by every opening idea. `count` adds «+20 محاميًا ومستشارًا» under them. */
-import { team } from '../../../../shared/content.ts';
+import { getContent, type Lang } from '../../../../shared/i18n.ts';
 
-interface Props { count?: boolean; center?: boolean }
-const { count = false, center = false } = Astro.props;
-const { hero } = team;
+interface Props { count?: boolean; center?: boolean; lang?: Lang }
+const { count = false, center = false, lang = 'ar' } = Astro.props;
+const { hero } = getContent(lang).team;
 ---
 <div class:list={['th__copy', { 'th__copy--center': center }]}>
   <p class="eyebrow th__eyebrow" data-reveal="rule"><i class="rh"></i><span>{hero.eyebrow}</span></p>

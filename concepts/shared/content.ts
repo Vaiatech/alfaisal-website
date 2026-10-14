@@ -1,6 +1,9 @@
 // Single source of truth for the site's copy and contact details.
 // Text follows the client's content document (موقع شركة الفيصل للمحاماة.pdf).
 
+export const lang = 'ar' as const;
+export const base = '';
+
 export const site = {
   name: 'شركة الفيصل للمحاماة والاستشارات القانونية',
   shortName: 'الفيصل',
@@ -50,12 +53,14 @@ export const nav: NavItem[] = [
   { label: 'تواصل معنا', href: '/contact/', page: 'contact' },
 ];
 
-/** Where a nav item points from a given page. */
-export const navHref = (item: NavItem, from: Page) => {
-  if (item.href.startsWith('/')) return item.href;
-  if (from === 'home' || item.href === '#contact') return item.href;
-  return item.href === '#top' ? '/' : `/${item.href}`;
+/** Where a nav item points from a given page. `base` is '' for Arabic and '/en' for English. */
+export const navHref = (item: NavItem, from: Page, base = '') => {
+  if (item.href.startsWith('/')) return base + item.href;
+  if (from === 'home') return item.href;
+  return item.href === '#top' ? `${base}/` : `${base}/${item.href}`;
 };
+/** The same page in the other language. */
+export const pagePath = (page: Page, base = '') => base + (page === 'home' ? '/' : `/${page}/`);
 
 export const hero = {
   eyebrow: site.name,
@@ -315,6 +320,58 @@ export const contactPage = {
     modes: ['صوت', 'كتابة'],
     note: 'الاستشارة مدفوعة',
   },
+};
+
+/* ------------------------------------------------------------------
+ * Interface words (everything that is not page copy)
+ * ------------------------------------------------------------------ */
+export const ui = {
+  skip: 'تخطَّ إلى المحتوى',
+  home: 'الرئيسية',
+  mainNav: 'القائمة الرئيسية',
+  menu: 'القائمة',
+  soon: 'قريبًا',
+  toDay: 'المظهر الفاتح',
+  toNight: 'المظهر الداكن',
+  consult: 'احجز استشارة',
+  consultShort: 'احجز استشارة',
+  // the switch shows the other language
+  other: { code: 'en', label: 'English', short: 'EN' },
+  outro: 'الفيصل',
+  registry: 'السجل التجاري',
+  backToTop: 'العودة إلى البداية',
+  phone: 'الهاتف',
+  whatsapp: 'واتساب',
+  email: 'البريد الإلكتروني',
+  address: 'العنوان',
+  openMap: 'افتح الخريطة',
+  startChat: 'ابدأ المحادثة',
+  writeUs: 'راسلنا',
+  map: 'خريطة',
+  recordLead: ['كل ملف يضيف إلى خبرتنا…', 'وكل عميل يضيف إلى مسؤوليتنا.'],
+  fileDetails: 'تفاصيل الملف',
+  scope: 'نطاق العمل',
+  scopeOf: 'نطاق عمل',
+  form: {
+    name: 'الاسم',
+    phone: 'رقم الجوال',
+    topic: 'موضوع الاستشارة',
+    message: 'نبذة عن ملفك',
+    errName: 'فضلًا اكتب اسمك.',
+    errPhone: 'فضلًا اكتب رقم جوال صحيحًا.',
+    errMsg: 'فضلًا اكتب نبذة قصيرة عن ملفك (عشرة أحرف على الأقل).',
+    greet: 'السلام عليكم،',
+    signoff: '— مرسلة من موقع شركة الفيصل للمحاماة',
+    subject: 'طلب استشارة',
+  },
+  // the specialisms that drift across the team page's opening
+  terms: [
+    'التصفيات والإفلاس', 'التركات والأوقاف', 'الشركات والاستثمار', 'الأصول العقارية', 'التحكيم والوساطة',
+    'المحكمة التجارية', 'ديوان المظالم', 'المشتريات الحكومية', 'الأحوال الشخصية', 'الحوكمة',
+    'الالتزام التنظيمي', 'الملكية الفكرية', 'الزكاة والضريبة', 'الاندماج والاستحواذ', 'عقود الإنشاءات',
+    'النزاعات الإيجارية', 'النزاعات العمالية', 'القضايا الجزائية', 'الوصايا والمواريث', 'البيع على الخريطة',
+    'الأوراق التجارية', 'التأمين التجاري', 'منازعات التنفيذ', 'الثروات الخاصة', 'الأوراق المالية',
+  ],
 };
 
 export const formatNumber = (n: number) => n.toLocaleString('en-US');

@@ -1,20 +1,24 @@
 ---
 import Mark from './Mark.astro';
 import logoRaw from '../../../shared/logo/alfaisal-logo-on-dark.svg?raw';
-import { site, contact, nav, navHref, type Page } from '../../../shared/content.ts';
-import { ar } from '../lib/format';
+import type { Page } from '../../../shared/content.ts';
+import { getContent, type Lang } from '../../../shared/i18n.ts';
+import { idx } from '../lib/format';
 
-interface Props { page: Page }
-const { page } = Astro.props;
+interface Props { page: Page; lang?: Lang }
+const { page, lang = 'ar' } = Astro.props;
+const { site, contact, nav, navHref, pagePath, ui, base } = getContent(lang);
 const wordmark = (logoRaw.match(/<g id="wordmark"[^>]*>([\s\S]*?)<\/g>/) || [])[1] || '';
-const links = nav.map((item) => ({ ...item, to: navHref(item, page), current: item.page === page }));
+const links = nav.map((item) => ({ ...item, to: navHref(item, page, base), current: item.page === page }));
+// the same page in the other language
+const otherHref = pagePath(page, lang === 'en' ? '' : '/en');
 ---
 <header class="hdr">
-  <a class="hdr__logo" href={page === 'home' ? '#top' : '/'} data-nav data-title="الرئيسية" aria-label={site.name}>
+  <a class="hdr__logo" href={page === 'home' ? '#top' : `${base}/`} data-nav data-title={ui.home} aria-label={site.name}>
     <Mark uid="hm" variant="header" />
     <svg class="hdr__wordmark" viewBox="0 870 1031 205" aria-hidden="true"><g fill="#f1eadf" set:html={wordmark} /></svg>
   </a>
-  <nav class="hdr__nav" aria-label="القائمة الرئيسية">
+  <nav class="hdr__nav" aria-label={ui.mainNav}>
     <ul>
       {links.map((item) => (
         <li>
@@ -27,27 +31,31 @@ const links = nav.map((item) => ({ ...item, to: navHref(item, page), current: it
             data-soon={item.soon ? '' : undefined}
           >
             {item.label}
-            {item.soon && <small class="soon-tag">قريبًا</small>}
+            {item.soon && <small class="soon-tag">{ui.soon}</small>}
           </a>
         </li>
       ))}
     </ul>
   </nav>
   <div class="hdr__actions">
+    <!-- the other language: the same page, carried over through the veil -->
+    <a class="lng" href={otherHref} data-nav data-title={ui.other.label} hreflang={ui.other.code} lang={ui.other.code} aria-label={ui.other.label}>
+      <span class="lng__short">{ui.other.short}</span>
+    </a>
     <!-- day / night: the sun shows on the night theme (switch to day), the moon on the day theme -->
-    <button class="thm" type="button" aria-pressed="true" aria-label="المظهر الداكن">
+    <button class="thm" type="button" aria-pressed="true" aria-label={ui.toNight} data-to-day={ui.toDay} data-to-night={ui.toNight}>
       <svg class="thm__sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.3" /><path d="M12 2.6v2.3M12 19.1v2.3M2.6 12h2.3M19.1 12h2.3M5.35 5.35 7 7M17 17l1.65 1.65M5.35 18.65 7 17M17 7l1.65-1.65" /></svg>
       <svg class="thm__moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.9A8.2 8.2 0 0 1 9.1 4.4a8.2 8.2 0 1 0 10.5 10.5Z" /></svg>
     </button>
     <button class="hdr__menu" type="button" aria-expanded="false" aria-controls="mnav">
-      <span class="sr">القائمة</span>
+      <span class="sr">{ui.menu}</span>
       <i></i><i></i>
     </button>
     <a class="consult" href={site.consultUrl} target="_blank" rel="noopener">
       <span class="consult__mic" aria-hidden="true">
         <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" /></svg>
       </span>
-      <span class="consult__label">احجز استشارة</span>
+      <span class="consult__label"><span class="consult__full">{ui.consult}</span><span class="consult__short" aria-hidden="true">{ui.consultShort}</span></span>
       <span class="consult__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     </a>
   </div>
@@ -58,9 +66,9 @@ const links = nav.map((item) => ({ ...item, to: navHref(item, page), current: it
     {links.map((item, i) => (
       <li style={`--i:${i}`}>
         <a href={item.to} data-nav data-title={item.label} aria-current={item.current ? 'page' : undefined}>
-          <span class="mnav__n">{ar(i + 1)}</span>
+          <span class="mnav__n">{idx(i + 1, lang)}</span>
           <span class="mnav__t">{item.label}</span>
-          {item.soon && <small class="soon-tag">قريبًا</small>}
+          {item.soon && <small class="soon-tag">{ui.soon}</small>}
         </a>
       </li>
     ))}
@@ -68,11 +76,14 @@ const links = nav.map((item) => ({ ...item, to: navHref(item, page), current: it
   <div class="mnav__foot">
     <a href={`tel:${contact.phones[0].tel}`} dir="ltr">{contact.phones[0].display}</a>
     <a href={`mailto:${contact.email}`} dir="ltr">{contact.email}</a>
-    <button class="thm thm--row" type="button" aria-pressed="false">
-      <svg class="thm__sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.3" /><path d="M12 2.6v2.3M12 19.1v2.3M2.6 12h2.3M19.1 12h2.3M5.35 5.35 7 7M17 17l1.65 1.65M5.35 18.65 7 17M17 7l1.65-1.65" /></svg>
-      <svg class="thm__moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.9A8.2 8.2 0 0 1 9.1 4.4a8.2 8.2 0 1 0 10.5 10.5Z" /></svg>
-      <span class="thm__to-day">المظهر الفاتح</span>
-      <span class="thm__to-night">المظهر الداكن</span>
-    </button>
+    <div class="mnav__row">
+      <button class="thm thm--row" type="button" aria-pressed="false">
+        <svg class="thm__sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.3" /><path d="M12 2.6v2.3M12 19.1v2.3M2.6 12h2.3M19.1 12h2.3M5.35 5.35 7 7M17 17l1.65 1.65M5.35 18.65 7 17M17 7l1.65-1.65" /></svg>
+        <svg class="thm__moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.9A8.2 8.2 0 0 1 9.1 4.4a8.2 8.2 0 1 0 10.5 10.5Z" /></svg>
+        <span class="thm__to-day">{ui.toDay}</span>
+        <span class="thm__to-night">{ui.toNight}</span>
+      </button>
+      <a class="lng lng--row" href={otherHref} data-nav data-title={ui.other.label} hreflang={ui.other.code} lang={ui.other.code}>{ui.other.label}</a>
+    </div>
   </div>
 </div>

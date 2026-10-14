@@ -5,15 +5,12 @@
  * in engraved gold, row against row; scrolling, they gather onto one gold line.
  */
 import HeroCopy from './HeroCopy.astro';
-import { team } from '../../../../shared/content.ts';
+import { getContent, type Lang } from '../../../../shared/i18n.ts';
 
-const terms = [
-  'التصفيات والإفلاس', 'التركات والأوقاف', 'الشركات والاستثمار', 'الأصول العقارية', 'التحكيم والوساطة',
-  'المحكمة التجارية', 'ديوان المظالم', 'المشتريات الحكومية', 'الأحوال الشخصية', 'الحوكمة',
-  'الالتزام التنظيمي', 'الملكية الفكرية', 'الزكاة والضريبة', 'الاندماج والاستحواذ', 'عقود الإنشاءات',
-  'النزاعات الإيجارية', 'النزاعات العمالية', 'القضايا الجزائية', 'الوصايا والمواريث', 'البيع على الخريطة',
-  'الأوراق التجارية', 'التأمين التجاري', 'منازعات التنفيذ', 'الثروات الخاصة', 'الأوراق المالية',
-];
+interface Props { lang?: Lang }
+const { lang = 'ar' } = Astro.props;
+const { team, ui } = getContent(lang);
+const terms = ui.terms;
 // seven rows, each starting at a different place in the list so no two rows read alike
 const rows = Array.from({ length: 7 }, (_, r) => {
   const start = (r * 7) % terms.length;
@@ -35,6 +32,6 @@ const rows = Array.from({ length: 7 }, (_, r) => {
   </div>
   <i class="tl__line" aria-hidden="true"></i>
   <i class="tl__core" data-anchor aria-hidden="true"></i>
-  <HeroCopy count center />
+  <HeroCopy count center lang={lang} />
 </section>
 <div class="link link--hero" aria-hidden="true"><i></i></div>

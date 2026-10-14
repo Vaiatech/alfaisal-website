@@ -15,6 +15,9 @@ const FX = root.classList.contains('fx');
 const PAGE = (root.dataset.page || 'home') as 'home' | 'team' | 'contact';
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 const isMobile = () => window.innerWidth <= 860;
+// the English edition reads left to right: the pinned scenes mirror their geometry
+const LTR = root.dir === 'ltr';
+const DIR = LTR ? -1 : 1;
 
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
@@ -179,7 +182,7 @@ const syncThemeButtons = () => {
   const day = root.dataset.theme === 'light';
   themeBtns.forEach((b) => {
     b.setAttribute('aria-pressed', String(day));
-    if (!b.classList.contains('thm--row')) b.setAttribute('aria-label', day ? 'المظهر الداكن' : 'المظهر الفاتح');
+    if (!b.classList.contains('thm--row')) b.setAttribute('aria-label', (day ? b.dataset.toNight : b.dataset.toDay) || '');
   });
 };
 syncThemeButtons();
@@ -379,11 +382,13 @@ function setupContactForm() {
   const phone = $<HTMLInputElement>('#f-phone', form);
   const msg = $<HTMLTextAreaElement>('#f-msg', form);
   const wa = form.getAttribute('action') || '';
+  // the page's own words (Arabic or English), rendered into the form by the page
+  const T = JSON.parse(form.dataset.i18n || '{}') as Record<string, string>;
   const email = (document.querySelector<HTMLAnchorElement>('a[href^="mailto:"]')?.getAttribute('href') || '').replace('mailto:', '');
   const rules: [HTMLInputElement | HTMLTextAreaElement, (v: string) => string][] = [
-    [name, (v) => (v.trim().length < 2 ? 'فضلًا اكتب اسمك.' : '')],
-    [phone, (v) => (v.replace(/[^\d]/g, '').length < 9 ? 'فضلًا اكتب رقم جوال صحيحًا.' : '')],
-    [msg, (v) => (v.trim().length < 10 ? 'فضلًا اكتب نبذة قصيرة عن ملفك (عشرة أحرف على الأقل).' : '')],
+    [name, (v) => (v.trim().length < 2 ? T.errName : '')],
+    [phone, (v) => (v.replace(/[^\d]/g, '').length < 9 ? T.errPhone : '')],
+    [msg, (v) => (v.trim().length < 10 ? T.errMsg : '')],
   ];
   const check = (el: HTMLInputElement | HTMLTextAreaElement, rule: (v: string) => string) => {
     const err = rule(el.value);
@@ -400,14 +405,14 @@ function setupContactForm() {
   const compose = () => {
     const topic = (form.querySelector<HTMLInputElement>('input[name="topic"]:checked')?.value) || '';
     return [
-      'السلام عليكم،',
-      `الاسم: ${name.value.trim()}`,
-      `الجوال: ${phone.value.trim()}`,
-      `الموضوع: ${topic}`,
+      T.greet,
+      `${T.name}: ${name.value.trim()}`,
+      `${T.phone}: ${phone.value.trim()}`,
+      `${T.topic}: ${topic}`,
       '',
       msg.value.trim(),
       '',
-      '— مرسلة من موقع شركة الفيصل للمحاماة',
+      T.signoff,
     ].join('\n');
   };
   const valid = () => {
@@ -424,7 +429,7 @@ function setupContactForm() {
   $('[data-mail]', form).addEventListener('click', () => {
     if (!valid() || !email) return;
     const topic = (form.querySelector<HTMLInputElement>('input[name="topic"]:checked')?.value) || '';
-    location.href = `mailto:${email}?subject=${encodeURIComponent(`طلب استشارة — ${topic}`)}&body=${encodeURIComponent(compose())}`;
+    location.href = `mailto:${email}?subject=${encodeURIComponent(`${T.subject} — ${topic}`)}&body=${encodeURIComponent(compose())}`;
   });
 }
 if (PAGE === 'contact') setupContactForm();
@@ -795,7 +800,7 @@ function setupStory() {
       };
     } else {
       // desktop: the file in the left column; the sheets fan in an arc, then hang in a row from one bus
-      const left = gutter, right = W * 0.53;
+      const left = LTR ? W * 0.47 : gutter, right = LTR ? W - gutter : W * 0.53;
       const top = hdrH + 26, bottom = H - 34;
       const u = clamp(Math.min((right - left) / 700, (bottom - top) / 780), 0.72, 1.4);
       const cx = (left + right) / 2;
@@ -810,12 +815,12 @@ function setupStory() {
       const rowTop = seal1.y + 70 * u;
       L = {
         mob, W, H, cx, u, fw, fh, fx: cx - fw / 2, ftop, seal0, seal1, sw, sh,
-        inside: sheets.map((_, i) => ({ x: cx + (MID - i) * 4 * u, y: ftop + fh * 0.5, r: (MID - i) * 1.2, s: 0.86 })),
+        inside: sheets.map((_, i) => ({ x: cx + DIR * (MID - i) * 4 * u, y: ftop + fh * 0.5, r: DIR * (MID - i) * 1.2, s: 0.86 })),
         fan: sheets.map((_, i) => {
-          const a = ((MID - i) * 20 * Math.PI) / 180;
-          return { x: seal0.x + Math.sin(a) * R, y: seal0.y - Math.cos(a) * R, r: (MID - i) * 20, s: 1 };
+          const a = (DIR * (MID - i) * 20 * Math.PI) / 180;
+          return { x: seal0.x + Math.sin(a) * R, y: seal0.y - Math.cos(a) * R, r: DIR * (MID - i) * 20, s: 1 };
         }),
-        sys: sheets.map((_, i) => ({ x: cx + (MID - i) * (sw * k + gap), y: rowTop + (sh * k) / 2, r: 0, s: k })),
+        sys: sheets.map((_, i) => ({ x: cx + DIR * (MID - i) * (sw * k + gap), y: rowTop + (sh * k) / 2, r: 0, s: k })),
         busY: rowTop - 24 * u, rowTop,
         y0: ftop, s0: 1,
       };
@@ -839,7 +844,7 @@ function setupStory() {
     // the cover swings open, then closes once the sheets are out
     const open = io(seg(0.13, 0.3)) * (1 - io(seg(0.66, 0.82)));
     cover.style.setProperty('--open', `${-180 * open}deg`);
-    const fx = l.fx - (l.fw / 2) * open;
+    const fx = l.fx - DIR * (l.fw / 2) * open;
     const settleIn = io(seg(0.04, 0.2));
     const s = lerp(l.s0, 1, settleIn);
     const fy = lerp(l.y0, l.ftop, settleIn);
@@ -883,7 +888,7 @@ function setupStory() {
       if (l.mob) {
         tree.setAttribute('d', `M${l.cx},${sy} L${l.cx},${lerp(sy, l.ftop, grow)}`);
       } else {
-        const half = (l.sys[0].x - l.sys[N - 1].x) / 2;
+        const half = Math.abs(l.sys[0].x - l.sys[N - 1].x) / 2;
         const xl = l.cx - half * grow, xr = l.cx + half * grow;
         let d = `M${l.cx},${sy} L${l.cx},${lerp(sy, l.busY, clamp(grow * 2))}`;
         if (grow > 0.5) {
@@ -1080,10 +1085,11 @@ function setupExpertise() {
     if (!vis || isMobile()) { path.setAttribute('d', ''); return; }
     const sr = stage.getBoundingClientRect();
     const dr = dial.getBoundingClientRect();
-    const px = dr.right - sr.left + 6, py = dr.top + dr.height / 2 - sr.top;
+    // the leader runs from the instrument's edge facing the list to the start of the active row
+    const px = (LTR ? dr.left - 6 : dr.right + 6) - sr.left, py = dr.top + dr.height / 2 - sr.top;
     const row = $('.xp__row', items[Math.max(0, active)]);
     const rr = row.getBoundingClientRect();
-    const tx = rr.left - sr.left - 18;
+    const tx = (LTR ? rr.right + 18 : rr.left - 18) - sr.left;
     const ty = rr.top + rr.height / 2 - sr.top;
     ly.v = ly.v < 0 ? ty : lerp(ly.v, ty, 0.14);
     const mx = px + (tx - px) * 0.55;
@@ -1126,9 +1132,11 @@ function setupMethod() {
 
   const draw = (t: number) => {
     const cr = canvas.getBoundingClientRect();
-    const nx = nodes.map((n) => { const r = n.getBoundingClientRect(); return r.left + r.width / 2 - cr.left; });
+    // drawn right → left; the English canvas is mirrored in CSS, so positions are mirrored here too
+    const mir = (x: number) => (LTR ? W - x : x);
+    const nx = nodes.map((n) => { const r = n.getBoundingClientRect(); return mir(r.left + r.width / 2 - cr.left); });
     const sr = seal.getBoundingClientRect();
-    const sealX = sr.left + sr.width / 2 - cr.left;
+    const sealX = mir(sr.left + sr.width / 2 - cr.left);
     const startX = nx[0] + (nx[0] - nx[1]) * 0.6; // a little before the first step
     const yc = H / 2;
     // the front travels right → left (RTL) across the whole rail
@@ -1195,7 +1203,7 @@ function setupMethod() {
       ctx.arc(front, yc, 22, 0, Math.PI * 2);
       ctx.fill();
     }
-    const fx = (cr.left + clamp(front, left, right)) / window.innerWidth;
+    const fx = (cr.left + mir(clamp(front, left, right))) / window.innerWidth;
     light.override = currentScene === 'method' ? { x: fx, y: (cr.top + yc) / window.innerHeight } : null;
   };
   gsap.ticker.add((t) => {

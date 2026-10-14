@@ -1,8 +1,11 @@
 ---
 /** Page 3 after its opening: the leadership arches and the legal groups with their scope dropdowns. */
-import { ar } from '../../lib/format';
-import { team } from '../../../../shared/content.ts';
+import { idx } from '../../lib/format';
+import { getContent, type Lang } from '../../../../shared/i18n.ts';
 
+interface Props { lang?: Lang }
+const { lang = 'ar' } = Astro.props;
+const { team, ui } = getContent(lang);
 const { leadership, groups } = team;
 
 // «عنوان: تفاصيل» → the title in gold, the details after it.
@@ -81,22 +84,22 @@ const scopeParts = (s: string) => {
                   </>}
             </span>
           </span>
-          <span class="gc__idx naskh" aria-hidden="true">{ar(i + 1)}</span>
+          <span class="gc__idx naskh" aria-hidden="true">{idx(i + 1, lang)}</span>
           <span class="gc__name" data-hover>{g.name}</span>
           <span class="gc__lead">
             <small>{g.leadTitle}</small>
             <span>{g.leader}</span>
           </span>
           <span class="gc__cue">
-            <span>نطاق العمل</span>
+            <span>{ui.scope}</span>
             <svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" /></svg>
           </span>
         </button>
-        <div class="gc__drop" id={`scope-${i + 1}`} role="region" aria-label={`نطاق عمل ${g.name}`}>
+        <div class="gc__drop" id={`scope-${i + 1}`} role="region" aria-label={`${ui.scopeOf} ${g.name}`}>
           <i class="gc__thread" aria-hidden="true"></i>
           <div class="gc__panel">
             <p class="gc__pn">{g.name}</p>
-            <p class="gc__k"><i class="rh rh--sm"></i><span>نطاق العمل</span></p>
+            <p class="gc__k"><i class="rh rh--sm"></i><span>{ui.scope}</span></p>
             <ul class="gc__scope">
               {g.scope.map((s) => {
                 const p = scopeParts(s);

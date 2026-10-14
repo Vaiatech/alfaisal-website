@@ -855,7 +855,7 @@ main, .outro { position: relative; z-index: 1; }
 }
 @media (max-width: 860px) {
   .story__stage { grid-template-columns: 1fr; gap: 6vh; padding: 10vh var(--gutter); }
-  .story__text { grid-column: 1; text-align: right; }
+  .story__text { grid-column: 1; text-align: start; }
   .story__vis { --sw: 170px; --sh: 34px; --fz: 15px; grid-area: 2 / 1; }
   .story__title { font-size: 1.9rem; }
   .story__sheets { flex-direction: column; gap: 8px; margin-top: 18px; padding-top: 0; }
@@ -926,7 +926,7 @@ html.fx .story__seal {
   writing-mode: horizontal-tb;
 }
 .lead-num__unit { font-size: var(--fs-h1); font-weight: 800; line-height: 1.4; }
-.nums__sub { justify-self: end; text-align: left; padding-bottom: 2vh; }
+.nums__sub { justify-self: end; text-align: end; padding-bottom: 2vh; }
 .nums__sub > span { display: block; }
 
 /* Odometer: tabular cells (Almarai has proportional digits only). */
@@ -1035,7 +1035,7 @@ html.fx .story__seal {
 }
 @media (max-width: 860px) {
   .nums__top { grid-template-columns: 1fr; }
-  .nums__sub { justify-self: start; text-align: right; }
+  .nums__sub { justify-self: start; text-align: start; }
   .lead-num { flex-direction: column; align-items: flex-start; }
   .ledger { grid-template-columns: 1fr; margin-top: 7vh; border-radius: 22px; }
   .ledger__item { grid-template-columns: auto 1fr auto; align-items: center; padding: 20px 22px 22px; gap: 0 14px; }
@@ -1064,7 +1064,7 @@ html.fx .story__seal {
   gap: 14px;
   width: 100%;
   padding: 10px 0 8px;
-  text-align: right;
+  text-align: start;
   font-weight: 800;
   cursor: default;
 }
@@ -1459,7 +1459,7 @@ html.fx .val__stage {
   gap: 0;
   width: min(1180px, 100%);
   margin-top: 7vh;
-  text-align: right;
+  text-align: start;
 }
 .contact__col { padding: clamp(26px, 3vw, 44px); display: flex; flex-direction: column; gap: 6px; }
 .contact__col + .contact__col { border-inline-start: 1px solid var(--line-2); }
@@ -1598,11 +1598,11 @@ html.is-intro .hero__mark .write path { visibility: hidden; }
 /* Landscape phones (html.short): too short for pinned scenes — the complete static page, hero side by side */
 html.short .hero { min-height: 0; padding-top: calc(var(--hdr) + 6vh); grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr); }
 html.short .hero__mark { grid-area: 1 / 2; width: min(34vw, 70vh); margin: 0; }
-html.short .hero__copy { grid-area: 1 / 1; text-align: right; }
+html.short .hero__copy { grid-area: 1 / 1; text-align: start; }
 html.short .hero__eyebrow { justify-content: flex-start; }
 html.short .hero__eyebrow::before { display: none; }
 html.short .hero__eyebrow .rh { display: inline-block; }
-html.short .hero__body { text-align: right; }
+html.short .hero__body { text-align: start; }
 html.short .hero__cta { flex-direction: row; justify-content: flex-start; }
 
 @media (max-width: 860px) {
@@ -1911,7 +1911,7 @@ html.short .th { min-height: 0; padding-top: calc(var(--hdr) + 6vh); }
 .gc__panel {
   padding: 20px 22px 12px;
   border-radius: 22px;
-  text-align: right;
+  text-align: start;
   background: linear-gradient(180deg, rgba(22, 38, 63, 0.94), rgba(8, 14, 26, 0.97));
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
@@ -1965,7 +1965,7 @@ html:not(.js) .gc__drop { position: static; visibility: visible; }
     align-items: center;
     padding: 16px;
     border-radius: 22px;
-    text-align: right;
+    text-align: start;
   }
   .gc__medal { grid-row: 1 / span 3; width: 84px; }
   .gc__medal::before { inset: -6px; }
@@ -2589,7 +2589,7 @@ html.is-arriving .wa-fab { opacity: 0; transform: scale(0.6); pointer-events: no
    Client notes (14 Oct): the platform button, the scope over its card
    ========================================================================= */
 /* the floating button's words: the line, and the platform's name beneath it */
-.wa-fab__label { display: grid; gap: 1px; padding: 9px 18px 10px; border-radius: 18px; text-align: right; }
+.wa-fab__label { display: grid; gap: 1px; padding: 9px 18px 10px; border-radius: 18px; text-align: start; }
 .wa-fab__line { font-size: var(--fs-small); font-weight: 800; line-height: 1.5; color: var(--ink); }
 .wa-fab__sub { font-size: var(--fs-label); font-weight: 700; line-height: 1.5; color: var(--gold-hi); }
 /* it says its words once on arrival, then folds away until hovered */
@@ -2616,4 +2616,106 @@ html.is-arriving .wa-fab { opacity: 0; transform: scale(0.6); pointer-events: no
   .gc.is-open .gc__drop { height: auto; visibility: visible; }
   .gc__thread { display: none; }
   .gc__panel { margin-top: 10px; }
+}
+/* =========================================================================
+   THE ENGLISH EDITION — the same design, read left to right
+   ========================================================================= */
+/* the language switch */
+.lng {
+  display: grid;
+  place-items: center;
+  min-width: 46px;
+  height: 46px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--gold-hi);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(226, 190, 118, 0.38);
+  transition: box-shadow 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.lng:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px var(--gold-hi), 0 0 26px rgba(226, 190, 118, 0.38); }
+.lng:lang(ar) { font-family: 'Almarai', sans-serif; font-size: 1.05rem; }
+[data-theme='light'] .lng { background: rgba(255, 255, 255, 0.55); box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.45); }
+.mnav__row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+.mnav__row .thm--row { margin-top: 0; }
+.lng--row { display: inline-flex; height: auto; min-height: 44px; padding: 8px 18px; font-size: 1rem; font-weight: 700; }
+@media (max-width: 760px) {
+  .hdr__actions .lng { min-width: 42px; height: 42px; padding: 0 10px; }
+}
+/* on the narrowest phones the switch lives in the menu only */
+@media (max-width: 370px) { .hdr__actions .lng { display: none; } }
+
+/* type: English reads tighter than Arabic */
+html[lang='en'] { --lh-text: 1.75; --lh-display: 1.14; --lh-h1: 1.18; --lh-h2: 1.32; }
+html[lang='en'] h1, html[lang='en'] h2 { letter-spacing: -0.012em; }
+html[lang='en'] .naskh,
+html[lang='en'] .mnav__n,
+html[lang='en'] .xp__nm > span { font-family: 'Almarai', system-ui, sans-serif; font-weight: 700; }
+html[lang='en'] .hero__l1 { font-size: calc(var(--fs-display) * 0.84); }
+html[lang='en'] .hero__l2 { font-size: calc(var(--fs-display) * 0.56); line-height: 1.25; }
+html[lang='en'] .th__l1 { line-height: 1.12; }
+
+/* lines that grow from the reading start, and the light that passes in the reading direction */
+html[dir='ltr'] .eyebrow::after { background: linear-gradient(to right, var(--gold), rgba(201, 162, 90, 0)); transform-origin: left center; }
+html[dir='ltr'] .hdr::after { transform-origin: left; }
+html[dir='ltr'] .ledger__measure::before { inset: 0 auto 0 0; background: linear-gradient(to right, rgba(201, 162, 90, 0.2), var(--gold-hi)); transform-origin: left; }
+html[dir='ltr'] .ledger__measure::after { right: auto; left: calc(var(--m) * 100% * var(--mp, 1) - 3px); }
+html[dir='ltr'] .ledger__plus { margin-right: 0.06em; }
+html[dir='ltr'] .mth__steps::before { background: linear-gradient(to right, var(--gold-hi), rgba(226, 190, 118, 0.25)); }
+html[dir='ltr'] .stmt__line { transform-origin: left; }
+html[dir='ltr'].fx .xp__item::before { right: auto; left: 0; background: linear-gradient(to right, var(--gold-hi), rgba(201, 162, 90, 0)); transform-origin: left; }
+html[dir='ltr'] .wiping {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(var(--wp, 0) * 150% - 50%), transparent calc(var(--wp, 0) * 150%));
+  mask-image: linear-gradient(to right, #000 calc(var(--wp, 0) * 150% - 50%), transparent calc(var(--wp, 0) * 150%));
+}
+html[dir='ltr'] .val__lit {
+  background-image:
+    linear-gradient(to right, rgba(255, 250, 235, 0) calc(var(--f) * 150% - 58%), rgba(255, 250, 235, 0.95) calc(var(--f) * 150% - 50%), rgba(255, 250, 235, 0) calc(var(--f) * 150% - 42%)),
+    var(--metal);
+  -webkit-mask-image: linear-gradient(to right, #000 calc(var(--f) * 150% - 50%), transparent calc(var(--f) * 150%));
+  mask-image: linear-gradient(to right, #000 calc(var(--f) * 150% - 50%), transparent calc(var(--f) * 150%));
+}
+/* arrows point the way the reader goes */
+html[dir='ltr'] .btn__arrow { transform: scaleX(-1); }
+html[dir='ltr'] .btn:hover .btn__arrow,
+html[dir='ltr'] .contact__map:hover .btn__arrow,
+html[dir='ltr'] .cc:hover .btn__arrow { transform: scaleX(-1) translateX(-6px); }
+/* the pen stroke strikes «case» from left to right */
+html[dir='ltr'] .strike { transform: scaleX(-1); }
+html[dir='ltr'] .fld__i[dir='ltr'] { text-align: left; }
+html[dir='ltr'] .tl__t { direction: ltr; }
+
+/* the pinned scenes, mirrored: words on the left, the instrument on the right */
+html[dir='ltr'].fx .story__text { right: auto; left: var(--gutter); }
+html[dir='ltr'].fx .xp__col { right: auto; left: var(--gutter); }
+html[dir='ltr'].fx .xp__stage { --cx: 75vw; --base: 180deg; }
+html[dir='ltr'].fx .mth__head { right: auto; left: var(--gutter); }
+html[dir='ltr'].fx .mth__wave { transform: scaleX(-1); }
+html[dir='ltr'].fx .mth__seal { left: auto; right: 0; margin: -8px -8px 0 0; }
+@media (max-width: 860px) {
+  html[dir='ltr'].fx .story__text,
+  html[dir='ltr'].fx .xp__col,
+  html[dir='ltr'].fx .mth__head { right: var(--gutter); }
+  html[dir='ltr'].fx .xp__stage { --cx: 50vw; --base: 90deg; }
+  html[dir='ltr'].fx .mth__seal { right: -10px; }
+}
+/* the file in the English edition opens from its left edge */
+html[dir='ltr'] .dossier__front { transform-origin: 0% 50%; }
+html[dir='ltr'] .dossier__back::before,
+html[dir='ltr'] .dossier__label { right: auto; left: 9%; }
+/* phones: the booking button carries its short name; the language switch moves into the menu on narrow screens */
+.consult__short { display: none; }
+@media (max-width: 760px) {
+  .consult__full { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .consult__short { display: inline; }
+}
+@media (max-width: 430px) { .hdr__actions .lng { display: none; } }
+/* English words run longer than Arabic: the values and the methodology steps take a smaller size */
+html[lang='en'] .val__ink { font-size: clamp(1.8rem, 0.8rem + 2vw, 2.9rem); }
+@media (max-width: 860px) {
+  html[lang='en'] .val__ink { font-size: clamp(1.6rem, 7.2vw, 2.1rem); }
+  html[lang='en'] .mth__w { font-size: 0.74rem; letter-spacing: -0.01em; }
 }

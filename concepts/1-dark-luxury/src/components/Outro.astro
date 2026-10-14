@@ -1,11 +1,14 @@
 ---
 import Mark from './Mark.astro';
-import { site } from '../../../shared/content.ts';
+import { getContent, type Lang } from '../../../shared/i18n.ts';
 
+interface Props { lang?: Lang }
+const { lang = 'ar' } = Astro.props;
+const { site, ui } = getContent(lang);
 const year = 2026;
 ---
 <!-- ============ OUTRO — the lamp goes out last on the name ============ -->
-<footer class="outro scene" data-scene="outro" data-title="الفيصل">
+<footer class="outro scene" data-scene="outro" data-title={ui.outro}>
   <div class="outro__logo" data-anchor>
     <Mark uid="ft" variant="lockup" write glow label={site.name} />
   </div>
@@ -22,9 +25,9 @@ const year = 2026;
       </p>
     </div>
     <a class="outro__web" href={site.url}><bdi dir="ltr">{site.domain}</bdi></a>
-    <p>© <bdi dir="ltr">{year}</bdi> · السجل التجاري <bdi dir="ltr" class="tnum">{site.commercialRegistry}</bdi></p>
+    <p>© <bdi dir="ltr">{year}</bdi> · {ui.registry} <bdi dir="ltr" class="tnum">{site.commercialRegistry}</bdi></p>
     <a href="#top" data-nav class="outro__top">
-      <span>العودة إلى البداية</span>
+      <span>{ui.backToTop}</span>
       <svg viewBox="0 0 12 24" aria-hidden="true"><path d="M6 23V2M1 7l5-5 5 5" /></svg>
     </a>
   </div>
