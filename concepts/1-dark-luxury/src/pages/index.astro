@@ -75,7 +75,7 @@ const STRIKE_INK =
         {stats.items.map((it, i) => (
           <li class="ledger__item" style={`--m:${measure(it.value)};--i:${i}`}>
             <span class="ledger__n">{ar(i + 1)}</span>
-            <span class="odo odo--md" data-odo={it.value} dir="ltr">{formatNumber(it.value)}</span>
+            <span class="ledger__fig" dir="ltr"><span class="ledger__plus">+</span><span class="odo odo--md" data-odo={it.value}>{formatNumber(it.value)}</span></span>
             <span class="ledger__label">{it.label}</span>
             <i class="ledger__measure" aria-hidden="true"></i>
           </li>
@@ -84,8 +84,49 @@ const STRIKE_INK =
     </section>
     <div class="link" aria-hidden="true"><i></i></div>
 
-    <!-- ============ 3 · STORY — «الملف يُفتح»: a file opens and becomes a system ============ -->
-    <section class="story scene" id="about" data-scene="story" data-title={story.label}>
+    <!-- ============ 3 · EXPERTISE — one instrument, six engravings ============ -->
+    <section class="xp scene" id="expertise" data-scene="expertise" data-title={expertise.label}>
+      <div class="xp__stage">
+        <div class="xp__dial" aria-hidden="true">
+          <svg class="xp__ticks" viewBox="-500 -500 1000 1000"></svg>
+          <div class="xp__ring">
+            {expertise.items.map((it, i) => (
+              <span class="xp__lbl" style={`--i:${i}`}><span>{it.title}</span></span>
+            ))}
+          </div>
+          <div class="xp__num">
+            {expertise.items.map((_, i) => (
+              <span class="xp__nm" style={`--i:${i}`}><span>{ar(i + 1)}</span></span>
+            ))}
+          </div>
+          <i class="xp__beam"></i>
+          <i class="xp__core" data-anchor></i>
+        </div>
+        <div class="xp__col">
+        <div class="xp__head">
+          <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{expertise.label}</span></p>
+          <h2 class="t-h1 xp__title" data-split>{expertise.title}</h2>
+        </div>
+        <ol class="xp__list">
+          {expertise.items.map((it, i) => (
+            <li class="xp__item" style={`--i:${i}`}>
+              <h3 class="xp__h">
+                <button class="xp__row" type="button" data-i={i}>
+                  <span class="xp__idx naskh">{ar(i + 1)}</span>
+                  <span class="xp__t">{it.title}</span>
+                </button>
+              </h3>
+              <div class="xp__body"><p class="xp__p">{it.body}</p></div>
+            </li>
+          ))}
+        </ol>
+        </div>
+      </div>
+    </section>
+    <div class="link" aria-hidden="true"><i></i></div>
+
+    <!-- ============ 4 · METHODOLOGY opens — «الملف يُفتح»: a file opens and becomes a system ============ -->
+    <section class="story scene" id="method" data-scene="story" data-title={story.label}>
       <div class="story__stage">
         <div class="story__text">
           <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{story.label}</span></p>
@@ -131,52 +172,10 @@ const STRIKE_INK =
     </section>
     <div class="link link--story" aria-hidden="true"><i></i></div>
 
-    <!-- ============ 4 · EXPERTISE — one instrument, six engravings ============ -->
-    <section class="xp scene" id="expertise" data-scene="expertise" data-title={expertise.label}>
-      <div class="xp__stage">
-        <div class="xp__dial" aria-hidden="true">
-          <svg class="xp__ticks" viewBox="-500 -500 1000 1000"></svg>
-          <div class="xp__ring">
-            {expertise.items.map((it, i) => (
-              <span class="xp__lbl" style={`--i:${i}`}><span>{it.title}</span></span>
-            ))}
-          </div>
-          <div class="xp__num">
-            {expertise.items.map((_, i) => (
-              <span class="xp__nm" style={`--i:${i}`}><span>{ar(i + 1)}</span></span>
-            ))}
-          </div>
-          <i class="xp__beam"></i>
-          <i class="xp__core" data-anchor></i>
-        </div>
-        <div class="xp__col">
-        <div class="xp__head">
-          <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{expertise.label}</span></p>
-          <h2 class="t-h1 xp__title" data-split>{expertise.title}</h2>
-        </div>
-        <ol class="xp__list">
-          {expertise.items.map((it, i) => (
-            <li class="xp__item" style={`--i:${i}`}>
-              <h3 class="xp__h">
-                <button class="xp__row" type="button" data-i={i}>
-                  <span class="xp__idx naskh">{ar(i + 1)}</span>
-                  <span class="xp__t">{it.title}</span>
-                </button>
-              </h3>
-              <div class="xp__body"><p class="xp__p">{it.body}</p></div>
-            </li>
-          ))}
-        </ol>
-        </div>
-      </div>
-    </section>
-    <div class="link" aria-hidden="true"><i></i></div>
-
     <!-- ============ 5 · METHOD — from noise to one line ============ -->
-    <section class="mth scene" id="method" data-scene="method" data-title={method.label}>
+    <section class="mth scene" id="steps" data-scene="method" data-title={method.label}>
       <div class="mth__stage">
         <div class="mth__head">
-          <p class="eyebrow" data-reveal="rule"><i class="rh"></i><span>{method.label}</span></p>
           <h2 class="t-h1 mth__title">
             <span data-split>{method.title[0]}</span>
             <span class="gold-text" data-split>{method.title[1]}</span>
@@ -206,7 +205,7 @@ const STRIKE_INK =
         <span class="stmt__a" data-light>{method.statement[0]}</span>
         <span class="stmt__b gold-text" data-light data-anchor>{method.statement[1]}</span>
       </p>
-      <a class="btn btn--glass stmt__cta" href="#about" data-nav>
+      <a class="btn btn--glass stmt__cta" href="/team/" data-nav data-title="فريقنا">
         <span>{method.cta}</span>
         <svg class="btn__arrow" viewBox="0 0 24 12" aria-hidden="true"><path d="M23 6H2M7 1 2 6l5 5" /></svg>
       </a>

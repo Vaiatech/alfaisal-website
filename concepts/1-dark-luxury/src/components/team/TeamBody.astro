@@ -95,6 +95,7 @@ const scopeParts = (s: string) => {
         <div class="gc__drop" id={`scope-${i + 1}`} role="region" aria-label={`نطاق عمل ${g.name}`}>
           <i class="gc__thread" aria-hidden="true"></i>
           <div class="gc__panel">
+            <p class="gc__pn">{g.name}</p>
             <p class="gc__k"><i class="rh rh--sm"></i><span>نطاق العمل</span></p>
             <ul class="gc__scope">
               {g.scope.map((s) => {

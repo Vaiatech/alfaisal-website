@@ -27,7 +27,7 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#070b14" />
+    <meta name="theme-color" content="#f6f1e8" />
     <meta name="color-scheme" content="dark light" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="/fonts/almarai-arabic-800.woff2" as="font" type="font/woff2" crossorigin />
@@ -38,11 +38,11 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
       (function () {
         var d = document.documentElement;
         d.classList.add('js');
-        // day or night: the visitor's own choice, remembered; night (the house look) otherwise
+        // day or night: the visitor's own choice, remembered; day otherwise (client notes: light is the default)
         var theme = null;
         try { theme = localStorage.getItem('alf-theme'); } catch (e) {}
-        d.dataset.theme = theme === 'light' ? 'light' : 'dark';
-        if (theme === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f6f1e8');
+        d.dataset.theme = theme === 'dark' ? 'dark' : 'light';
+        if (theme === 'dark') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#070b14');
         var mm = window.matchMedia;
         var rm = mm && mm('(prefers-reduced-motion: reduce)').matches;
         // landscape phones are too short for pinned scenes: they get the complete static page
@@ -98,12 +98,15 @@ const fullTitle = title ? `${title} | ${site.name}` : site.name;
 
     <Outro />
 
-    <!-- WhatsApp, on every page: a gold ring that opens the chat -->
-    <a class="wa-fab" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener" aria-label="تواصل معنا عبر واتساب">
-      <span class="wa-fab__label" aria-hidden="true">تواصل عبر واتساب</span>
+    <!-- The consultation platform, on every page: a gold ring with its microphone; its words show on arrival and on hover -->
+    <a class="wa-fab" href={site.consultUrl} target="_blank" rel="noopener" aria-label={`${site.platform.line} — ${site.platform.sub}`}>
+      <span class="wa-fab__label" aria-hidden="true">
+        <span class="wa-fab__line">{site.platform.line}</span>
+        <small class="wa-fab__sub">{site.platform.sub}</small>
+      </span>
       <span class="wa-fab__ring">
         <i class="wa-fab__pulse"></i>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 20 5.3 16a8.3 8.3 0 1 1 3 2.9L4.2 20Z" /><path d="M9.2 8.4c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.6.7c.4.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.5.3-1.1.4-1.7.3-2.6-.6-4.7-2.7-5.3-5.3-.1-.6 0-1.2.3-1.7Z" /></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" /></svg>
       </span>
     </a>
 

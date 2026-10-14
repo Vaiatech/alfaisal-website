@@ -623,6 +623,8 @@ main, .outro { position: relative; z-index: 1; }
   color: var(--ink-2);
 }
 .hero__body p:first-child { color: var(--ink); }
+/* the opening paragraph (client notes) reads as one line of thought across both columns */
+.hero__body p:only-child { grid-column: 1 / -1; max-width: 46rem; font-size: var(--fs-lead); line-height: 1.95; }
 .hero__cta {
   display: flex;
   align-items: center;
@@ -999,7 +1001,9 @@ html.fx .story__seal {
   line-height: 1.6;
   color: rgba(201, 162, 90, 0.75);
 }
-.ledger__item .odo { grid-column: 1; grid-row: 1; justify-self: start; }
+/* every figure carries a «+» (client notes) */
+.ledger__fig { grid-column: 1; grid-row: 1; justify-self: start; display: inline-flex; align-items: center; font-size: clamp(2.2rem, 1.4rem + 2vw, 3.4rem); }
+.ledger__plus { margin-right: 0.06em; font-size: 0.72em; font-weight: 800; line-height: 1; color: var(--gold); }
 .ledger__label { grid-column: 1 / -1; font-size: var(--fs-lead); font-weight: 700; line-height: 1.7; color: var(--ink-2); margin-top: 8px; }
 .ledger__measure {
   grid-column: 1 / -1;
@@ -1444,7 +1448,10 @@ html.fx .val__stage {
   line-height: 1.6;
   color: var(--gold-hi);
 }
-.voice__label::after { content: ' ←'; font-weight: 400; }
+/* the platform's words under the microphone: the line, then its name in a smaller hand */
+.voice__label { display: grid; justify-items: center; gap: 2px; text-align: center; }
+.voice__line { display: block; }
+.voice__sub { display: block; font-size: var(--fs-small); font-weight: 700; line-height: 1.6; color: var(--ink-2); }
 
 .contact {
   display: grid;
@@ -2441,7 +2448,6 @@ html.is-arriving .wa-fab { opacity: 0; transform: scale(0.6); pointer-events: no
 @media (max-width: 760px) {
   .wa-fab { left: max(16px, env(safe-area-inset-left)); bottom: max(16px, env(safe-area-inset-bottom)); }
   .wa-fab__ring { width: 54px; height: 54px; }
-  .wa-fab__label { display: none; }
   .outro { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
 }
 [data-theme='light'] .wa-fab__label { color: var(--ink); background: rgba(251, 248, 242, 0.92); box-shadow: inset 0 0 0 1px rgba(148, 106, 31, 0.45), 0 10px 30px -14px rgba(70, 50, 20, 0.4); }
@@ -2578,4 +2584,36 @@ html.is-arriving .wa-fab { opacity: 0; transform: scale(0.6); pointer-events: no
   .cf__open,
   .outro__web { display: inline-flex; align-items: center; min-height: 44px; }
   .cc__phones { gap: 0; }
+}
+/* =========================================================================
+   Client notes (14 Oct): the platform button, the scope over its card
+   ========================================================================= */
+/* the floating button's words: the line, and the platform's name beneath it */
+.wa-fab__label { display: grid; gap: 1px; padding: 9px 18px 10px; border-radius: 18px; text-align: right; }
+.wa-fab__line { font-size: var(--fs-small); font-weight: 800; line-height: 1.5; color: var(--ink); }
+.wa-fab__sub { font-size: var(--fs-label); font-weight: 700; line-height: 1.5; color: var(--gold-hi); }
+/* it says its words once on arrival, then folds away until hovered */
+.wa-fab.is-greeting .wa-fab__label { opacity: 1; transform: translate(0, -50%); }
+@media (max-width: 760px) {
+  .wa-fab__label { padding: 7px 14px 8px; }
+  .wa-fab__line { font-size: 0.8125rem; }
+  .wa-fab__sub { font-size: 0.75rem; }
+}
+
+/* the scope of work rises over the card itself (a pointer that hovers) */
+.gc__pn { display: none; }
+@media (min-width: 861px) and (hover: hover) and (pointer: fine) {
+  .gc__drop { top: 0; left: 0; right: 0; min-height: 100%; padding-top: 0; display: flex; }
+  .gc__thread { display: none; }
+  .gc__panel { flex: 1; padding: 26px 22px 14px; border-radius: 28px; }
+  .gc__pn { display: block; padding-bottom: 10px; font-size: 1.02rem; font-weight: 800; line-height: 1.6; color: var(--ink); text-wrap: balance; }
+  .gc__k { padding-bottom: 10px; }
+  .gc__scope li { padding: 8px 0; font-size: 0.9rem; line-height: 1.75; }
+}
+/* touch screens wider than a phone (tablets) use the same in-flow list as phones */
+@media (min-width: 861px) and (hover: none) {
+  .gc__drop { position: static; height: 0; overflow: hidden; padding-top: 0; visibility: hidden; }
+  .gc.is-open .gc__drop { height: auto; visibility: visible; }
+  .gc__thread { display: none; }
+  .gc__panel { margin-top: 10px; }
 }

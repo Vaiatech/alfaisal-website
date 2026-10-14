@@ -50,7 +50,7 @@ export function createTeamPage(ctx: Ctx) {
       open = i;
       const c = cards[i];
       const drop = $('.gc__drop', c);
-      const items = $$('.gc__scope li, .gc__k', c);
+      const items = $$('.gc__pn, .gc__k, .gc__scope li', c);
       c.classList.add('is-open');
       list.classList.add('has-open');
       $('.gc__trigger', c).setAttribute('aria-expanded', 'true');
@@ -59,11 +59,12 @@ export function createTeamPage(ctx: Ctx) {
       if (!animate) { gsap.set(drop, { clearProps: 'all' }); return; }
       if (overlay()) {
         gsap.fromTo($('.gc__thread', c), { scaleY: 0 }, { scaleY: 1, duration: 0.35, ease: EASE.io });
-        gsap.fromTo(drop, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.7, ease: EASE.io, delay: 0.12 });
+        // the scope rises over the card itself, like a page drawn up over the portrait
+        gsap.fromTo(drop, { clipPath: 'inset(100% 0% 0% 0% round 28px)' }, { clipPath: 'inset(0% 0% 0% 0% round 28px)', duration: 0.65, ease: EASE.io });
       } else {
         gsap.fromTo(drop, { height: 0 }, { height: 'auto', duration: 0.6, ease: EASE.io, onComplete: () => { gsap.set(drop, { clearProps: 'height' }); } });
       }
-      gsap.fromTo(items, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.7, ease: EASE.out, stagger: 0.04, delay: overlay() ? 0.3 : 0.15 });
+      gsap.fromTo(items, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.7, ease: EASE.out, stagger: 0.035, delay: overlay() ? 0.22 : 0.15 });
     };
     function hide(i: number) {
       const c = cards[i];
@@ -74,7 +75,7 @@ export function createTeamPage(ctx: Ctx) {
       gsap.killTweensOf(drop);
       const done = () => { if (open !== i) { c.classList.remove('is-open'); gsap.set(drop, { clearProps: 'clipPath,height' }); } };
       if (!animate) { done(); return; }
-      if (overlay()) gsap.to(drop, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.38, ease: 'power2.in', onComplete: done });
+      if (overlay()) gsap.to(drop, { clipPath: 'inset(100% 0% 0% 0% round 28px)', duration: 0.42, ease: 'power2.in', onComplete: done });
       else gsap.to(drop, { height: 0, duration: 0.42, ease: EASE.io, onComplete: done });
     }
 

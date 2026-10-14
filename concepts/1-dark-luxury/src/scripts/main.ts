@@ -133,8 +133,8 @@ updateHeader();
 
 // Home: the active item follows the section in view. Other pages mark their own item in the markup.
 if (PAGE === 'home') {
-  const navTargets = ['#top', '#about', '#expertise', '#method', '#contact'];
-  const sectionFor: Record<string, string> = { numbers: '#top', statement: '#method', values: '#method', outro: '#contact' };
+  const navTargets = ['#top', '#expertise', '#method', '#contact'];
+  const sectionFor: Record<string, string> = { numbers: '#top', story: '#method', method: '#method', statement: '#method', values: '#method', outro: '#contact' };
   const setActiveNav = () => {
     const s = activeScene();
     if (!s) return;
@@ -429,6 +429,25 @@ function setupContactForm() {
 }
 if (PAGE === 'contact') setupContactForm();
 
+/* The platform button says its words once the page has opened, then folds them away. */
+{
+  const fab = document.querySelector<HTMLElement>('.wa-fab');
+  if (fab) {
+    let tries = 0;
+    const greet = () => {
+      if (root.classList.contains('is-intro') || root.classList.contains('is-arriving')) {
+        if (++tries < 60) setTimeout(greet, 300);
+        return;
+      }
+      setTimeout(() => {
+        fab.classList.add('is-greeting');
+        setTimeout(() => fab.classList.remove('is-greeting'), 5200);
+      }, 900);
+    };
+    greet();
+  }
+}
+
 const team = createTeamPage({
   FX,
   finePointer,
@@ -446,9 +465,10 @@ const team = createTeamPage({
 if (FX) {
   document.fonts.ready.then(() => {
     if (PAGE === 'home') {
-      setupStory();
+      // pinned scenes are set up in page order, so each one's start includes the pins above it
       setupNumbers();
       setupExpertise();
+      setupStory();
       setupMethod();
       setupStatement();
       setupValues();

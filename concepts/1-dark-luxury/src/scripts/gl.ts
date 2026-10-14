@@ -92,7 +92,7 @@ export function createGL(canvas: HTMLCanvasElement) {
   const u = (n: string) => gl.getUniformLocation(prog, n);
   const U = { res: u('uRes'), time: u('uTime'), light: u('uLight'), li: u('uLightI'), lr: u('uLightR'), dim: u('uDim'), theme: u('uTheme') };
 
-  const state: GLState = { lx: 0.5, ly: 0.45, li: 0, lr: 0.3, dim: 0, theme: document.documentElement.dataset.theme === 'light' ? 1 : 0 };
+  const state: GLState = { lx: 0.5, ly: 0.45, li: 0, lr: 0.3, dim: 0, theme: document.documentElement.dataset.theme === 'dark' ? 0 : 1 };
 
   // The shader is cheap; render at CSS-pixel resolution (DPR capped at 1) so falloffs stay crisp.
   const resize = () => {
