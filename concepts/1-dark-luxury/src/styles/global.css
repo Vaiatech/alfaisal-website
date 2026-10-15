@@ -2707,10 +2707,13 @@ html[dir='ltr'] .dossier__front { transform-origin: 0% 50%; }
 html[dir='ltr'] .dossier__back::before,
 html[dir='ltr'] .dossier__label { right: auto; left: 9%; }
 /* phones: the booking button carries its short name; the language switch moves into the menu on narrow screens */
-.consult__short { display: none; }
+/* the header button: the platform's line, and its name in a smaller hand beneath (client notes, 15 Oct) */
+.consult__label { display: grid; gap: 1px; line-height: 1.25; text-align: start; }
+.consult__line { font-size: 0.875rem; font-weight: 800; }
+.consult__sub { font-size: 0.7rem; font-weight: 700; opacity: 0.78; }
 @media (max-width: 760px) {
-  .consult__full { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .consult__short { display: inline; }
+  .consult__line { font-size: 0.78rem; }
+  .consult__sub { display: none; }
 }
 @media (max-width: 430px) { .hdr__actions .lng { display: none; } }
 /* English words run longer than Arabic: the values and the methodology steps take a smaller size */

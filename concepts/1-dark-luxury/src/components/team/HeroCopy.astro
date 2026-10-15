@@ -2,16 +2,17 @@
 /** The opening words of page 3, shared by every opening idea. `count` adds «+20 محاميًا ومستشارًا» under them. */
 import { getContent, type Lang } from '../../../../shared/i18n.ts';
 
-interface Props { count?: boolean; center?: boolean; lang?: Lang }
-const { count = false, center = false, lang = 'ar' } = Astro.props;
+interface Props { count?: boolean; center?: boolean; lang?: Lang; heading?: 'h1' | 'h2' }
+const { count = false, center = false, lang = 'ar', heading = 'h1' } = Astro.props;
+const H = heading;
 const { hero } = getContent(lang).team;
 ---
 <div class:list={['th__copy', { 'th__copy--center': center }]}>
   <p class="eyebrow th__eyebrow" data-reveal="rule"><i class="rh"></i><span>{hero.eyebrow}</span></p>
-  <h1 class="th__title">
+  <H class="th__title">
     <span class="th__l1" data-split>{hero.title[0]}</span>
     <span class="th__l2 gold-text" data-split>{hero.title[1]}</span>
-  </h1>
+  </H>
   <div class="th__body">
     {hero.body.map((p) => <p data-reveal="wipe">{p}</p>)}
   </div>

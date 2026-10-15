@@ -136,8 +136,8 @@ updateHeader();
 
 // Home: the active item follows the section in view. Other pages mark their own item in the markup.
 if (PAGE === 'home') {
-  const navTargets = ['#top', '#expertise', '#method', '#contact'];
-  const sectionFor: Record<string, string> = { numbers: '#top', story: '#method', method: '#method', statement: '#method', values: '#method', outro: '#contact' };
+  const navTargets = ['#top', '#expertise', '#method', '#team', '#contact'];
+  const sectionFor: Record<string, string> = { numbers: '#top', story: '#method', method: '#method', statement: '#method', values: '#method', 'team-hero': '#team', leadership: '#team', groups: '#team', outro: '#contact' };
   const setActiveNav = () => {
     const s = activeScene();
     if (!s) return;
@@ -477,6 +477,9 @@ if (FX) {
       setupMethod();
       setupStatement();
       setupValues();
+      // the team, merged into the home page (client notes, 15 Oct)
+      team.setup();
+      team.enterOnScroll();
     } else if (PAGE === 'team') {
       team.setup();
     }
@@ -495,7 +498,7 @@ if (FX) {
   });
 } else {
   setupVoice();
-  if (PAGE === 'team') team.setupStatic();
+  if (PAGE === 'team' || PAGE === 'home') team.setupStatic();
 }
 
 /* The contact page opens simply: the light comes on, the invitation rises, the four cards follow. */

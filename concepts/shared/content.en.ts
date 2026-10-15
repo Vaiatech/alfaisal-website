@@ -33,20 +33,17 @@ export const contact = {
     city: 'Makkah',
     line: 'Al-Awali – Al-Awali Center',
   },
-  mapsUrl:
-    'https://www.google.com/maps/search/?api=1&query=' +
-    encodeURIComponent('سنتر العوالي، العوالي، مكة المكرمة'),
-  directionsUrl:
-    'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent('سنتر العوالي، العوالي، مكة المكرمة'),
-  mapsEmbed:
-    'https://maps.google.com/maps?q=' + encodeURIComponent('سنتر العوالي، العوالي، مكة المكرمة') + '&hl=en&z=15&output=embed',
+  // the firm's own pin (client notes, 15 Oct): شركة الفيصل للمحاماة — 21.362076, 39.8903367
+  mapsUrl: 'https://maps.app.goo.gl/DM6aZqhUeASc7RKa7',
+  directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=21.362076,39.8903367',
+  mapsEmbed: 'https://maps.google.com/maps?q=21.362076,39.8903367&hl=en&z=17&output=embed',
 };
 
 export const nav: NavItem[] = [
   { label: 'Home', href: '#top' },
   { label: 'Expertise', href: '#expertise' },
   { label: 'Methodology', href: '#method' },
-  { label: 'Our team', href: '/team/', page: 'team' },
+  { label: 'Our team', href: '#team' },
   { label: 'Contact', href: '/contact/', page: 'contact' },
 ];
 
@@ -91,7 +88,7 @@ export const story = {
 
 export const expertise = {
   label: 'Expertise',
-  title: 'Our expertise lies where the details meet',
+  title: 'From precision in the details to soundness in the solution',
   items: [
     { title: 'Liquidation & Bankruptcy', body: 'Legal management of liquidation, bankruptcy and financial restructuring files.' },
     { title: 'Estates & Endowments', body: 'Administration and settlement of estates, inherited assets and endowments.' },
@@ -306,8 +303,8 @@ export const ui = {
   soon: 'Soon',
   toDay: 'Light theme',
   toNight: 'Dark theme',
-  consult: 'Book a consultation',
-  consultShort: 'Consultation',
+  consultLine: 'Tell us what happened',
+  consultSub: 'Al-Faisal Consultation Platform',
   other: { code: 'ar', label: 'العربية', short: 'ع' },
   outro: 'Al-Faisal',
   registry: 'Commercial Registration',

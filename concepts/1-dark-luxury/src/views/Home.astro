@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import Contact from '../components/Contact.astro';
 import Mark from '../components/Mark.astro';
+import HeroLines from '../components/team/HeroLines.astro';
+import TeamBody from '../components/team/TeamBody.astro';
 import { idx } from '../lib/format';
 import { getContent, type Lang } from '../../../shared/i18n.ts';
 
@@ -200,7 +202,7 @@ const STRIKE_INK =
         <span class="stmt__a" data-light>{method.statement[0]}</span>
         <span class="stmt__b gold-text" data-light data-anchor>{method.statement[1]}</span>
       </p>
-      <a class="btn btn--glass stmt__cta" href={`${base}/team/`} data-nav data-title={getContent(lang).team.label}>
+      <a class="btn btn--glass stmt__cta" href="#team" data-nav data-title={getContent(lang).team.label}>
         <span>{method.cta}</span>
         <svg class="btn__arrow" viewBox="0 0 24 12" aria-hidden="true"><path d="M23 6H2M7 1 2 6l5 5" /></svg>
       </a>
@@ -224,6 +226,10 @@ const STRIKE_INK =
       </div>
     </section>
     <div class="link" aria-hidden="true"><i></i></div>
+
+    <!-- ============ 7 · OUR TEAM — merged into the home page (client notes, 15 Oct) ============ -->
+    <HeroLines lang={lang} embedded />
+    <TeamBody lang={lang} />
 
     <Contact lang={lang} />
 </Base>

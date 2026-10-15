@@ -31,14 +31,10 @@ export const contact = {
     city: 'مكة المكرمة',
     line: 'العوالي – سنتر العوالي', // as on uhearu.com
   },
-  mapsUrl:
-    'https://www.google.com/maps/search/?api=1&query=' +
-    encodeURIComponent('سنتر العوالي، العوالي، مكة المكرمة'),
-  directionsUrl:
-    'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent('سنتر العوالي، العوالي، مكة المكرمة'),
-  // the embedded map (no API key needed); swap for the firm's exact pin when they share it
-  mapsEmbed:
-    'https://maps.google.com/maps?q=' + encodeURIComponent('سنتر العوالي، العوالي، مكة المكرمة') + '&hl=ar&z=15&output=embed',
+  // the firm's own pin (client notes, 15 Oct): شركة الفيصل للمحاماة — 21.362076, 39.8903367
+  mapsUrl: 'https://maps.app.goo.gl/DM6aZqhUeASc7RKa7',
+  directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=21.362076,39.8903367',
+  mapsEmbed: 'https://maps.google.com/maps?q=21.362076,39.8903367&hl=ar&z=17&output=embed',
 } as const;
 
 export type Page = 'home' | 'team' | 'contact';
@@ -49,7 +45,7 @@ export const nav: NavItem[] = [
   { label: 'الرئيسية', href: '#top' },
   { label: 'خبراتنا', href: '#expertise' },
   { label: 'منهجيتنا', href: '#method' },
-  { label: 'فريقنا', href: '/team/', page: 'team' },
+  { label: 'فريقنا', href: '#team' }, // merged into the home page (client notes, 15 Oct)
   { label: 'تواصل معنا', href: '/contact/', page: 'contact' },
 ];
 
@@ -104,7 +100,7 @@ export const story = {
 
 export const expertise = {
   label: 'خبراتنا',
-  title: 'خبرتنا حيث تتقاطع التفاصيل',
+  title: 'من دقة التفاصيل إلى إحكام الحلول', // client notes, 15 Oct
   items: [
     { title: 'التصفيات والإفلاس', body: 'إدارة الملفات القانونية للتصفيات والإفلاس وإعادة التنظيم المالي.' },
     { title: 'التركات والأوقاف', body: 'إدارة وتصفية التركات والأصول الموروثة والأوقاف.' },
@@ -333,8 +329,9 @@ export const ui = {
   soon: 'قريبًا',
   toDay: 'المظهر الفاتح',
   toNight: 'المظهر الداكن',
-  consult: 'احجز استشارة',
-  consultShort: 'احجز استشارة',
+  // the header button carries the platform's words (client notes, 15 Oct)
+  consultLine: 'أسمعنا ما حدث بطريقتك',
+  consultSub: 'منصة الفيصل للاستشارات',
   // the switch shows the other language
   other: { code: 'en', label: 'English', short: 'EN' },
   outro: 'الفيصل',

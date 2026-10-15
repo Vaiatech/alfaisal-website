@@ -27,7 +27,7 @@ type Ctx = {
 export function createTeamPage(ctx: Ctx) {
   const page = document.querySelector<HTMLElement>('.th');
   const noop = () => {};
-  if (!page) return { setup: noop, enter: (_open: () => void) => {}, setupStatic: noop };
+  if (!page) return { setup: noop, enter: (_open: () => void) => {}, enterOnScroll: noop, setupStatic: noop };
 
   const { FX, finePointer, isMobile, sceneLight } = ctx;
 
@@ -268,6 +268,24 @@ export function createTeamPage(ctx: Ctx) {
         .add(() => body.forEach((b, i) => wipeIn(b, { delay: i * 0.12, duration: 1.3 })), 0.7)
         .fromTo('.th + .link--hero', { opacity: 0 }, { opacity: 1, duration: 0.8 }, 1.4);
       if (count) tl.to(count, { opacity: 1, y: 0, duration: 1, ease: EASE.out }, 1.7).add(() => { odo?.play(0); }, 1.7);
+    },
+    /** as a section of the home page: the words reveal like every other section;
+        the drifting lines and the count play once the section comes into view */
+    enterOnScroll() {
+      hero.prepare();
+      if (count) gsap.set(count, { opacity: 0, y: 14 });
+      const odo = countOdo ? ctx.odos.get(countOdo) : undefined;
+      if (countOdo) $$('.strip', countOdo).forEach((s) => gsap.set(s, { yPercent: 0 }));
+      ScrollTrigger.create({
+        trigger: page,
+        start: 'top 72%',
+        once: true,
+        onEnter: () => {
+          const tl = gsap.timeline();
+          hero.play(tl);
+          if (count) tl.to(count, { opacity: 1, y: 0, duration: 1, ease: EASE.out }, 1.1).add(() => { odo?.play(0); }, 1.1);
+        },
+      });
     },
     /** reduced motion: the complete page, still — only the dropdown works */
     setupStatic() {

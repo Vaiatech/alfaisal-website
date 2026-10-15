@@ -51,11 +51,11 @@ const otherHref = pagePath(page, lang === 'en' ? '' : '/en');
       <span class="sr">{ui.menu}</span>
       <i></i><i></i>
     </button>
-    <a class="consult" href={site.consultUrl} target="_blank" rel="noopener">
+    <a class="consult" href={site.consultUrl} target="_blank" rel="noopener" aria-label={`${ui.consultLine} — ${ui.consultSub}`}>
       <span class="consult__mic" aria-hidden="true">
         <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" /></svg>
       </span>
-      <span class="consult__label"><span class="consult__full">{ui.consult}</span><span class="consult__short" aria-hidden="true">{ui.consultShort}</span></span>
+      <span class="consult__label" aria-hidden="true"><span class="consult__line">{ui.consultLine}</span><small class="consult__sub">{ui.consultSub}</small></span>
       <span class="consult__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     </a>
   </div>

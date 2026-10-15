@@ -1,4 +1,7 @@
 ---
-import Team from '../views/Team.astro';
+/** The team now lives on the home page (client notes, 15 Oct): old links land on its section. */
+const to = '/#team';
 ---
-<Team lang="ar" />
+<!doctype html>
+<html><head><meta charset="utf-8" /><meta name="robots" content="noindex" /><link rel="canonical" href={to} /><meta http-equiv="refresh" content={`0; url=${to}`} /><title>…</title>
+<script is:inline define:vars={{ to }}>location.replace(to);</script></head><body><a href={to}>{to}</a></body></html>
